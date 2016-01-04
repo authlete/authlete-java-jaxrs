@@ -1,0 +1,315 @@
+/*
+ * Copyright (C) 2015-2016 Authlete, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.authlete.jaxrs;
+
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.AuthorizationFailRequest.Reason;
+import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.jaxrs.spi.AuthorizationRequestHandlerSpi;
+
+
+/**
+ * Handler for authorization requests to a <a href=
+ * "https://tools.ietf.org/html/rfc6749#section-3.1">authorization endpoint</a>
+ * of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
+ *
+ * <p>
+ * In an implementation of authorization endpoint, call {@link
+ * #handle(HttpServletRequest)} method and use the response as the response
+ * from the endpoint to the client application. {@code handle()} method calls
+ * Authlete's {@code /api/auth/authorization} API, receives a response from
+ * the API, and dispatches processing according to the {@code action} parameter
+ * in the response.
+ * </p>
+ *
+ * @author Takahiko Kawasaki
+ */
+public class AuthorizationRequestHandler extends BaseHandler
+{
+    /**
+     * Implementation of {@link AuthorizationRequestHandlerSpi} interface.
+     */
+    private final AuthorizationRequestHandlerSpi mSpi;
+
+
+    /**
+     * Constructor with an implementation of {@link AuthleteApi} interface
+     * and an implementation of {@link AuthorizationRequestHandlerSpi} interface.
+     *
+     * @param api
+     *         Implementation of {@link AuthleteApi} interface.
+     *
+     * @param spi
+     *         Implementation of {@link AuthorizationRequestHandlerSpi} interface.
+     */
+    public AuthorizationRequestHandler(AuthleteApi api, AuthorizationRequestHandlerSpi spi)
+    {
+        super(api);
+
+        mSpi = spi;
+    }
+
+
+    /**
+     * Handle an authorization request to a <a href=
+     * "https://tools.ietf.org/html/rfc6749#section-3.1">authorization endpoint</a>
+     * of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
+     *
+     * @param request
+     *         An authorization request
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     */
+    public Response handle(HttpServletRequest request)
+    {
+        try
+        {
+            // Process the given parameters.
+            return process(request);
+        }
+        catch (WebApplicationException e)
+        {
+            return e.getResponse();
+        }
+    }
+
+
+    /**
+     * Process the parameters of the authorization request.
+     */
+    private Response process(HttpServletRequest request)
+    {
+        // Call Authlete's /api/auth/authorization API.
+        AuthorizationResponse response = getApiCaller().callAuthorization(request);
+
+        // 'action' in the response denotes the next action which
+        // this service implementation should take.
+        AuthorizationResponse.Action action = response.getAction();
+
+        // The content of the response to the client application.
+        // The format of the content varies depending on the action.
+        String content = response.getResponseContent();
+
+        // Dispatch according to the action.
+        switch (action)
+        {
+            case INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error
+                return ResponseUtil.internalServerError(content);
+
+            case BAD_REQUEST:
+                // 400 Bad Request
+                return ResponseUtil.badRequest(content);
+
+            case LOCATION:
+                // 302 Found
+                return ResponseUtil.location(content);
+
+            case FORM:
+                // 200 OK
+                return ResponseUtil.form(content);
+
+            case INTERACTION:
+                // Process the authorization request with user interaction.
+                return handleInteraction(request, response);
+
+            case NO_INTERACTION:
+                // Process the authorization request without user interaction.
+                // The flow reaches here only when the authorization request
+                // contained prompt=none.
+                return handleNoInteraction(request, response);
+
+            default:
+                // This never happens.
+                throw getApiCaller().unknownAction("/api/auth/authorization", action);
+        }
+    }
+
+
+    /**
+     * Handle the case where {@code action} parameter in a response from
+     * Authlete's {@code /api/auth/authorization} API is {@code INTERACTION}.
+     */
+    private Response handleInteraction(HttpServletRequest request, AuthorizationResponse response)
+    {
+        return mSpi.generateAuthorizationPage(response);
+    }
+
+
+    /**
+     * Handle the case where {@code action} parameter in a response from
+     * Authlete's {@code /api/auth/authorization} API is {@code NO_INTERACTION}.
+     */
+    private Response handleNoInteraction(HttpServletRequest request, AuthorizationResponse response)
+    {
+        // Check 1. End-User Authentication
+        noInteractionCheckAuthentication(request, response);
+
+        // Get the time when the user was authenticated.
+        long authTime = mSpi.getUserAuthenticatedAt();
+
+        // Check 2. Max Age
+        noInteractionCheckMaxAge(request, response, authTime);
+
+        // The current subject, i.e. the unique ID assigned by
+        // the service to the current user.
+        String subject = mSpi.getUserSubject();
+
+        // Check 3. Subject
+        noInteractionCheckSubject(request, response, subject);
+
+        // Get the ACR that was satisfied when the current user
+        // was authenticated.
+        String acr = mSpi.getAcr();
+
+        // Check 4. ACR
+        noInteractionCheckAcr(request, response, acr);
+
+        // Issue
+        return noInteractionIssue(request, response, authTime, subject, acr);
+    }
+
+
+    /**
+     * Check whether an end-user has already logged in or not.
+     */
+    private void noInteractionCheckAuthentication(HttpServletRequest request, AuthorizationResponse response)
+    {
+        // If the current user has already been authenticated.
+        if (mSpi.isUserAuthenticated())
+        {
+            // OK.
+            return;
+        }
+
+        // A user must have logged in.
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.NOT_LOGGED_IN);
+    }
+
+
+    private void noInteractionCheckMaxAge(HttpServletRequest request, AuthorizationResponse response, long authTime)
+    {
+        // Get the requested maximum authentication age.
+        int maxAge = response.getMaxAge();
+
+        // If no maximum authentication age is requested.
+        if (maxAge == 0)
+        {
+            // No check is needed.
+            return;
+        }
+
+        // The time at which the authentication expires.
+        long expiresAt = authTime + maxAge * 1000;
+
+        // If the authentication has not expired yet.
+        if (System.currentTimeMillis() < expiresAt)
+        {
+            // OK.
+            return;
+        }
+
+        // The maximum authentication age has elapsed.
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.EXCEEDS_MAX_AGE);
+    }
+
+
+    private void noInteractionCheckSubject(HttpServletRequest request, AuthorizationResponse response, String subject)
+    {
+        // Get the requested subject.
+        String requestedSubject = response.getSubject();
+
+        // If no subject is requested.
+        if (requestedSubject == null)
+        {
+            // No check is needed.
+            return;
+        }
+
+        // If the requested subject matches the current user.
+        if (requestedSubject.equals(subject))
+        {
+            // OK.
+            return;
+        }
+
+        // The current user is different from the requested subject.
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.DIFFERENT_SUBJECT);
+    }
+
+
+    private void noInteractionCheckAcr(HttpServletRequest request, AuthorizationResponse response, String acr)
+    {
+        // Get the list of requested ACRs.
+        String[] requestedAcrs = response.getAcrs();
+
+        // If no ACR is requested.
+        if (requestedAcrs == null || requestedAcrs.length == 0)
+        {
+            // No check is needed.
+            return;
+        }
+
+        for (String requestedAcr : requestedAcrs)
+        {
+            if (requestedAcr.equals(acr))
+            {
+                // OK. The ACR satisfied when the current user was
+                // authenticated matches one of the requested ACRs.
+                return;
+            }
+        }
+
+        // If one of the requested ACRs must be satisfied.
+        if (response.isAcrEssential())
+        {
+            // None of the requested ACRs is satisfied.
+            throw getApiCaller().authorizationFail(response.getTicket(), Reason.ACR_NOT_SATISFIED);
+        }
+
+        // The ACR satisfied when the current user was authenticated
+        // does not match any one of the requested ACRs, but the
+        // authorization request from the client application did
+        // not request ACR as essential. Therefore, it is not
+        // necessary to raise an error here.
+    }
+
+
+    private Response noInteractionIssue(
+            HttpServletRequest request, AuthorizationResponse response,
+            long authTime, String subject, String acr)
+    {
+        // When prompt=none is contained in an authorization request,
+        // response.getClaims() returns null. This means that user
+        // claims don't have to be collected. In other words, if an
+        // authorization request contains prompt=none and requests
+        // user claims at the same time, Authlete regards such a
+        // request as illegal, because Authlete does not provide any
+        // means to pre-configure consent for claims.
+        //
+        // See the description about prompt=none in "OpenID Connect
+        // Core 1.0, 3.1.2.1. Authentication Request" for details.
+
+        return getApiCaller().authorizationIssue(
+            response.getTicket(), subject, authTime, acr, null);
+    }
+}

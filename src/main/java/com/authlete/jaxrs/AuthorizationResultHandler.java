@@ -1,0 +1,205 @@
+/*
+ * Copyright (C) 2015-2016 Authlete, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.authlete.jaxrs;
+
+
+import java.util.Map;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.AuthorizationFailRequest.Reason;
+
+
+/**
+ * Handler for end-user's decision on the authorization request.
+ *
+ * <p>
+ * An authorization endpoint returns an authorization page (HTML) to an end-user,
+ * and the end-user will select either "authorize" or "deny" the authorization
+ * request. {@link #authorize(String, String, long, String, Map) authorize()}
+ * and {@link #deny(String) deny()} are methods to handle the decision.
+ * </p>
+ *
+ * <p>
+ * {@code authorize()} method calls Authlete's {@code /api/auth/authorization/issue}
+ * API to issue an authorization code, an access token and/or an ID token.
+ * {@code deny()} method calls Authlete's {@code /api/auth/authorization/fail}
+ * API to generate a response to tell the client application that the end-user
+ * denied the authorization request.
+ * </p>
+ *
+ * @author Takahiko Kawasaki
+ */
+public class AuthorizationResultHandler extends BaseHandler
+{
+    /**
+     * Constructor with an implementation of {@link AuthleteApi} interface.
+     *
+     * @param api
+     *         Implementation of {@link AuthleteApi} interface.
+     */
+    public AuthorizationResultHandler(AuthleteApi api)
+    {
+        super(api);
+    }
+
+
+    /**
+     * Handle an end-user's decision of granting authorization to the client
+     * application. This method calls Authlete's {@code
+     * /api/auth/authorization/issue} API.
+     *
+     * <p>
+     * <b>Note about the {@code claims} argument:</b>
+     * </p>
+     *
+     * <p>
+     * A response from Authlete's {@code /api/auth/authorization} API contains
+     * {@code claims} parameter which is a {@code String} array of claim names
+     * such as {@code name}, {@code email} and {@code birthdate}. They are
+     * claims requested by the client application. You are expected to collect
+     * values of the claims and pass the collected claim key-value pairs to
+     * Authlete's {@code /api/auth/authorization/issue} API. The {@code claims}
+     * argument of this method is the collected claim key-value pairs.
+     * </p>
+     *
+     * <p>
+     * Types of claim values vary depending on claim keys. Types of most
+     * standard claims (see "<a href=
+     * "http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"
+     * >5.1. Standard Claims</a>" in <a href=
+     * "http://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect
+     * Core 1.0</a>) are string, but types of {@code email_verified} claim
+     * and {@code phone_number_verified} claim are boolean and the type of
+     * {@code updated_at} claim is number. In addition, the type of {@code
+     * address} claim is JSON object. The detailed format of {@code address}
+     * claim is described in <a href=
+     * "http://openid.net/specs/openid-connect-core-1_0.html#AddressClaim"
+     * >5.1.1. Address Claim</a>. {@link com.authlete.common.dto.Address
+     * Address} class in <a href="https://github.com/authlete/authlete-java-common"
+     * >authlete-java-common</a> library can be used to represent a value of
+     * {@code address} claim.
+     * </p>
+     *
+     * <p>
+     * The following code is an example to prepare {@code claims} argument.
+     * </p>
+     *
+     * <blockquote>
+     * <pre style="border: 1px solid gray; padding: 0.5em; margin: 1em;">
+     * Map&lt;String, Object&gt; claims = new HashMap&lt;String, Object&gt;();
+     *
+     * <span style="color: green;">// Name</span>
+     * claims.put(<span style="color: darkred;">"name"</span>,        <span style="color: darkred;">"Takahiko Kawasaki"</span>);
+     * claims.put(<span style="color: darkred;">"given_name"</span>,  <span style="color: darkred;">"Takahiko"</span>);
+     * claims.put(<span style="color: darkred;">"family_name"</span>, <span style="color: darkred;">"Kawasaki"</span>);
+     *
+     * <span style="color: green;">// Name with a language tag.
+     * // See <a href="http://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts"
+     * >5.2. Claims Languages and Scripts</a> for details.</span>
+     * claims.put(<span style="color: darkred;">"name#ja"</span>,        <span style="color: darkred;"
+     * >"\u5DDD\u5D0E \u8CB4\u5F66"</span>);  <span style="color: green;">// &#x5ddd;&#x5D0E; &#x8CB4;&#x5F66;</span>
+     * claims.put(<span style="color: darkred;">"given_name#ja"</span>,  <span style="color: darkred;"
+     * >"\u8CB4\u5F66"</span>);               <span style="color: green;">// &#x8CB4;&#x5F66;</span>
+     * claims.put(<span style="color: darkred;">"family_name#ja"</span>, <span style="color: darkred;"
+     * >"\u5DDD\u5D0E"</span>);               <span style="color: green;">// &#x5ddd;&#x5D0E;</span>
+     *
+     * <span style="color: green;">// Postal address.
+     * // See <a href="http://openid.net/specs/openid-connect-core-1_0.html#AddressClaim"
+     * >5.1.1. Address Claim</a> for details.</span>
+     * Address address = new Address()
+     *     .setCountry(<span style="color: darkred;">"JP"</span>)
+     *     .setRegion(<span style="color: darkred;">"Tokyo"</span>)
+     *     .setLocality(<span style="color: darkred;">"Itabashi-ku"</span>)
+     *     .setFormatted(<span style="color: darkred;">"Itabashi-ku, Tokyo, Japan"</span>);
+     * claims.put(<span style="color: darkred;">"address"</span>, address);
+     *
+     * <span style="color: green;">// Other information.</span>
+     * claims.put(<span style="color: darkred;">"gender"</span>,    <span style="color: darkred;">"male"</span>);
+     * claims.put(<span style="color: darkred;">"birthdate"</span>, <span style="color: darkred;">"1974-05-06"</span>);
+     * claims.put(<span style="color: darkred;">"zoneinfo"</span>,  <span style="color: darkred;">"Asia/Tokyo"</span>);
+     * claims.put(<span style="color: darkred;">"locale"</span>,    <span style="color: darkred;">"ja"</span>);
+     *
+     * <span style="color: green;">// FYI: Constant values in {@link com.authlete.common.types.StandardClaims
+     * StandardClaims} class can be used as keys.</span></pre>
+     * </blockquote>
+     *
+     * @param ticket
+     *         A ticket that was issued by Authlete's {@code /api/auth/authorization} API.
+     *
+     * @param subject
+     *         The subject (= unique identifier) of the end-user.
+     *
+     * @param authTime
+     *         The time when end-user authentication occurred. The number of
+     *         seconds since Unix epoch (1970-01-01). This value is used as
+     *         the value of {@code auth_time} claim in an ID token that may
+     *         be issued. Pass 0 if the time is unknown.
+     *
+     * @param acr
+     *         The authentication context class reference that the end-user
+     *         authentication satisfied. This value is used as the value of
+     *         {@code acr} claim in an ID token that may be issued. Pass
+     *         {@code null} if ACR is unknown.
+     *
+     * @param claims
+     *         Pairs of claim key and claim value. The pairs are embedded
+     *         in an ID token that may be issued. Passing {@code null} means
+     *         that values of the requested claims are not available.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     */
+    public Response authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
+    {
+        try
+        {
+            return getApiCaller().authorizationIssue(ticket, subject, authTime, acr, claims);
+        }
+        catch (WebApplicationException e)
+        {
+            return e.getResponse();
+        }
+    }
+
+
+    /**
+     * Handle an end-user's decision of denying the authorization request
+     * by the client application. This method calls Authlete's {@code
+     * /api/auth/authorization/fail} API and generates a response that
+     * triggers redirection.
+     * </p>
+     *
+     * @param ticket
+     *         A ticket that was issued by Authlete's {@code /api/auth/authorization} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     */
+    public Response deny(String ticket)
+    {
+        try
+        {
+            // Generate an error response to indicate that the user
+            // has denied the authorization request.
+            return getApiCaller().authorizationFail(ticket, Reason.DENIED).getResponse();
+        }
+        catch (WebApplicationException e)
+        {
+            return e.getResponse();
+        }
+    }
+}
