@@ -7,11 +7,12 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the
+ * License.
  */
 package com.authlete.jaxrs.spi;
 
@@ -203,6 +204,10 @@ public interface AuthorizationRequestHandlerSpi
      * Connect Core 1.0</a> for details about {@code prompt=none}.
      * </p>
      *
+     * <p>
+     * If you don't know what ACR is, return {@code null}.
+     * </p>
+     *
      * @return
      *         The authentication context class reference (ACR) that
      *         was satisfied when the current end-user was authenticated.
@@ -230,10 +235,10 @@ public interface AuthorizationRequestHandlerSpi
      * grant authorization to the client application or to reject the
      * authorization request. The authorization server should receive the
      * decision and call either {@link
-     * com.authlete.jaxrs.AuthorizationResultHandler#authorize(String,
+     * com.authlete.jaxrs.AuthorizationDecisionHandler#authorize(String,
      * String, long, String, java.util.Map) authorize()} method or {@link
-     * com.authlete.jaxrs.AuthorizationResultHandler#deny(String) deny()}
-     * method of {@link com.authlete.jaxrs.AuthorizationResultHandler
+     * com.authlete.jaxrs.AuthorizationDecisionHandler#deny(String) deny()}
+     * method of {@link com.authlete.jaxrs.AuthorizationDecisionHandler
      * AuthorizationResultHandler} class accordingly.
      * </p>
      *

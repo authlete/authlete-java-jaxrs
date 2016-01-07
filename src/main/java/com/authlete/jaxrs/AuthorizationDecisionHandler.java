@@ -7,11 +7,12 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the
+ * License.
  */
 package com.authlete.jaxrs;
 
@@ -21,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
+import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 
 
 /**
@@ -29,31 +31,105 @@ import com.authlete.common.dto.AuthorizationFailRequest.Reason;
  * <p>
  * An authorization endpoint returns an authorization page (HTML) to an end-user,
  * and the end-user will select either "authorize" or "deny" the authorization
- * request. {@link #authorize(String, String, long, String, Map) authorize()}
- * and {@link #deny(String) deny()} are methods to handle the decision.
- * </p>
- *
- * <p>
- * {@code authorize()} method calls Authlete's {@code /api/auth/authorization/issue}
- * API to issue an authorization code, an access token and/or an ID token.
- * {@code deny()} method calls Authlete's {@code /api/auth/authorization/fail}
- * API to generate a response to tell the client application that the end-user
- * denied the authorization request.
+ * request. This class handles the decision and calls Authlete's
+ * {@code /api/auth/authorization/issue} API or {@code /api/auth/authorization/fail}
+ * API accordingly.
  * </p>
  *
  * @author Takahiko Kawasaki
  */
-public class AuthorizationResultHandler extends BaseHandler
+public class AuthorizationDecisionHandler extends BaseHandler
 {
     /**
-     * Constructor with an implementation of {@link AuthleteApi} interface.
+     * Implementation of {@link AuthorizationDecisionHandlerSpi} interface.
+     */
+    private final AuthorizationDecisionHandlerSpi mSpi;
+
+
+    /**
+     * Constructor with an implementation of {@link AuthleteApi} interface
+     * and an implementation of {@link AuthorizationDecisionHandlerSpi}
+     * interface.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
+     *
+     * @param spi
+     *         Implementation of {@link AuthorizationDecisionHandlerSpi} interface.
      */
-    public AuthorizationResultHandler(AuthleteApi api)
+    public AuthorizationDecisionHandler(AuthleteApi api, AuthorizationDecisionHandlerSpi spi)
     {
         super(api);
+
+        mSpi = spi;
+    }
+
+
+    /**
+     * Handle an end-user's decision on an authorization request.
+     *
+     * @param ticket
+     *         A ticket that was issued by Authlete's {@code /api/auth/authorization} API.
+     *
+     * @param claimNames
+     *         Names of requested claims. Use the value of the {@code claims}
+     *         parameter in a response from Authlete's {@code /api/auth/authorization} API.
+     *
+     * @param claimLocales
+     *         Requested claim locales. Use the value of the {@code claimsLocales}
+     *         parameter in a response from Authlete's {@code /api/auth/authorization} API.
+     *
+     * @return
+     *         A response to the client application. Basically, the response
+     *         will trigger redirection to the client's redirection endpoint.
+     */
+    public Response handle(String ticket, String[] claimNames, String[] claimLocales)
+    {
+        // If the end-user did not grant authorization to the client application.
+        if (mSpi.isClientAuthorized() == false)
+        {
+            // Deny the authorization request.
+            return deny(ticket);
+        }
+
+        // The subject (= unique identifier) of the end-user.
+        String subject = mSpi.getUserSubject();
+
+        // If the subject of the end-user is not available.
+        if (subject == null || subject.length() == 0)
+        {
+            // Regard this case as denial of the authorization request.
+            return deny(ticket);
+        }
+
+        // The time when the end-user was authenticated.
+        long authTime = mSpi.getUserAuthenticatedAt();
+
+        // The ACR (Authentication Context Class Reference) of the
+        // end-user authentication.
+        String acr = mSpi.getAcr();
+
+        // Collect claim values.
+        Map<String, Object> claims = collectClaims(subject, claimNames, claimLocales);
+
+        // Authorize the authorization request.
+        return authorize(ticket, subject, authTime, acr, claims);
+    }
+
+
+    /**
+     * Collect claims of the end-user.
+     */
+    private Map<String, Object> collectClaims(String subject, String[] claimNames, String[] claimLocales)
+    {
+        if (claimNames == null || claimNames.length == 0)
+        {
+            // No claim is requested.
+            return null;
+        }
+
+        // TODO
+        return null;
     }
 
 
@@ -163,10 +239,14 @@ public class AuthorizationResultHandler extends BaseHandler
      * @return
      *         A response that should be returned to the client application.
      */
-    public Response authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
+    private Response authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
     {
         try
         {
+            // Generate a redirect response containing an authorization code,
+            // an access token and/or an ID token. If the original authorization
+            // request had response_type=none, no tokens will be contained in
+            // the generated response, though.
             return getApiCaller().authorizationIssue(ticket, subject, authTime, acr, claims);
         }
         catch (WebApplicationException e)
@@ -189,7 +269,7 @@ public class AuthorizationResultHandler extends BaseHandler
      * @return
      *         A response that should be returned to the client application.
      */
-    public Response deny(String ticket)
+    private Response deny(String ticket)
     {
         try
         {

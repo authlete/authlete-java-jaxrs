@@ -17,28 +17,15 @@
 package com.authlete.jaxrs.spi;
 
 
-import javax.ws.rs.core.Response;
-import com.authlete.common.dto.AuthorizationResponse;
-
-
 /**
- * Empty implementation of {@link AuthorizationRequestHandlerSpi} interface.
- *
- * <p>
- * If you have no mind to support {@code prompt=none} (<a href=
- * "http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"
- * >3.1.2.1. Authentication Request</a> in <a href=
- * "http://openid.net/specs/openid-connect-core-1_0.html">OpenID
- * Connect Core 1.0</a>), methods you must override are only
- * {@link #generateAuthorizationPage(AuthorizationResponse)}.
- * </p>
+ * Empty implementation of {@link AuthorizationDecisionHandlerSpi} interface.
  *
  * @author Takahiko Kawasaki
  */
-public class AuthorizationRequestHandlerSpiAdapter implements AuthorizationRequestHandlerSpi
+public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDecisionHandlerSpi
 {
     @Override
-    public boolean isUserAuthenticated()
+    public boolean isClientAuthorized()
     {
         return false;
     }
@@ -60,13 +47,6 @@ public class AuthorizationRequestHandlerSpiAdapter implements AuthorizationReque
 
     @Override
     public String getAcr()
-    {
-        return null;
-    }
-
-
-    @Override
-    public Response generateAuthorizationPage(AuthorizationResponse info)
     {
         return null;
     }
