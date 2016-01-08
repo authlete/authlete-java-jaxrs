@@ -18,6 +18,7 @@ package com.authlete.jaxrs;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -87,8 +88,11 @@ public class TokenRequestHandler extends BaseHandler
      * @return
      *         A response that should be returned from the endpoint to the
      *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
      */
-    public Response handle(HttpServletRequest request)
+    public Response handle(HttpServletRequest request) throws WebApplicationException
     {
         // The value of "Authorization" header.
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -109,7 +113,13 @@ public class TokenRequestHandler extends BaseHandler
         }
         catch (WebApplicationException e)
         {
-            return e.getResponse();
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            // Unexpected error.
+            throw new InternalServerErrorException(
+                    "Unexpected error in TokenRequestHandler.", t);
         }
     }
 

@@ -18,6 +18,7 @@ package com.authlete.jaxrs;
 
 
 import java.util.Map;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
@@ -82,8 +83,34 @@ public class AuthorizationDecisionHandler extends BaseHandler
      * @return
      *         A response to the client application. Basically, the response
      *         will trigger redirection to the client's redirection endpoint.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
      */
-    public Response handle(String ticket, String[] claimNames, String[] claimLocales)
+    public Response handle(String ticket, String[] claimNames, String[] claimLocales) throws WebApplicationException
+    {
+        try
+        {
+            // Process the end-user's decision.
+            return process(ticket, claimNames, claimLocales);
+        }
+        catch (WebApplicationException e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            // Unexpected error.
+            throw new InternalServerErrorException(
+                    "Unexpected error in AuthorizationDecisionHandler.", t);
+        }
+    }
+
+
+    /**
+     * Process the end-user's decision.
+     */
+    private Response process(String ticket, String[] claimNames, String[] claimLocales)
     {
         // If the end-user did not grant authorization to the client application.
         if (mSpi.isClientAuthorized() == false)
