@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import java.util.Map;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
@@ -101,8 +100,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         catch (Throwable t)
         {
             // Unexpected error.
-            throw new InternalServerErrorException(
-                    "Unexpected error in AuthorizationDecisionHandler.", t);
+            throw unexpected("Unexpected error in AuthorizationDecisionHandler", t);
         }
     }
 

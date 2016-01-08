@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
@@ -69,13 +70,21 @@ class AuthleteApiCaller
      * Create an {@link InternalServerErrorException} instance to indicate
      * that an Authlete API call failed.
      */
-    private InternalServerErrorException apiFailure(String path, Exception e)
+    private InternalServerErrorException apiFailure(String path, AuthleteApiException e)
     {
         // Error message.
         String message = String.format("Authlete %s API failed: %s", path, e.getMessage());
 
+        // Response body in the response from the Authlete server.
+        if (e.getResponseBody() != null)
+        {
+            // Append the content of the response body to the error message.
+            message = new StringBuilder(message)
+                    .append(": ").append(e.getResponseBody()).toString();
+        }
+
         // 500 Internal Server Error
-        return new InternalServerErrorException(message, e);
+        return internalServerError(message, e);
     }
 
 
@@ -90,7 +99,26 @@ class AuthleteApiCaller
         String message = String.format("Authlete %s API returned an unknown action: %s", path, action);
 
         // 500 Internal Server Error
-        return new InternalServerErrorException(message);
+        return internalServerError(message, null);
+    }
+
+
+    /**
+     * Create an {@link InternalServerErrorException} instance having
+     * a response body.
+     */
+    private InternalServerErrorException internalServerError(String message, Throwable cause)
+    {
+        Response response = ResponseUtil.internalServerError(message, MediaType.TEXT_PLAIN_TYPE);
+
+        if (cause != null)
+        {
+            return new InternalServerErrorException(message, response, cause);
+        }
+        else
+        {
+            return new InternalServerErrorException(message, response);
+        }
     }
 
 

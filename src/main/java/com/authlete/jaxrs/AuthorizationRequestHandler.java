@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
@@ -98,8 +97,7 @@ public class AuthorizationRequestHandler extends BaseHandler
         catch (Throwable t)
         {
             // Unexpected error.
-            throw new InternalServerErrorException(
-                    "Unexpected error in AuthorizationRequestHandler.", t);
+            throw unexpected("Unexpected error in AuthorizationRequestHandler", t);
         }
     }
 

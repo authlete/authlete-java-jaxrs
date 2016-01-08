@@ -149,7 +149,17 @@ class ResponseUtil
      */
     public static Response internalServerError(String entity)
     {
-        return builder(Status.INTERNAL_SERVER_ERROR, entity, MEDIA_TYPE_JSON).build();
+        return internalServerError(entity, MEDIA_TYPE_JSON);
+    }
+
+
+    /**
+     * Create a response of {@code "500 Internal Server Error"}
+     * with the given entity.
+     */
+    public static Response internalServerError(String entity, MediaType mediaType)
+    {
+        return builder(Status.INTERNAL_SERVER_ERROR, entity, mediaType).build();
     }
 
 
@@ -166,6 +176,9 @@ class ResponseUtil
     }
 
 
+    /**
+     * Create a {@link ResponseBuilder}.
+     */
     private static ResponseBuilder builder(Status status, String entity, MediaType type)
     {
         return builder(status)

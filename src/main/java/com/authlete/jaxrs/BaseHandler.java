@@ -17,6 +17,9 @@
 package com.authlete.jaxrs;
 
 
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 
 
@@ -39,5 +42,20 @@ abstract class BaseHandler
     protected AuthleteApiCaller getApiCaller()
     {
         return mApiCaller;
+    }
+
+
+    protected InternalServerErrorException unexpected(String message, Throwable cause)
+    {
+        if (cause != null && cause.getMessage() != null)
+        {
+            // Append the message of the cause.
+            message += ": " + cause.getMessage();
+        }
+
+        // Response having a response body.
+        Response response = ResponseUtil.internalServerError(message, MediaType.TEXT_PLAIN_TYPE);
+
+        return new InternalServerErrorException(message, response, cause);
     }
 }

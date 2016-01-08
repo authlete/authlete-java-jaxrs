@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -118,8 +117,7 @@ public class TokenRequestHandler extends BaseHandler
         catch (Throwable t)
         {
             // Unexpected error.
-            throw new InternalServerErrorException(
-                    "Unexpected error in TokenRequestHandler.", t);
+            throw unexpected("Unexpected error in TokenRequestHandler", t);
         }
     }
 
