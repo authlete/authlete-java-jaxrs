@@ -18,10 +18,10 @@ package com.authlete.jaxrs;
 
 
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
@@ -125,11 +125,11 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/authorization} API.
      */
-    public AuthorizationResponse callAuthorization(HttpServletRequest request)
+    public AuthorizationResponse callAuthorization(MultivaluedMap<String, String> parameters)
     {
-        String parameters = URLCoder.formUrlEncode(request.getParameterMap());
+        String params = URLCoder.formUrlEncode(parameters);
 
-        return callAuthorization(parameters);
+        return callAuthorization(params);
     }
 
 
@@ -315,11 +315,11 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/token} API.
      */
-    public TokenResponse callToken(HttpServletRequest request, String clientId, String clientSecret)
+    public TokenResponse callToken(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
     {
-        String parameters = URLCoder.formUrlEncode(request.getParameterMap());
+        String params = URLCoder.formUrlEncode(parameters);
 
-        return callToken(parameters, clientId, clientSecret);
+        return callToken(params, clientId, clientSecret);
     }
 
 

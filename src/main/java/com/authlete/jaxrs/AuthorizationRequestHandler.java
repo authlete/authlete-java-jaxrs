@@ -17,8 +17,8 @@
 package com.authlete.jaxrs;
 
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
@@ -33,7 +33,7 @@ import com.authlete.jaxrs.spi.AuthorizationRequestHandlerSpi;
  *
  * <p>
  * In an implementation of authorization endpoint, call {@link
- * #handle(HttpServletRequest)} method and use the response as the response
+ * #handle(MultivaluedMap) handle()} method and use the response as the response
  * from the endpoint to the client application. {@code handle()} method calls
  * Authlete's {@code /api/auth/authorization} API, receives a response from
  * the API, and dispatches processing according to the {@code action} parameter
@@ -73,8 +73,8 @@ public class AuthorizationRequestHandler extends BaseHandler
      * "https://tools.ietf.org/html/rfc6749#section-3.1">authorization endpoint</a>
      * of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
      *
-     * @param request
-     *         An authorization request
+     * @param parameters
+     *         Request parameters of an authorization request.
      *
      * @return
      *         A response that should be returned from the endpoint to the
@@ -83,12 +83,12 @@ public class AuthorizationRequestHandler extends BaseHandler
      * @throws WebApplicationException
      *         An error occurred.
      */
-    public Response handle(HttpServletRequest request) throws WebApplicationException
+    public Response handle(MultivaluedMap<String, String> parameters) throws WebApplicationException
     {
         try
         {
             // Process the given parameters.
-            return process(request);
+            return process(parameters);
         }
         catch (WebApplicationException e)
         {
@@ -105,10 +105,10 @@ public class AuthorizationRequestHandler extends BaseHandler
     /**
      * Process the authorization request.
      */
-    private Response process(HttpServletRequest request)
+    private Response process(MultivaluedMap<String, String> parameters)
     {
         // Call Authlete's /api/auth/authorization API.
-        AuthorizationResponse response = getApiCaller().callAuthorization(request);
+        AuthorizationResponse response = getApiCaller().callAuthorization(parameters);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -139,13 +139,13 @@ public class AuthorizationRequestHandler extends BaseHandler
 
             case INTERACTION:
                 // Process the authorization request with user interaction.
-                return handleInteraction(request, response);
+                return handleInteraction(response);
 
             case NO_INTERACTION:
                 // Process the authorization request without user interaction.
                 // The flow reaches here only when the authorization request
                 // contained prompt=none.
-                return handleNoInteraction(request, response);
+                return handleNoInteraction(response);
 
             default:
                 // This never happens.
@@ -158,7 +158,7 @@ public class AuthorizationRequestHandler extends BaseHandler
      * Handle the case where {@code action} parameter in a response from
      * Authlete's {@code /api/auth/authorization} API is {@code INTERACTION}.
      */
-    private Response handleInteraction(HttpServletRequest request, AuthorizationResponse response)
+    private Response handleInteraction(AuthorizationResponse response)
     {
         return mSpi.generateAuthorizationPage(response);
     }
@@ -168,40 +168,40 @@ public class AuthorizationRequestHandler extends BaseHandler
      * Handle the case where {@code action} parameter in a response from
      * Authlete's {@code /api/auth/authorization} API is {@code NO_INTERACTION}.
      */
-    private Response handleNoInteraction(HttpServletRequest request, AuthorizationResponse response)
+    private Response handleNoInteraction(AuthorizationResponse response)
     {
         // Check 1. End-User Authentication
-        noInteractionCheckAuthentication(request, response);
+        noInteractionCheckAuthentication(response);
 
         // Get the time when the user was authenticated.
         long authTime = mSpi.getUserAuthenticatedAt();
 
         // Check 2. Max Age
-        noInteractionCheckMaxAge(request, response, authTime);
+        noInteractionCheckMaxAge(response, authTime);
 
         // The current subject, i.e. the unique ID assigned by
         // the service to the current user.
         String subject = mSpi.getUserSubject();
 
         // Check 3. Subject
-        noInteractionCheckSubject(request, response, subject);
+        noInteractionCheckSubject(response, subject);
 
         // Get the ACR that was satisfied when the current user
         // was authenticated.
         String acr = mSpi.getAcr();
 
         // Check 4. ACR
-        noInteractionCheckAcr(request, response, acr);
+        noInteractionCheckAcr(response, acr);
 
         // Issue
-        return noInteractionIssue(request, response, authTime, subject, acr);
+        return noInteractionIssue(response, authTime, subject, acr);
     }
 
 
     /**
      * Check whether an end-user has already logged in or not.
      */
-    private void noInteractionCheckAuthentication(HttpServletRequest request, AuthorizationResponse response)
+    private void noInteractionCheckAuthentication(AuthorizationResponse response)
     {
         // If the current user has already been authenticated.
         if (mSpi.isUserAuthenticated())
@@ -215,7 +215,7 @@ public class AuthorizationRequestHandler extends BaseHandler
     }
 
 
-    private void noInteractionCheckMaxAge(HttpServletRequest request, AuthorizationResponse response, long authTime)
+    private void noInteractionCheckMaxAge(AuthorizationResponse response, long authTime)
     {
         // Get the requested maximum authentication age.
         int maxAge = response.getMaxAge();
@@ -242,7 +242,7 @@ public class AuthorizationRequestHandler extends BaseHandler
     }
 
 
-    private void noInteractionCheckSubject(HttpServletRequest request, AuthorizationResponse response, String subject)
+    private void noInteractionCheckSubject(AuthorizationResponse response, String subject)
     {
         // Get the requested subject.
         String requestedSubject = response.getSubject();
@@ -266,7 +266,7 @@ public class AuthorizationRequestHandler extends BaseHandler
     }
 
 
-    private void noInteractionCheckAcr(HttpServletRequest request, AuthorizationResponse response, String acr)
+    private void noInteractionCheckAcr(AuthorizationResponse response, String acr)
     {
         // Get the list of requested ACRs.
         String[] requestedAcrs = response.getAcrs();
@@ -304,8 +304,7 @@ public class AuthorizationRequestHandler extends BaseHandler
 
 
     private Response noInteractionIssue(
-            HttpServletRequest request, AuthorizationResponse response,
-            long authTime, String subject, String acr)
+            AuthorizationResponse response, long authTime, String subject, String acr)
     {
         // When prompt=none is contained in an authorization request,
         // response.getClaims() returns null. This means that user

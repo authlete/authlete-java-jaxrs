@@ -234,12 +234,9 @@ public interface AuthorizationRequestHandlerSpi
      * In an authorization page, an end-user will finally decide either to
      * grant authorization to the client application or to reject the
      * authorization request. The authorization server should receive the
-     * decision and call either {@link
-     * com.authlete.jaxrs.AuthorizationDecisionHandler#authorize(String,
-     * String, long, String, java.util.Map) authorize()} method or {@link
-     * com.authlete.jaxrs.AuthorizationDecisionHandler#deny(String) deny()}
-     * method of {@link com.authlete.jaxrs.AuthorizationDecisionHandler
-     * AuthorizationResultHandler} class accordingly.
+     * decision and call {@link
+     * com.authlete.jaxrs.AuthorizationDecisionHandler#handle(String,
+     * String[], String[]) handle()} method.
      * </p>
      *
      * @param info

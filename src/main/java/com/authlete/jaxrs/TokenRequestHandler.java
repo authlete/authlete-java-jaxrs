@@ -17,9 +17,8 @@
 package com.authlete.jaxrs;
 
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.TokenFailRequest.Reason;
@@ -35,8 +34,8 @@ import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
  * (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
  *
  * <p>
- * In an implementation of token endpoint, call {@link #handle(HttpServletRequest)}
- * method and use the response as the response from the endpoint to the client
+ * In an implementation of token endpoint, call {@link #handle(MultivaluedMap, String)
+ * handle()} method and use the response as the response from the endpoint to the client
  * application. {@code handle()} method calls Authlete's {@code /api/auth/token} API,
  * receives a response from the API, and dispatches processing according to the
  * {@code action} parameter in the response.
@@ -81,8 +80,15 @@ public class TokenRequestHandler extends BaseHandler
      * >token endpoint</a> of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749"
      * >RFC 6749</a>).
      *
-     * @param request
-     *         A token request
+     * @param parameters
+     *         Request parameters of a token request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header in the token request.
+     *         A client application may embed its pair of client ID and client
+     *         secret in a token request using <a href=
+     *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
+     *         Authentication</a>.
      *
      * @return
      *         A response that should be returned from the endpoint to the
@@ -91,11 +97,8 @@ public class TokenRequestHandler extends BaseHandler
      * @throws WebApplicationException
      *         An error occurred.
      */
-    public Response handle(HttpServletRequest request) throws WebApplicationException
+    public Response handle(MultivaluedMap<String, String> parameters, String authorization) throws WebApplicationException
     {
-        // The value of "Authorization" header.
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         // Convert the value of Authorization header (credentials of
         // the client application), if any, into BasicCredentials.
         BasicCredentials credentials = BasicCredentials.parse(authorization);
@@ -108,7 +111,7 @@ public class TokenRequestHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(request, clientId, clientSecret);
+            return process(parameters, clientId, clientSecret);
         }
         catch (WebApplicationException e)
         {
@@ -125,10 +128,10 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Process the parameters of the token request.
      */
-    private Response process(HttpServletRequest request, String clientId, String clientSecret)
+    private Response process(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
     {
         // Call Authlete's /api/auth/token API.
-        TokenResponse response = getApiCaller().callToken(request, clientId, clientSecret);
+        TokenResponse response = getApiCaller().callToken(parameters, clientId, clientSecret);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -154,7 +157,7 @@ public class TokenRequestHandler extends BaseHandler
 
             case PASSWORD:
                 // Process the token request whose flow is "Resource Owner Password Credentials".
-                return handlePassword(request, response);
+                return handlePassword(response);
 
             case OK:
                 // 200 OK
@@ -170,7 +173,7 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Process the token request whose flow is "Resource Owner Password Credentials".
      */
-    private Response handlePassword(HttpServletRequest request, TokenResponse response)
+    private Response handlePassword(TokenResponse response)
     {
         // The credentials of the resource owner.
         String username = response.getUsername();
