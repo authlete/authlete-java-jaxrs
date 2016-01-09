@@ -50,4 +50,11 @@ public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDeci
     {
         return null;
     }
+
+
+    @Override
+    public Object getUserClaim(String claimName, String languageTag)
+    {
+        return null;
+    }
 }

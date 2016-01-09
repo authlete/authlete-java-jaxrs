@@ -108,4 +108,32 @@ public interface AuthorizationDecisionHandlerSpi
      *         was satisfied when the current end-user was authenticated.
      */
     String getAcr();
+
+
+    /**
+     * Get the value of a claim of the user.
+     *
+     * @param claimName
+     *         A claim name such as {@code name} and {@code family_name}.
+     *         Standard claim names are listed in "<a href=
+     *         "http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims"
+     *         >5.1. Standard Claims</a>" of <a href=
+     *         "http://openid.net/specs/openid-connect-core-1_0.html">OpenID
+     *         Connect Core 1.0</a>. Java constant values that represent the
+     *         standard claims are listed in {@link com.authlete.common.types.StandardClaims
+     *         StandardClaims} class.
+     *
+     * @param languageTag
+     *         A language tag such as {@code en} and {@code ja}. Implementations
+     *         should take this into account whenever possible. See "<a href=
+     *         "http://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts"
+     *         >5.2. Claims Languages and Scripts</a>" in <a href=
+     *         "http://openid.net/specs/openid-connect-core-1_0.html">OpenID
+     *         Connect Core 1.0</a> for details.
+     *
+     * @return
+     *         The claim value. {@code null} if the claim value of the claim
+     *         is not available.
+     */
+    Object getUserClaim(String claimName, String languageTag);
 }
