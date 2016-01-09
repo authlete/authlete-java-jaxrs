@@ -113,8 +113,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
         // If the end-user did not grant authorization to the client application.
         if (mSpi.isClientAuthorized() == false)
         {
-            // Deny the authorization request.
-            return deny(ticket);
+            // The end-user denied the authorization request.
+            return fail(ticket, Reason.DENIED);
         }
 
         // The subject (= unique identifier) of the end-user.
@@ -123,8 +123,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
         // If the subject of the end-user is not available.
         if (subject == null || subject.length() == 0)
         {
-            // Regard this case as denial of the authorization request.
-            return deny(ticket);
+            // The end-user is not authenticated.
+            return fail(ticket, Reason.NOT_AUTHENTICATED);
         }
 
         // The time when the end-user was authenticated.
@@ -282,8 +282,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
 
 
     /**
-     * Handle an end-user's decision of denying the authorization request
-     * by the client application. This method calls Authlete's {@code
+     * Generate an error response to indicate that the authorization
+     * request failed. This method calls Authlete's {@code
      * /api/auth/authorization/fail} API and generates a response that
      * triggers redirection.
      * </p>
@@ -291,16 +291,19 @@ public class AuthorizationDecisionHandler extends BaseHandler
      * @param ticket
      *         A ticket that was issued by Authlete's {@code /api/auth/authorization} API.
      *
+     * @param reason
+     *         A reason of the failure of the authorization request.
+     *
      * @return
      *         A response that should be returned to the client application.
      */
-    private Response deny(String ticket)
+    private Response fail(String ticket, Reason reason)
     {
         try
         {
-            // Generate an error response to indicate that the user
-            // has denied the authorization request.
-            return getApiCaller().authorizationFail(ticket, Reason.DENIED).getResponse();
+            // Generate an error response to indicate that
+            // the authorization request failed.
+            return getApiCaller().authorizationFail(ticket, reason).getResponse();
         }
         catch (WebApplicationException e)
         {

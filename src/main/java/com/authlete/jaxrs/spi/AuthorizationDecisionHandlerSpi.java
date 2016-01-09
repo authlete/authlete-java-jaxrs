@@ -77,17 +77,10 @@ public interface AuthorizationDecisionHandlerSpi
      * your user database.
      * </p>
      *
-     * <p>
-     * If {@code null} is returned, {@link
-     * com.authlete.jaxrs.AuthorizationDecisionHandler#handle(String, String[], String[])
-     * AuthorizationDecisionHandler.handle()} behaves as if the
-     * end-user rejected the authorization request.
-     * </p>
-     *
      * @return
      *         The subject (= unique identifier) of the end-user.
-     *         {@code null} means the end-user rejected the
-     *         authorization request.
+     *         Returning {@code null} makes the authorization
+     *         request fail.
      */
     String getUserSubject();
 
