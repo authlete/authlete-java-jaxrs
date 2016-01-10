@@ -6,12 +6,11 @@ Overview
 
 This library provides utility classes to make it easy for developers
 to implement an authorization server which supports [OAuth 2.0][1] and
-[OpenID Connect][2]. [java-oauth-server][3] is an authorization server
-implementation which uses this library.
+[OpenID Connect][2].
 
 This library is written using JAX-RS 2.0 API and [authlete-java-common][4]
-library. JAX-RS is _The Java API for RESTful Web Services_. JAX-RS
-2.0 API is standardized by [JSR 339][5] and contained in Java EE 7.
+library. JAX-RS is _The Java API for RESTful Web Services_. JAX-RS 2.0
+API has been standardized by [JSR 339][5] and it is included in Java EE 7.
 On the other hand, authlete-java-common library is another Authlete's
 open source library which provides classes to communicate with
 [Authlete Web APIs][6].
@@ -21,6 +20,10 @@ open source library which provides classes to communicate with
 Authlete because authorization data (e.g. access tokens), settings of
 authorization servers and settings of client applications are stored in
 the Authlete server on cloud.
+
+[java-oauth-server][3] is an authorization server implementation which
+uses this library. The reference implementation is a good starting point
+for your authorization server implementation.
 
 
 License
@@ -44,13 +47,13 @@ Maven
 Source Code
 -----------
 
-    https://github.com/authlete/authlete-java-jaxrs
+  https://github.com/authlete/authlete-java-jaxrs
 
 
 JavaDoc
 -------
 
-    http://authlete.github.io/authlete-java-jaxrs
+  http://authlete.github.io/authlete-java-jaxrs
 
 
 Description
@@ -95,7 +98,8 @@ look like the following.
 // Request parameters of an authorization request.
 MultivaluedMap<String, String> parameters = ...;
 
-// Implementation of AuthleteApi interface. See authlete-java-common.
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
 AuthleteApi api = ...;
 
 // Your implementation of AuthorizationRequestHandlerSpi interface.
@@ -165,7 +169,7 @@ The constructor of `TokenRequestHandler` takes an implementation of
 `TokenRequestHandlerSpi` interface as does the constructor of
 `AuthorizationRequestHandler`.
 
-In summary, a flow in a token endpoint implentation will look like
+In summary, a flow in a token endpoint implementation will look like
 the following.
 
 ```java
@@ -175,7 +179,8 @@ MultivaluedMap<String, String> parameters = ...;
 // The value of Authorization header.
 String authorization = ...;
 
-// Implementation of AuthleteApi interface. See authlete-java-common.
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
 AuthleteApi api = ...;
 
 // Your implementation of TokenRequestHandlerSpi interface.
@@ -200,10 +205,18 @@ supports OAuth 2.0 and OpenID Connect. See the [JavaDoc][11] and the
 reference implementation ([java-oauth-server][3]) for details.
 
 
+See Also
+--------
+
+- [java-oauth-server][3] Authorization Server Implementation
+- [authlete-java-common][4] Authlete Common Library for Java
+- [Authlete][7] Authlete Home Page
+
+
 Support
 -------
 
-[Authlete, Inc.](https://www.authlete.com/)
+[Authlete, Inc.](https://www.authlete.com/)<br/>
 support@authlete.com
 
 
