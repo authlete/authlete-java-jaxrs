@@ -60,6 +60,11 @@ public interface AuthorizationDecisionHandlerSpi
      * }</pre>
      * </blockquote>
      *
+     * <p>
+     * This method is not called when {@link #isClientAuthorized()}
+     * has returned {@code false}.
+     * </p>
+     *
      * @return
      *         The time when the end-user authentication occurred.
      *         The number of seconds since Unix epoch (1970-01-01).
@@ -70,11 +75,18 @@ public interface AuthorizationDecisionHandlerSpi
 
     /**
      * Get the subject (= unique identifier) of the end-user.
+     * It must consist of only ASCII letters and its length
+     * must not exceed 100.
      *
      * <p>
      * In a typical case, the subject is a primary key or another
      * unique ID of the record that represents the end-user in
      * your user database.
+     * </p>
+     *
+     * <p>
+     * This method is not called when {@link #isClientAuthorized()}
+     * has returned {@code false}.
      * </p>
      *
      * @return
@@ -113,6 +125,13 @@ public interface AuthorizationDecisionHandlerSpi
     /**
      * Get the value of a claim of the user.
      *
+     * <p>
+     * This method may be called multiple times. On the other hand,
+     * this method is not called when {@link #isClientAuthorized()}
+     * has returned {@code false} or when {@link #getUserSubject()}
+     * has returned {@code null}.
+     * </p>
+     *
      * @param claimName
      *         A claim name such as {@code name} and {@code family_name}.
      *         Standard claim names are listed in "<a href=
@@ -121,7 +140,8 @@ public interface AuthorizationDecisionHandlerSpi
      *         "http://openid.net/specs/openid-connect-core-1_0.html">OpenID
      *         Connect Core 1.0</a>. Java constant values that represent the
      *         standard claims are listed in {@link com.authlete.common.types.StandardClaims
-     *         StandardClaims} class.
+     *         StandardClaims} class. The value of {@code claimName} does NOT
+     *         contain a language tag.
      *
      * @param languageTag
      *         A language tag such as {@code en} and {@code ja}. Implementations

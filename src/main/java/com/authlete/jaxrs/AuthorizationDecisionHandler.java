@@ -17,7 +17,12 @@
 package com.authlete.jaxrs;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
@@ -147,14 +152,156 @@ public class AuthorizationDecisionHandler extends BaseHandler
      */
     private Map<String, Object> collectClaims(String subject, String[] claimNames, String[] claimLocales)
     {
+        // If no claim is required.
         if (claimNames == null || claimNames.length == 0)
         {
-            // No claim is requested.
             return null;
         }
 
-        // TODO
-        return null;
+        // Drop empty and duplicate entries from claimLocales.
+        claimLocales = normalizeClaimLocales(claimLocales);
+
+        // Claim values.
+        Map<String, Object> claims = new HashMap<String, Object>();
+
+        // For each requested claim.
+        for (String claimName : claimNames)
+        {
+            // If the claim name is empty.
+            if (claimName == null || claimName.length() == 0)
+            {
+                continue;
+            }
+
+            // Split the claim name into the name part and the tag part.
+            String[] elements = claimName.split("#", 2);
+            String name = elements[0];
+            String tag  = (elements.length == 2) ? elements[1] : null;
+
+            // If the name part is empty.
+            if (name == null || name.length() == 0)
+            {
+                continue;
+            }
+
+            // Get the claim value of the claim.
+            Object value = getClaim(name, tag, claimLocales);
+
+            // If the claim value was not obtained.
+            if (value == null)
+            {
+                continue;
+            }
+
+            if (tag == null)
+            {
+                // Just for an edge case where claimName ends with "#".
+                claimName = name;
+            }
+
+            // Add the pair of the claim name and the claim value.
+            claims.put(claimName, value);
+        }
+
+        // If no claim value has been obtained.
+        if (claims.size() == 0)
+        {
+            return null;
+        }
+
+        // Obtained claim values.
+        return claims;
+    }
+
+
+    private String[] normalizeClaimLocales(String[] claimLocales)
+    {
+        if (claimLocales == null || claimLocales.length == 0)
+        {
+            return null;
+        }
+
+        // From 5.2. Claims Languages and Scripts in OpenID Connect Core 1.0
+        //
+        //     However, since BCP47 language tag values are case insensitive,
+        //     implementations SHOULD interpret the language tag values
+        //     supplied in a case insensitive manner.
+        //
+        Set<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+
+        // Normalized list.
+        List<String> list = new ArrayList<String>();
+
+        // Loop to drop empty and duplicate claim locales.
+        for (String claimLocale : claimLocales)
+        {
+            // If the claim locale is empty.
+            if (claimLocale == null || claimLocale.length() == 0)
+            {
+                continue;
+            }
+
+            // If the claim locale is a duplicate.
+            if (set.contains(claimLocale))
+            {
+                continue;
+            }
+
+            set.add(claimLocale);
+            list.add(claimLocale);
+        }
+
+        int size = list.size();
+
+        if (size == 0)
+        {
+            return null;
+        }
+        else if (size == claimLocales.length)
+        {
+            // No change.
+            return claimLocales;
+        }
+
+        // Convert the list to an array.
+        String[] array = new String[size];
+        list.toArray(array);
+
+        return array;
+    }
+
+
+    private Object getClaim(String name, String tag, String[] claimLocales)
+    {
+        // If a language tag is explicitly appended.
+        if (tag != null && tag.length() != 0)
+        {
+            // Get the claim value of the claim with the specific language tag.
+            return mSpi.getUserClaim(name, tag);
+        }
+
+        // If claim locales are not specified by 'claims_locales' request parameter.
+        if (claimLocales == null || claimLocales.length == 0)
+        {
+            // Get the claim value of the claim without any language tag.
+            return mSpi.getUserClaim(name, null);
+        }
+
+        // For each claim locale. They are ordered by preference.
+        for (String claimLocale : claimLocales)
+        {
+            // Try to get the claim value with the claim locale.
+            Object value = mSpi.getUserClaim(name, claimLocale);
+
+            // If the claim value was obtained.
+            if (value != null)
+            {
+                return value;
+            }
+        }
+
+        // The last resort. Try to get the claim value without any language tag.
+        return mSpi.getUserClaim(name, null);
     }
 
 

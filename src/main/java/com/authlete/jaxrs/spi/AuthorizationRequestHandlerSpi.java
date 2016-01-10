@@ -143,6 +143,8 @@ public interface AuthorizationRequestHandlerSpi
 
     /**
      * Get the subject (= unique identifier) of the current end-user.
+     * It must consist of only ASCII letters and its length must not
+     * exceed 100.
      *
      * <p>
      * This method is called only when an authorization request comes
