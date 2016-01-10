@@ -131,7 +131,7 @@ See the [JavaDoc][11] and the reference implementation
 ([java-oauth-server][3]) for details.
 
 
-### Authorization Decision Endpoint
+#### Authorization Decision Endpoint
 
 An authorization page displays information about an authorization request
 such as the name of the client application and requested permissions. An
@@ -148,7 +148,7 @@ Also, its constructor requires an implementation of
 of `AuthorizationRequestHandler`.
 
 
-### Token Endpoint
+#### Token Endpoint
 
 `TokenRequestHandler` is a class to process a token request from a client
 application. The class has `handle()` method which takes two arguments of
@@ -208,9 +208,9 @@ reference implementation ([java-oauth-server][3]) for details.
 See Also
 --------
 
-- [java-oauth-server][3] Authorization Server Implementation
-- [authlete-java-common][4] Authlete Common Library for Java
-- [Authlete][7] Authlete Home Page
+- [java-oauth-server][3] - Authorization Server Implementation
+- [authlete-java-common][4] - Authlete Common Library for Java
+- [Authlete][7] - Authlete Home Page
 
 
 Support
