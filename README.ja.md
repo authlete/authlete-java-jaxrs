@@ -110,7 +110,7 @@ return response;
 ```
 
 `AuthorizationRequestHandlerSpi` に定義されているメソッド群のうち、最も重要なメソッドは
-`generateAuthorizationPage()` です。 このメソッドは認可ページを生成するための呼ばれます。
+`generateAuthorizationPage()` です。 このメソッドは認可ページを生成するために呼ばれます。
 このメソッドは、Authlete の `/api/auth/authorization` Web API からの応答を表す
 `AuthorizationResponse` クラスのインスタンスを受け取ります。
 そのインスタンスには、認可ページを生成するのに必要な情報が含まれています。
@@ -140,8 +140,8 @@ Response generateAuthorizationPage(AuthorizationResponse info);
 
 `TokenRequestHandler` はクライアントアプリケーションからのトークンリクエストを処理するためのクラスです。
 このクラスには、`MultivaluedMap<String, String>` と `String` の二つの引数を取る
-`handle()` メソッドがあります。 `MultivaluedMap` 引数はリクエストパラメーター群を表し、`String`
-引数はトークンリクエストに含まれる `Authorization` ヘッダーの値です。
+`handle()` メソッドがあります。 `MultivaluedMap` 引数はリクエストパラメーター群を表します。
+一方の `String` 引数はトークンリクエストに含まれる `Authorization` ヘッダーの値です。
 
 ```java
 public Response handle(
@@ -153,7 +153,7 @@ public Response handle(
 `handle()` メソッドに委譲することができます。
 
 `TokenRequestHandler` のコンストラクターは、`AuthorizationRequestHandler`
-のコンストラクターと同じように、`TokenRequestHandlerSpi` インターフェースの実装を取ります。
+のコンストラクターと同じように、`TokenRequestHandlerSpi` インターフェースの実装を要求します。
 
 まとめると、トークンエンドポイント実装内のフローは次のようになります。
 
