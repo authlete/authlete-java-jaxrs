@@ -11,15 +11,14 @@ to implement an authorization server which supports [OAuth 2.0][1] and
 This library is written using JAX-RS 2.0 API and [authlete-java-common][4]
 library. JAX-RS is _The Java API for RESTful Web Services_. JAX-RS 2.0
 API has been standardized by [JSR 339][5] and it is included in Java EE 7.
-On the other hand, authlete-java-common library is another Authlete's
-open source library which provides classes to communicate with
-[Authlete Web APIs][6].
+On the other hand, authlete-java-common is another Authlete's open source
+library which provides classes to communicate with [Authlete Web APIs][6].
 
-[Authlete][7] is an OAuth 2.0 & OpenID Connect implementation on _cloud_
-([overview][8]). You can build a _DB-less_ authorization server by using
-Authlete because authorization data (e.g. access tokens), settings of
-authorization servers and settings of client applications are stored in
-the Authlete server on cloud.
+[Authlete][7] is a cloud service that provides an implementation of OAuth
+2.0 & OpenID Connect ([overview][8]). You can build a _DB-less_ authorization
+server by using Authlete because authorization data (e.g. access tokens),
+settings of authorization servers and settings of client applications are
+stored in the Authlete server on cloud.
 
 [java-oauth-server][3] is an authorization server implementation which
 uses this library. The reference implementation is a good starting point
@@ -29,7 +28,7 @@ for your authorization server implementation.
 License
 -------
 
-Apache License, Version 2.0
+  Apache License, Version 2.0
 
 
 Maven
@@ -81,7 +80,7 @@ process an authorization request to the `handle()` method.
 
 If you are using JAX-RS, it is easy to obtain an instance of
 `MultivaluedMap<String, String>` instance containing request
-parameters and to call the `handle()` method with the instance.
+parameters and call the `handle()` method with the instance.
 But, the point exists at another different place. You are required
 to prepare an implementation of `AuthorizationRequestHandlerSpi`
 interface and pass it to the constructor of `AuthorizationRequestHandler`
@@ -119,7 +118,7 @@ return response;
 The most important method defined in `AuthorizationRequestHandlerSpi`
 interface is `generateAuthorizationPage()`. It is called to generate
 an authorization page. The method receives an instance of
-`AuthorizationResponse` class which is a response from Authlete's
+`AuthorizationResponse` class which represents a response from Authlete's
 `/api/auth/authorization` Web API. The instance contains information
 that will be needed in generating an authorization page.
 
@@ -137,9 +136,9 @@ An authorization page displays information about an authorization request
 such as the name of the client application and requested permissions. An
 end-user checks the information and decides either to authorize or to deny
 the request. An authorization server receives the decision and returns a
-response according to the decision. This means that an authorization server
-must have an endpoint that receives the decision in addition to the
-authorization endpoint.
+response according to the decision. Therefore, an authorization server
+must have an endpoint that receives the decision by an end-user in addition
+to the authorization endpoint.
 
 `AuthorizationDecisionHandler` is a class to process the decision.
 The class has `handle()` method as does `AuthorizationRequestHandler`.
@@ -208,9 +207,9 @@ reference implementation ([java-oauth-server][3]) for details.
 See Also
 --------
 
+- [Authlete][7] - Authlete Home Page
 - [java-oauth-server][3] - Authorization Server Implementation
 - [authlete-java-common][4] - Authlete Common Library for Java
-- [Authlete][7] - Authlete Home Page
 
 
 Support
