@@ -84,6 +84,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String AUTH_USERINFO_API_PATH            = "/api/auth/userinfo";
     private static final String AUTH_USERINFO_ISSUE_API_PATH      = "/api/auth/userinfo/issue";
     private static final String AUTH_INTROSPECTION_API_PATH       = "/api/auth/introspection";
+    private static final String SERVICE_CONFIGURATION_API_PATH    = "/api/service/configuration";
     private static final String SERVICE_CREATE_API_PATH           = "/api/service/create";
     private static final String SERVICE_DELETE_API_PATH           = "/api/service/delete/%d";
     private static final String SERVICE_GET_API_PATH              = "/api/service/get/%d";
@@ -700,6 +701,18 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_JWKS_GET_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/service/configuration} API
+     */
+    @Override
+    public String getServiceConfiguration() throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServiceGetApiCaller<String>(
+                        String.class, SERVICE_CONFIGURATION_API_PATH));
     }
 
 
