@@ -33,6 +33,8 @@ import com.authlete.common.dto.AuthorizationIssueRequest;
 import com.authlete.common.dto.AuthorizationIssueResponse;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.RevocationRequest;
+import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.TokenFailRequest;
 import com.authlete.common.dto.TokenFailResponse;
 import com.authlete.common.dto.TokenIssueRequest;
@@ -549,5 +551,40 @@ class AuthleteApiCaller
         }
 
         return list.get(0);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/revocation} API.
+     */
+    public RevocationResponse callRevocation(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
+    {
+        String params = URLCoder.formUrlEncode(parameters);
+
+        return callRevocation(params, clientId, clientSecret);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/revocation} API.
+     */
+    private RevocationResponse callRevocation(String parameters, String clientId, String clientSecret)
+    {
+        // Create a request for Authlete's /api/auth/revocation API.
+        RevocationRequest request = new RevocationRequest()
+            .setParameters(parameters)
+            .setClientId(clientId)
+            .setClientSecret(clientSecret);
+
+        try
+        {
+            // Call Authlete's /api/auth/revocation API.
+            return mApi.revocation(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/auth/revocation", e);
+        }
     }
 }
