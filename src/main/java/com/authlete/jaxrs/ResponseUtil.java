@@ -83,6 +83,15 @@ class ResponseUtil
 
 
     /**
+     * Create a response of {@code "204 No Content"}.
+     */
+    public static Response noContent()
+    {
+        return builder(Status.NO_CONTENT).build();
+    }
+
+
+    /**
      * Create a response of {@code "302 Found"}
      * with {@code Location} header having the given location.
      */

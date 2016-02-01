@@ -17,12 +17,14 @@
 package com.authlete.jaxrs;
 
 
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.dto.AuthorizationFailRequest;
@@ -491,5 +493,61 @@ class AuthleteApiCaller
             // The API call failed.
             throw apiFailure("/api/service/configuration", e);
         }
+    }
+
+
+    /**
+     * Get the JWK Set of the service. This method calls Authlete's
+     * {@code /api/service/jwks/get} API.
+     */
+    public Response serviceJwksGet() throws AuthleteApiException
+    {
+        try
+        {
+            // Call Authlete's /api/service/jwks/get API.
+            String jwks = mApi.getServiceJwks();
+
+            if (jwks == null)
+            {
+                // 204 No Content
+                return ResponseUtil.noContent();
+            }
+
+            // Response as "application/json;charset=UTF-8" with 200 OK.
+            return ResponseUtil.ok(jwks);
+        }
+        catch (AuthleteApiException e)
+        {
+            // If the status code is not 302 Found.
+            if (e.getStatusCode() != Status.FOUND.getStatusCode())
+            {
+                // The API call failed.
+                throw apiFailure("/api/service/jwks/get", e);
+            }
+
+            // The value of 'Location' header.
+            String location = getFirst(e.getResponseHeaders(), "Location");
+
+            // 302 Found with Location header.
+            return ResponseUtil.location(location);
+        }
+    }
+
+
+    private static String getFirst(Map<String, List<String>> map, String key)
+    {
+        if (map == null)
+        {
+            return null;
+        }
+
+        List<String> list = map.get(key);
+
+        if (list == null || list.size() == 0)
+        {
+            return null;
+        }
+
+        return list.get(0);
     }
 }
