@@ -474,4 +474,22 @@ class AuthleteApiCaller
                 throw unknownAction("/api/auth/token/issue", action);
         }
     }
+
+
+    /**
+     * Call Authlete's {@code /api/service/configuration} API.
+     */
+    public String callServiceConfiguration()
+    {
+        try
+        {
+            // Call Authlete's /api/service/configuration API.
+            return mApi.getServiceConfiguration();
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/service/configuration", e);
+        }
+    }
 }
