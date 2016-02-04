@@ -142,6 +142,14 @@ class AuthleteApiCaller
      */
     private AuthorizationResponse callAuthorization(String parameters)
     {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
         // Create a request for Authlete's /api/auth/authorization API.
         AuthorizationRequest request = new AuthorizationRequest()
             .setParameters(parameters);
@@ -332,6 +340,14 @@ class AuthleteApiCaller
      */
     private TokenResponse callToken(String parameters, String clientId, String clientSecret)
     {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
         // Create a request for Authlete's /api/auth/token API.
         TokenRequest request = new TokenRequest()
             .setParameters(parameters)
@@ -570,6 +586,14 @@ class AuthleteApiCaller
      */
     private RevocationResponse callRevocation(String parameters, String clientId, String clientSecret)
     {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
         // Create a request for Authlete's /api/auth/revocation API.
         RevocationRequest request = new RevocationRequest()
             .setParameters(parameters)
