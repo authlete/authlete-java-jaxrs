@@ -86,8 +86,7 @@ public class ConfigurationRequestHandler extends BaseHandler
 
     /**
      * Handle a request to an OpenID Provider configuration endpoint. This
-     * method internally calls Authlete's {@code /api/service/configuration}
-     * API.
+     * method is an alias of {@link #handle(boolean) handle}{@code (true)}.
      *
      * @return
      *         A response that should be returned from the endpoint to
@@ -98,12 +97,33 @@ public class ConfigurationRequestHandler extends BaseHandler
      */
     public Response handle() throws WebApplicationException
     {
+        return handle(true);
+    }
+
+
+    /**
+     * Handle a request to an OpenID Provider configuration endpoint. This
+     * method internally calls Authlete's {@code /api/service/configuration}
+     * API.
+     *
+     * @param pretty
+     *         {@code true} to return the output JSON in pretty format.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to
+     *         the client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     */
+    public Response handle(boolean pretty) throws WebApplicationException
+    {
         try
         {
             // Get Authlete's /api/service/configuration API.
             // The API returns a JSON that complies with
             // OpenID Connect Discovery 1.0.
-            String json = getApiCaller().callServiceConfiguration();
+            String json = getApiCaller().callServiceConfiguration(pretty);
 
             // Response as "application/json;charset=UTF-8" with 200 OK.
             return ResponseUtil.ok(json);

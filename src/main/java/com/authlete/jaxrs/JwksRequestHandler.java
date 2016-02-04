@@ -56,8 +56,8 @@ public class JwksRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a request to a JWK Set endpoint. This method internally calls
-     * Authlete's {@code /api/service/jwks/get} API.
+     * Handle a request to a JWK Set endpoint. This method is an alias
+     * of {@link #handle(boolean) handle}{@code (true)}.
      *
      * @return
      *         A response that should be returned from the endpoint to
@@ -68,11 +68,31 @@ public class JwksRequestHandler extends BaseHandler
      */
     public Response handle() throws WebApplicationException
     {
+        return handle(true);
+    }
+
+
+    /**
+     * Handle a request to a JWK Set endpoint. This method internally calls
+     * Authlete's {@code /api/service/jwks/get} API.
+     *
+     * @param pretty
+     *         {@code true} to return the output JSON in pretty format.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to
+     *         the client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     */
+    public Response handle(boolean pretty) throws WebApplicationException
+    {
         try
         {
             // Call Authlete's /api/service/jwks/get API. It returns the JWK Set
             // of the service. Of course, private keys are not included.
-            return getApiCaller().serviceJwksGet();
+            return getApiCaller().serviceJwksGet(pretty, false);
         }
         catch (WebApplicationException e)
         {

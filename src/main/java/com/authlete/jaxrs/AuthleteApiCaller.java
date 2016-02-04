@@ -499,12 +499,12 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/service/configuration} API.
      */
-    public String callServiceConfiguration()
+    public String callServiceConfiguration(boolean pretty)
     {
         try
         {
             // Call Authlete's /api/service/configuration API.
-            return mApi.getServiceConfiguration();
+            return mApi.getServiceConfiguration(pretty);
         }
         catch (AuthleteApiException e)
         {
@@ -518,14 +518,15 @@ class AuthleteApiCaller
      * Get the JWK Set of the service. This method calls Authlete's
      * {@code /api/service/jwks/get} API.
      */
-    public Response serviceJwksGet() throws AuthleteApiException
+    public Response serviceJwksGet(
+            boolean pretty, boolean includePrivateKeys) throws AuthleteApiException
     {
         try
         {
             // Call Authlete's /api/service/jwks/get API.
-            String jwks = mApi.getServiceJwks();
+            String jwks = mApi.getServiceJwks(pretty, includePrivateKeys);
 
-            if (jwks == null)
+            if (jwks == null || jwks.length() == 0)
             {
                 // 204 No Content
                 return ResponseUtil.noContent();
