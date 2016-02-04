@@ -251,7 +251,7 @@ public class AuthleteApiImpl implements AuthleteApi
         {
             for (Map.Entry<String, Object[]> param : params.entrySet())
             {
-                webTarget.queryParam(param.getKey(), param.getValue());
+                webTarget = webTarget.queryParam(param.getKey(), param.getValue());
             }
         }
 
