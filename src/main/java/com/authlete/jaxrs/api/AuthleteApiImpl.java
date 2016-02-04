@@ -19,6 +19,7 @@ package com.authlete.jaxrs.api;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
@@ -241,25 +242,37 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    private <TResponse> TResponse callGetApi(String auth, String path, Class<TResponse> responseClass)
+    private <TResponse> TResponse callGetApi(
+            String auth, String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return mTarget
-                .path(path)
+        WebTarget webTarget = mTarget.path(path);
+
+        if (params != null)
+        {
+            for (Map.Entry<String, Object[]> param : params.entrySet())
+            {
+                webTarget.queryParam(param.getKey(), param.getValue());
+            }
+        }
+
+        return webTarget
                 .request(APPLICATION_JSON_TYPE)
                 .header(AUTHORIZATION, auth)
                 .get(responseClass);
     }
 
 
-    private <TResponse> TResponse callServiceOwnerGetApi(String path, Class<TResponse> responseClass)
+    private <TResponse> TResponse callServiceOwnerGetApi(
+            String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return callGetApi(mServiceOwnerAuth, path, responseClass);
+        return callGetApi(mServiceOwnerAuth, path, responseClass, params);
     }
 
 
-    private <TResponse> TResponse callServiceGetApi(String path, Class<TResponse> responseClass)
+    private <TResponse> TResponse callServiceGetApi(
+            String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return callGetApi(mServiceAuth, path, responseClass);
+        return callGetApi(mServiceAuth, path, responseClass, params);
     }
 
 
@@ -314,6 +327,7 @@ public class AuthleteApiImpl implements AuthleteApi
         protected final String mPath;
         protected final Object mRequest;
         protected final Class<TResponse> mResponseClass;
+        protected final Map<String, Object[]> mParams = new LinkedHashMap<>();
 
 
         ApiCaller(Class<TResponse> responseClass, Object request, String path)
@@ -327,6 +341,14 @@ public class AuthleteApiImpl implements AuthleteApi
         ApiCaller(Class<TResponse> responseClass, Object request, String format, Object... args)
         {
             this(responseClass, request, String.format(format, args));
+        }
+
+
+        public ApiCaller<TResponse> addParam(String name, Object... values)
+        {
+            mParams.put(name, values);
+
+            return this;
         }
     }
 
@@ -370,7 +392,7 @@ public class AuthleteApiImpl implements AuthleteApi
         @Override
         public TResponse call()
         {
-            return callServiceOwnerGetApi(mPath, mResponseClass);
+            return callServiceOwnerGetApi(mPath, mResponseClass, mParams);
         }
     }
 
@@ -436,7 +458,7 @@ public class AuthleteApiImpl implements AuthleteApi
         @Override
         public TResponse call()
         {
-            return callServiceGetApi(mPath, mResponseClass);
+            return callServiceGetApi(mPath, mResponseClass, mParams);
         }
     }
 
@@ -705,6 +727,20 @@ public class AuthleteApiImpl implements AuthleteApi
 
 
     /**
+     * Call {@code /api/service/jwks/get} API
+     */
+    @Override
+    public String getServiceJwks(boolean pretty, boolean includePrivateKeys) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServiceGetApiCaller<String>(
+                        String.class, SERVICE_JWKS_GET_API_PATH)
+                .addParam("pretty", pretty)
+                .addParam("includePrivateKeys", includePrivateKeys));
+    }
+
+
+    /**
      * Call {@code /api/service/configuration} API
      */
     @Override
@@ -713,6 +749,19 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_CONFIGURATION_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/service/configuration} API
+     */
+    @Override
+    public String getServiceConfiguration(boolean pretty) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServiceGetApiCaller<String>(
+                        String.class, SERVICE_CONFIGURATION_API_PATH)
+                .addParam("pretty", pretty));
     }
 
 
