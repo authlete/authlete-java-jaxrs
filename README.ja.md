@@ -37,7 +37,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
@@ -45,20 +45,29 @@ Maven
 ソースコード
 ------------
 
-  https://github.com/authlete/authlete-java-jaxrs
+  <code>https://github.com/authlete/authlete-java-jaxrs</code>
 
 
 JavaDoc
 -------
 
-  http://authlete.github.io/authlete-java-jaxrs
+  <code>http://authlete.github.io/authlete-java-jaxrs</code>
 
 
 説明
 ----
 
-認可サーバーは[認可エンドポイント][9]と[トークンエンドポイント][10]を公開することになります。
+認可サーバーは次のエンドポイントを公開することが期待されています。
+
+  1. [認可エンドポイント][9]
+  2. [トークンエンドポイント][10]
+
 このライブラリは、これらのエンドポイントを実装するためのユーティリティークラス群を提供します。
+また、下記のエンドポイント用のユーティリティークラス群も含んでいます。
+
+  3. JWK Set エンドポイント ([OpenID Connect Core 1.0][13])
+  4. 設定エンドポイント ([OpenID Connect Discovery 1.0][12])
+  5. 取り消しエンドポイント ([RFC 7009][14])
 
 
 #### 認可エンドポイント
@@ -182,6 +191,164 @@ return response;
 ```
 
 
+#### JWK Set エンドポイント
+
+OpenID プロバイダーは、クライアントアプリケーションが (1) OpenID
+プロバイダーの署名を検証できるように、また、(2) OpenID
+プロバイダーへのリクエストを暗号化できるように、JSON Web Key Set
+ドキュメント (JWK Set) を公開する必要があります。
+
+`JwksRequestHandler` はそのようなエンドポイントへのリクエストを処理するためのクラスです。
+このクラスは SPI 実装を要求しないので、使い方は簡単です。
+
+```java
+// AuthleteApi インターフェースの実装。
+// 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
+AuthleteApi api = ...;
+
+// JwksRequestHandler クラスのインスタンスを生成する。
+JwksRequestHandler handler = new JwksRequestHandler(api);
+
+// リクエストの処理をハンドラーに委譲する。
+Response response = handler.handle();
+
+// クライアントアプリケーションにレスポンスを返す。
+return response;
+```
+
+さらに、`BaseJwksEndpoint` クラスはこの作業を信じられないほど簡単にします。
+下記は、JWK Set エンドポイントの完全な実装例です。 `BaseJwksEndpoint` の
+`handle()` メソッドは内部で `JwksRequestHandler` を使用しています。
+
+```java
+@Path("/api/jwks")
+public class JwksEndpoint extends BaseJwksEndpoint
+{
+    @GET
+    public Response get()
+    {
+        // JWK Set リクエストを処理する。
+        return handle(DefaultApiFactory.getInstance());
+    }
+}
+```
+
+
+#### 設定エンドポイント
+
+[OpenID Connect Discovery 1.0][12] をサポートする OpenID プロバイダーは、自身の設定情報を
+JSON フォーマットで返すエンドポイントを提供しなければなりません。フォーマットの詳細は
+OpenID Connect Discovery 1.0 の [3. OpenID Provider Metadata][15] に記述されています。
+
+`ConfigurationRequestHandler` はそのような設定エンドポイントへのリクエストを処理するためのクラスです。
+このクラスは SPI 実装を要求しないので、使い方は簡単です。
+
+```java
+// AuthleteApi インターフェースの実装。
+// 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
+AuthleteApi api = ...;
+
+// ConfigurationRequestHandler クラスのインスタンスを作成する。
+ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
+
+// リクエストの処理をハンドラーに委譲する。
+Response response = handler.handle();
+
+// クライアントアプリケーションにレスポンスを返す。
+return response;
+```
+
+さらに、`BaseConfigurationEndpoint` クラスはこの作業を信じられないほど簡単にします。
+下記は、設定エンドポイントの完全な実装例です。 `BaseConfigurationEndpoint` の
+`handle()` メソッドは内部で `ConfigurationRequestHandler` を使用しています。
+
+```java
+@Path("/.well-known/openid-configuration")
+public class ConfigurationEndpoint extends BaseConfigurationEndpoint
+{
+    @GET
+    public Response get()
+    {
+        // 設定リクエストを処理する。
+        return handle(DefaultApiFactory.getInstance());
+    }
+}
+```
+
+設定エンドポイントの URI は OpenID Connct Discovery 1.0 の
+[4.1. OpenID Provider Configuration Request][16] で定義されていることに注意してください。
+手短に言うと、URI は次の通りでなければなりません。
+
+    発行者識別子 + <code>/.well-known/openid-configuration</code>
+
+_発行者識別子_ は OpenID プロバイダーを識別するための URL です。
+例えば `https://example.com` となります。
+発行者識別子の詳細については、[3. OpenID Provider Meatadata][15]
+(OpenID Connect Discovery 1.0) の `issuer`、および [2. ID Token][17]
+(OpenID Connect Core 1.0) の `iss` を参照してください。
+
+
+### 取り消しエンドポイント
+
+認可サーバーは、アクセストークンやリフレッシュトークンを取り消すエンドポイントを公開してもよいです。
+[RFC 7009][18] はそのような取り消しエンドポイントに関する仕様です。
+
+`RevocationRequestHandler` は取り消しリクエストを処理するためのクラスです。
+このクラスには、`MultivaluedMap<String, String>` と `String` の二つの引数を取る
+`handle()` メソッドがあります。 `MultivaluedMap` 引数はリクエストパラメーター群を表します。
+一方の `String` 引数は取り消しリクエストに含まれる `Authorization` ヘッダーの値です。
+
+```java
+public Response handle(
+    MultivaluedMap<String, String> parameters, String authorization)
+    throws WebApplicationException
+```
+
+取り消しエンドポイントの実装は、取り消しリクエストを処理する処理する作業を
+`handle()` メソッドに委譲することができます。
+
+```java
+// 取り消しリクエストのリクエストパラメーター群
+MultivaluedMap<String, String> parameters = ...;
+
+// Authorization ヘッダーの値
+String authorization = ...;
+
+// AuthleteApi インターフェースの実装。
+// 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
+AuthleteApi api = ...;
+
+// RevocationRequestHandler クラスのインスタンスを作成する。
+RevocationRequestHandler handler = new RevocationRequestHandler(api);
+
+// 取り消しリクエストの処理をハンドラーに委譲する。
+Response response = handler.handle(parameters, authorization);
+
+// クライアントアプリケーションにレスポンスを返す。
+return response;
+```
+
+さらに、`BaseRevocationEndpoint` クラスはこの作業を信じられないほど簡単にします。
+下記は、設定エンドポイントの完全な実装例です。 `BaseRevocationEndpoint` の
+`handle()` メソッドは内部で `RevocationRequestHandler` を使用しています。
+
+```java
+@Path("/api/revocation")
+public class RevocationEndpoint extends BaseRevocationEndpoint
+{
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            MultivaluedMap<String, String> parameters)
+    {
+        // 取り消しリクエストを処理する。
+        return handle(DefaultApiFactory.getInstance(), parameters, authorization);
+    }
+}
+```
+
+
 まとめ
 ------
 
@@ -212,6 +379,13 @@ support@authlete.com
 [6]: https://www.authlete.com/documents/apis
 [7]: https://www.authlete.com/
 [8]: https://www.authlete.com/documents/overview
-[9]: https://tools.ietf.org/html/rfc6749#section-3.1
-[10]: https://tools.ietf.org/html/rfc6749#section-3.2
+[9]: http://tools.ietf.org/html/rfc6749#section-3.1
+[10]: http://tools.ietf.org/html/rfc6749#section-3.2
 [11]: http://authlete.github.io/authlete-java-jaxrs
+[12]: http://openid.net/specs/openid-connect-discovery-1_0.html
+[13]: http://openid.net/specs/openid-connect-core-1_0.html
+[14]: http://tools.ietf.org/html/rfc7009
+[15]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+[16]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
+[17]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+[18]: http://tools.ietf.org/html/rfc7009

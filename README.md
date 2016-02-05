@@ -38,7 +38,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
@@ -46,21 +46,30 @@ Maven
 Source Code
 -----------
 
-  https://github.com/authlete/authlete-java-jaxrs
+  <code>https://github.com/authlete/authlete-java-jaxrs</code>
 
 
 JavaDoc
 -------
 
-  http://authlete.github.io/authlete-java-jaxrs
+  <code>http://authlete.github.io/authlete-java-jaxrs</code>
 
 
 Description
 -----------
 
-Endpoints that an authorization server is expected to expose are an
-[authorization endpoint][9] and a [token endpoint][10]. This library
-provides utility classes to implement these endpoints.
+An authorization server is expected to expose the following endpoints.
+
+  1. [Authorization endpoint][9]
+  2. [Token endpoint][10]
+
+This library provides utility classes to implement these endpoints.
+In addition, utility classes for endpoints listed below are included,
+too.
+
+  3. JWK Set endpoint ([OpenID Connect Core 1.0][13])
+  4. Configuration endpoint ([OpenID Connect Discovery 1.0][12])
+  5. Revocation endpoint ([RFC 7009][14])
 
 
 #### Authorization Endpoint
@@ -196,6 +205,172 @@ return response;
 ```
 
 
+#### JWK Set Endpoint
+
+An OpenID Provider is required to expose its JSON Web Key Set document
+(JWK Set) so that client application can (1) verify signatures by the
+OpenID Provider and (2) encrypt their requests to the OpenID Provider.
+
+`JwksRequestHandler` is a class to process a request to such an
+endpoint. The class does not require any SPI implementation, so its
+usage is simple.
+
+```java
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
+AuthleteApi api = ...;
+
+// Create an instance of JwksRequestHandler class.
+JwksRequestHandler handler = new JwksRequestHandler(api);
+
+// Delegate the task to process a request.
+Response response = handler.handle();
+
+// Return the response to the client application.
+return response;
+```
+
+Furthermore, `BaseJwksEndpoint` class makes the task incredibly easier.
+The following is an example of a complete implementation of a JWK Set
+endpoint. The `handle()` method of `BaseJwksEndpoint` internally uses
+`JwksRequestHandler`.
+
+```java
+@Path("/api/jwks")
+public class JwksEndpoint extends BaseJwksEndpoint
+{
+    @GET
+    public Response get()
+    {
+        // Handle the JWK Set request.
+        return handle(DefaultApiFactory.getInstance());
+    }
+}
+```
+
+
+#### Configuration Endpoint
+
+An OpenID Provider that supports [OpenID Connect Discovery 1.0][12]
+must provide an OpenID Provider configuration endpoint that returns
+its configuration information in a JSON format. Details about the
+format are described in [3. OpenID Provider Metadata][15] in OpenID
+Connect Discovery 1.0.
+
+`ConfigurationRequestHandler` is a class to process a request to
+such a configuration endpoint. The class does not require any SPI
+implementation, so its usage is simple.
+
+```java
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
+AuthleteApi api = ...;
+
+// Create an instance of ConfigurationRequestHandler class.
+ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
+
+// Delegate the task to process a request.
+Response response = handler.handle();
+
+// Return the response to the client application.
+return response;
+```
+
+Furthermore, `BaseConfigurationEndpoint` class makes the task incredibly
+easier. The following is an example of a complete implementation of an
+OpenID Provider configuration endpoint. The `handle()` method of
+`BaseConfigurationEndpoint` internally uses `ConfigurationRequestHandler`.
+
+```java
+@Path("/.well-known/openid-configuration")
+public class ConfigurationEndpoint extends BaseConfigurationEndpoint
+{
+    @GET
+    public Response get()
+    {
+        // Handle the configuration request.
+        return handle(DefaultApiFactory.getInstance());
+    }
+}
+```
+
+Note that the URI of a configuration endpoint is defined in
+[4.1. OpenID Provider Configuration Request][16] in OpenID Connect
+Discovery 1.0. In short, the URI must be:
+
+    Issuer Identifier + <code>/.well-known/openid-configuration</code>
+
+_Issuer Identifier_ is a URL to identify an OpenID Provider, For example,
+`https://example.com`. For details about Issuer Identifier, see `issuer`
+in [3. OpenID Provider Meatadata][15] (OpenID Connect Discovery 1.0)
+and `iss` in [2. ID Token][17] (OpenID Connect Core 1.0).
+
+
+### Revocation Endpoint
+
+An authorization server may expose an endpoint to revoke access tokens
+and/or refresh tokens. [RFC 7009][18] is the specification about such
+a revocation endpoint.
+
+`RevocationRequestHandler` is a class to process a revocation request.
+The class has `handle()` method which takes two arguments of
+`MultivaluedMap<String, String>` and `String`. The `MultivaluedMap`
+argument represents request parameters and the `String` argument is
+the value of `Authorization` header in the revocation request.
+
+```java
+public Response handle(
+    MultivaluedMap<String, String> parameters, String authorization)
+    throws WebApplicationException
+```
+
+An implementation of revocation endpoint can delegate the task to
+process a revocation request to the `handle()` method. Below is an
+example of the `handle()` method.
+
+```java
+// Request parameters of a revocation request.
+MultivaluedMap<String, String> parameters = ...;
+
+// The value of Authorization header.
+String authorization = ...;
+
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
+AuthleteApi api = ...;
+
+// Create an instance of RevocationRequestHandler class.
+RevocationRequestHandler handler = new RevocationRequestHandler(api);
+
+// Delegate the task to process the revocation request to the handler.
+Response response = handler.handle(parameters, authorization);
+
+// Return the response to the client application.
+return response;
+```
+
+Furthermore, `BaseRevocationEndpoint` class makes the task incredibly
+easier. The following is an example of a complete implementation of a
+revocation endpoint. The `handle()` method of `BaseRevocationEndpoint`
+internally uses `RevocationRequestHandler`.
+
+```java
+@Path("/api/revocation")
+public class RevocationEndpoint extends BaseRevocationEndpoint
+{
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            MultivaluedMap<String, String> parameters)
+    {
+        // Handle the revocation request.
+        return handle(DefaultApiFactory.getInstance(), parameters, authorization);
+    }
+}
+```
+
+
 Summary
 -------
 
@@ -227,6 +402,13 @@ support@authlete.com
 [6]: https://www.authlete.com/documents/apis
 [7]: https://www.authlete.com/
 [8]: https://www.authlete.com/documents/overview
-[9]: https://tools.ietf.org/html/rfc6749#section-3.1
-[10]: https://tools.ietf.org/html/rfc6749#section-3.2
+[9]: http://tools.ietf.org/html/rfc6749#section-3.1
+[10]: http://tools.ietf.org/html/rfc6749#section-3.2
 [11]: http://authlete.github.io/authlete-java-jaxrs
+[12]: http://openid.net/specs/openid-connect-discovery-1_0.html
+[13]: http://openid.net/specs/openid-connect-core-1_0.html
+[14]: http://tools.ietf.org/html/rfc7009
+[15]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+[16]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
+[17]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
+[18]: http://tools.ietf.org/html/rfc7009
