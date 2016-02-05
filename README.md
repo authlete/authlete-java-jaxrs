@@ -298,7 +298,7 @@ Note that the URI of a configuration endpoint is defined in
 [4.1. OpenID Provider Configuration Request][16] in OpenID Connect
 Discovery 1.0. In short, the URI must be:
 
-    Issuer Identifier + <code>/.well-known/openid-configuration</code>
+    Issuer Identifier + /.well-known/openid-configuration
 
 _Issuer Identifier_ is a URL to identify an OpenID Provider, For example,
 `https://example.com`. For details about Issuer Identifier, see `issuer`

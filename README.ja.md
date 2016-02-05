@@ -279,7 +279,7 @@ public class ConfigurationEndpoint extends BaseConfigurationEndpoint
 [4.1. OpenID Provider Configuration Request][16] で定義されていることに注意してください。
 手短に言うと、URI は次の通りでなければなりません。
 
-    発行者識別子 + <code>/.well-known/openid-configuration</code>
+    発行者識別子 + /.well-known/openid-configuration
 
 _発行者識別子_ は OpenID プロバイダーを識別するための URL です。
 例えば `https://example.com` となります。
