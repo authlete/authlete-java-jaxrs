@@ -228,7 +228,7 @@ public class JwksEndpoint extends BaseJwksEndpoint
     public Response get()
     {
         // JWK Set リクエストを処理する。
-        return handle(DefaultApiFactory.getInstance());
+        return handle(AuthleteApiFactory.getDefaultApi());
     }
 }
 ```
@@ -270,7 +270,7 @@ public class ConfigurationEndpoint extends BaseConfigurationEndpoint
     public Response get()
     {
         // 設定リクエストを処理する。
-        return handle(DefaultApiFactory.getInstance());
+        return handle(AuthleteApiFactory.getDefaultApi());
     }
 }
 ```
@@ -343,7 +343,7 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
             MultivaluedMap<String, String> parameters)
     {
         // 取り消しリクエストを処理する。
-        return handle(DefaultApiFactory.getInstance(), parameters, authorization);
+        return handle(AuthleteApiFactory.getDefaultApi(), parameters, authorization);
     }
 }
 ```

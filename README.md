@@ -243,7 +243,7 @@ public class JwksEndpoint extends BaseJwksEndpoint
     public Response get()
     {
         // Handle the JWK Set request.
-        return handle(DefaultApiFactory.getInstance());
+        return handle(AuthleteApiFactory.getDefaultApi());
     }
 }
 ```
@@ -289,7 +289,7 @@ public class ConfigurationEndpoint extends BaseConfigurationEndpoint
     public Response get()
     {
         // Handle the configuration request.
-        return handle(DefaultApiFactory.getInstance());
+        return handle(AuthleteApiFactory.getDefaultApi());
     }
 }
 ```
@@ -365,7 +365,7 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
             MultivaluedMap<String, String> parameters)
     {
         // Handle the revocation request.
-        return handle(DefaultApiFactory.getInstance(), parameters, authorization);
+        return handle(AuthleteApiFactory.getDefaultApi(), parameters, authorization);
     }
 }
 ```
