@@ -18,38 +18,32 @@ package com.authlete.jaxrs;
 
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 
 
 /**
- * A base class for revocation endpoint implementations.
+ * A base class for authorization decision endpoints.
  *
- * @see <a href="http://tools.ietf.org/html/rfc7009"
- *      >RFC 7009 : OAuth 2.0 Token Revocation</a>
- *
- * @see RevocationRequestHandler
- *
- * @since 1.1
+ * @since 1.2
  *
  * @author Takahiko Kawasaki
  */
-public class BaseRevocationEndpoint extends BaseEndpoint
+public class BaseAuthorizationDecisionEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a revocation request.
+     * Handle an authorization decision request.
      *
      * <p>
-     * This method internally creates a {@link RevocationRequestHandler} instance
-     * and calls its {@link RevocationRequestHandler#handle(MultivaluedMap, String)
-     * handle()} method with the {@code parameters} argument and the {@code authorization}
-     * argument. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
+     * This method internally creates a {@link AuthorizationDecisionHandler} instance and
+     * calls its {@link AuthorizationDecisionHandler#handle(String, String[], String[])}
+     * method. Then, this method uses the value returned from the {@code handle()} method
+     * as a response from this method.
      * </p>
      *
      * <p>
-     * When {@code RevocationRequestHandler.handle()} method raises a {@link
+     * When {@code AuthorizationDecisionHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
      * onError()} method with the exception. The default implementation of {@code onError()}
      * calls {@code printStackTrace()} of the exception and does nothing else. You
@@ -61,24 +55,34 @@ public class BaseRevocationEndpoint extends BaseEndpoint
      * @param api
      *         An implementation of {@link AuthleteApi}.
      *
-     * @param parameters
-     *         Request parameters of a revocation request.
+     * @param spi
+     *         An implementation of {@link AuthorizationDecisionHandlerSpi}.
      *
-     * @param authorization
-     *         The value of {@code Authorization} header.
+     * @param ticket
+     *         A ticket that was issued by Authlete's {@code /api/auth/authorization} API.
+     *
+     * @param claimNames
+     *         Names of requested claims. Use the value of the {@code claims}
+     *         parameter in a response from Authlete's {@code /api/auth/authorization} API.
+     *
+     * @param claimLocales
+     *         Requested claim locales. Use the value of the {@code claimsLocales}
+     *         parameter in a response from Authlete's {@code /api/auth/authorization} API.
      *
      * @return
      *         A response that should be returned to the client application.
      */
-    public Response handle(AuthleteApi api, MultivaluedMap<String, String> parameters, String authorization)
+    public Response handle(
+            AuthleteApi api, AuthorizationDecisionHandlerSpi spi,
+            String ticket, String[] claimNames, String[] claimLocales)
     {
         try
         {
             // Create a handler.
-            RevocationRequestHandler handler = new RevocationRequestHandler(api);
+            AuthorizationDecisionHandler handler = new AuthorizationDecisionHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization);
+            return handler.handle(ticket, claimNames, claimLocales);
         }
         catch (WebApplicationException e)
         {

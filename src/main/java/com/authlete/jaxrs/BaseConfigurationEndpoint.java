@@ -68,7 +68,7 @@ import com.authlete.common.api.AuthleteApi;
  *
  * @author Takahiko Kawasaki
  */
-public class BaseConfigurationEndpoint
+public class BaseConfigurationEndpoint extends BaseEndpoint
 {
     /**
      * Handle a request for OpenID Provider configuration.
@@ -114,25 +114,5 @@ public class BaseConfigurationEndpoint
             // Convert the error to a Response.
             return e.getResponse();
         }
-    }
-
-
-    /**
-     * Called when {@link ConfigurationRequestHandler#handle()} method (which is
-     * called from within {@link #handle(AuthleteApi) handle()} method of this
-     * class) raises a {@link WebApplicationException}.
-     *
-     * <p>
-     * The default implementation calls {@code printStackTrace()} of the given
-     * exception and does nothing else. You can override this method as necessary.
-     * </p>
-     *
-     * @param exception
-     *         An exception thrown by {@link ConfigurationRequestHandler#handle()}
-     *         method.
-     */
-    protected void onError(WebApplicationException exception)
-    {
-        exception.printStackTrace();
     }
 }

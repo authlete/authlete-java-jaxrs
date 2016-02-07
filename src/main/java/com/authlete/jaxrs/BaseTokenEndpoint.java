@@ -21,35 +21,36 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
 
 
 /**
- * A base class for revocation endpoint implementations.
+ * A base class for token endpoints.
  *
- * @see <a href="http://tools.ietf.org/html/rfc7009"
- *      >RFC 7009 : OAuth 2.0 Token Revocation</a>
+ * @since 1.2
  *
- * @see RevocationRequestHandler
+ * @see <a href="http://tools.ietf.org/html/rfc6749#section-3.2"
+ *      >RFC 6749, 3.2. Token Endpoint</a>
  *
- * @since 1.1
+ * @see <a href="http://openid.net/specs/openid-connect-core-1_0.html#HybridTokenEndpoint"
+ *      >OpenID Connect Core 1.0, 3.3.3. Token Endpoint</a>
  *
  * @author Takahiko Kawasaki
  */
-public class BaseRevocationEndpoint extends BaseEndpoint
+public class BaseTokenEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a revocation request.
+     * Handle a token request.
      *
      * <p>
-     * This method internally creates a {@link RevocationRequestHandler} instance
-     * and calls its {@link RevocationRequestHandler#handle(MultivaluedMap, String)
-     * handle()} method with the {@code parameters} argument and the {@code authorization}
-     * argument. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
+     * This method internally creates a {@link TokenRequestHandler} instance and
+     * calls its {@link TokenRequestHandler#handle(MultivaluedMap, String)} method.
+     * Then, this method uses the value returned from the {@code handle()} method
+     * as a response from this method.
      * </p>
      *
      * <p>
-     * When {@code RevocationRequestHandler.handle()} method raises a {@link
+     * When {@code TokenRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
      * onError()} method with the exception. The default implementation of {@code onError()}
      * calls {@code printStackTrace()} of the exception and does nothing else. You
@@ -61,21 +62,26 @@ public class BaseRevocationEndpoint extends BaseEndpoint
      * @param api
      *         An implementation of {@link AuthleteApi}.
      *
+     * @param spi
+     *         An implementation of {@link TokenRequestHandlerSpi}.
+     *
      * @param parameters
-     *         Request parameters of a revocation request.
+     *         Request parameters of the token request.
      *
      * @param authorization
-     *         The value of {@code Authorization} header.
+     *         The value of {@code Authorization} header of the token request.
      *
      * @return
      *         A response that should be returned to the client application.
      */
-    public Response handle(AuthleteApi api, MultivaluedMap<String, String> parameters, String authorization)
+    public Response handle(
+            AuthleteApi api, TokenRequestHandlerSpi spi,
+            MultivaluedMap<String, String> parameters, String authorization)
     {
         try
         {
             // Create a handler.
-            RevocationRequestHandler handler = new RevocationRequestHandler(api);
+            TokenRequestHandler handler = new TokenRequestHandler(api, spi);
 
             // Delegate the task to the handler.
             return handler.handle(parameters, authorization);
