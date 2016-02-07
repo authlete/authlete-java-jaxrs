@@ -109,8 +109,9 @@ public class UserInfoRequestHandler extends BaseHandler
         // If an access token is not available.
         if (accessToken == null)
         {
-            // Return "401 Unauthorized".
-            return ResponseUtil.unauthorized(null, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
+            // Return "400 Bad Request".
+            return ResponseUtil.bearerError(
+                    Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
         }
 
         try
