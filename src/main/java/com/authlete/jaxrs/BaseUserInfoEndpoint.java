@@ -61,16 +61,14 @@ public class BaseUserInfoEndpoint extends BaseEndpoint
      * @param spi
      *         An implementation of {@link UserInfoRequestHandlerSpi}.
      *
-     * @param authorization
-     *         The value of {@code Authorization} header of the userinfo request.
-     *         An access token must be embedded there as a Bearer Token
-     *         (<a href="http://tools.ietf.org/html/rfc6750">RFC 6750</a>).
+     * @param accessToken
+     *         An access token.
      *
      * @return
      *         A response that should be returned to the client application.
      */
     public Response handle(
-            AuthleteApi api, UserInfoRequestHandlerSpi spi, String authorization)
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken)
     {
         try
         {
@@ -78,7 +76,7 @@ public class BaseUserInfoEndpoint extends BaseEndpoint
             UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(authorization);
+            return handler.handle(accessToken);
         }
         catch (WebApplicationException e)
         {

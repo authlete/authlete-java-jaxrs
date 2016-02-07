@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.dto.UserInfoResponse.Action;
-import com.authlete.common.web.BearerToken;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 
 
@@ -86,13 +85,8 @@ public class UserInfoRequestHandler extends BaseHandler
      * "http://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect
      * Core 1&#x002E;0</a>.
      *
-     * @param authorization
-     *         The value of {@code Authorization} header. The specification
-     *         (<a href="http://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest"
-     *         >5.3.1. UserInfo Request</a>) requires that an access token be
-     *         sent as a Bearer Token (<a href="http://tools.ietf.org/html/rfc6750"
-     *         >RFC 6750</a>). An example of {@code authorization} argument is
-     *         {@code "Bearer SlAV32hkKG"}.
+     * @param accessToken
+     *         An access token.
      *
      * @return
      *         A response that should be returned from the endpoint to the
@@ -101,11 +95,8 @@ public class UserInfoRequestHandler extends BaseHandler
      * @throws WebApplicationException
      *         An error occurred.
      */
-    public Response handle(String authorization) throws WebApplicationException
+    public Response handle(String accessToken) throws WebApplicationException
     {
-        // Extract an access token from authorization header.
-        String accessToken = BearerToken.parse(authorization);
-
         // If an access token is not available.
         if (accessToken == null)
         {
