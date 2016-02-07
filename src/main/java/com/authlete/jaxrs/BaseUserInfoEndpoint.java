@@ -33,7 +33,7 @@ import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
  *
  * @author Takahiko Kawasaki
  */
-public class BaseUserInfoEndpoint extends BaseEndpoint
+public class BaseUserInfoEndpoint extends BaseResourceEndpoint
 {
     /**
      * Handle a userinfo request.
