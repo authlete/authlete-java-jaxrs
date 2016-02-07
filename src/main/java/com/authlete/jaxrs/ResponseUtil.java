@@ -47,6 +47,12 @@ class ResponseUtil
 
 
     /**
+     * {@code "application/jwt"}
+     */
+    static final MediaType MEDIA_TYPE_JWT = new MediaType("application", "jwt");
+
+
+    /**
      * {@code "Cache-Control: no-store"}
      */
     private static final CacheControl CACHE_CONTROL;
@@ -67,7 +73,17 @@ class ResponseUtil
      */
     public static Response ok(String entity)
     {
-        return builder(Status.OK, entity, MEDIA_TYPE_JSON).build();
+        return ok(entity, MEDIA_TYPE_JSON);
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"} with the given entity
+     * with the given media format.
+     */
+    public static Response ok(String entity, MediaType mediaType)
+    {
+        return builder(Status.OK, entity, mediaType).build();
     }
 
 
@@ -193,5 +209,15 @@ class ResponseUtil
         return builder(status)
                 .entity(entity)
                 .type(type);
+    }
+
+
+    /**
+     * Create a response with the given status and {@code WWW-Authenticate}
+     * header having the given challenge as its value.
+     */
+    public static Response bearerError(Status status, String challenge)
+    {
+        return builder(status).header("WWW-Authenticate", challenge).build();
     }
 }

@@ -41,8 +41,11 @@ import com.authlete.common.dto.TokenIssueRequest;
 import com.authlete.common.dto.TokenIssueResponse;
 import com.authlete.common.dto.TokenRequest;
 import com.authlete.common.dto.TokenResponse;
+import com.authlete.common.dto.UserInfoIssueRequest;
+import com.authlete.common.dto.UserInfoIssueResponse;
+import com.authlete.common.dto.UserInfoRequest;
+import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.web.URLCoder;
-import com.google.gson.Gson;
 
 
 /**
@@ -52,9 +55,6 @@ import com.google.gson.Gson;
  */
 class AuthleteApiCaller
 {
-    private static final Gson GSON = new Gson();
-
-
     /**
      * Implementation of {@link AuthleteApi} interface.
      */
@@ -263,12 +263,12 @@ class AuthleteApiCaller
 
         if (claims != null && claims.size() != 0)
         {
-            request.setClaims(GSON.toJson(claims));
+            request.setClaims(claims);
         }
 
         try
         {
-            // Call Authlete's /auth/authorization/issue API.
+            // Call Authlete's /api/auth/authorization/issue API.
             return mApi.authorizationIssue(request);
         }
         catch (AuthleteApiException e)
@@ -610,6 +610,105 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/auth/revocation", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/userinfo} API.
+     */
+    public UserInfoResponse callUserInfo(String accessToken)
+    {
+        // Create a request for Authlete's /api/auth/userinfo API.
+        UserInfoRequest request = new UserInfoRequest()
+            .setToken(accessToken);
+
+        try
+        {
+            // Call Authlete's /api/auth/userinfo API.
+            return mApi.userinfo(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/auth/userinfo", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/userinfo/issue} API.
+     */
+    private UserInfoIssueResponse callUserInfoIssue(String accessToken, Map<String, Object> claims)
+    {
+        // Create a request for /api/auth/userinfo/issue API.
+        UserInfoIssueRequest request = new UserInfoIssueRequest()
+            .setToken(accessToken);
+
+        if (claims != null && claims.size() != 0)
+        {
+            request.setClaims(claims);
+        }
+
+        try
+        {
+            // Call Authlete's /api/auth/userinfo/issue API.
+            return mApi.userinfoIssue(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/auth/userinfo/issue", e);
+        }
+    }
+
+
+    /**
+     * Issue a JSON or a JWT containing user information.
+     */
+    public Response userInfoIssue(String accessToken, Map<String, Object> claims)
+    {
+        // Call Authlete's /api/auth/userinfo/issue API.
+        UserInfoIssueResponse response = callUserInfoIssue(accessToken, claims);
+
+        // 'action' in the response denotes the next action which
+        // this service implementation should take.
+        UserInfoIssueResponse.Action action = response.getAction();
+
+        // The content of the response to the client application.
+        // The format of the content varies depending on the action.
+        String content = response.getResponseContent();
+
+        // Dispatch according to the action.
+        switch (action)
+        {
+            case INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error
+                return ResponseUtil.bearerError(Status.INTERNAL_SERVER_ERROR, content);
+
+            case BAD_REQUEST:
+                // 400 Bad Request
+                return ResponseUtil.bearerError(Status.BAD_REQUEST, content);
+
+            case UNAUTHORIZED:
+                // 401 Unauthorized
+                return ResponseUtil.bearerError(Status.UNAUTHORIZED, content);
+
+            case FORBIDDEN:
+                // 403 Forbidden
+                return ResponseUtil.bearerError(Status.FORBIDDEN, content);
+
+            case JSON:
+                // 200 OK, application/json;charset=UTF-8
+                return ResponseUtil.ok(content);
+
+            case JWT:
+                // 200 OK, application/jwt
+                return ResponseUtil.ok(content, ResponseUtil.MEDIA_TYPE_JWT);
+
+            default:
+                // This never happens.
+                throw unknownAction("/api/auth/userinfo/issue", action);
         }
     }
 }
