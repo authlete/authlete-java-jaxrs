@@ -33,6 +33,8 @@ import com.authlete.common.dto.AuthorizationIssueRequest;
 import com.authlete.common.dto.AuthorizationIssueResponse;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.IntrospectionRequest;
+import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.TokenFailRequest;
@@ -709,6 +711,30 @@ class AuthleteApiCaller
             default:
                 // This never happens.
                 throw unknownAction("/api/auth/userinfo/issue", action);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/introspection} API.
+     */
+    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject)
+    {
+        // Create a request for /api/auth/introspection API.
+        IntrospectionRequest request = new IntrospectionRequest()
+            .setToken(accessToken)
+            .setScopes(scopes)
+            .setSubject(subject);
+
+        try
+        {
+            // Call Authlete's /api/auth/introspection API.
+            return mApi.introspection(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/auth/introspection", e);
         }
     }
 }
