@@ -21,12 +21,14 @@ Services_ です。 JAX-RS 2.0 API は [JSR 339][5] で標準化され、Java EE
 Authlete サーバーに保存されるため、Authlete
 を使うことで「DB レス」の認可サーバーを構築することができます。
 
-[java-oauth-server][3] はこのライブラリを使用している認可サーバーの実装です。
-あなたの認可サーバーの実装の開始点として、このリファレンス実装を活用してください。
-
-[java-resource-server][19] は [OpenID Connect Core 1.0][13]
-で定義されている[ユーザー情報エンドポイント][20] をサポートし、また、
-保護リソースエンドポイントの例を含んでいます。
+[java-oauth-server][3] はこのライブラリを使用している認可サーバーの実装で、
+認可エンドポイントやトークンエンドポイントに加え、JWK Set エンドポイント、
+設定エンドポイント、取り消しエンドポイントの実装が含まれています。
+また、[java-resource-server][19] はこのライブラリを使用しているリソースサーバーの実装です。
+[OpenID Connect Core 1.0][13] で定義されている[ユーザー情報エンドポイント][20]
+をサポートし、また、保護リソースエンドポイントの例を含んでいます。
+あなたの認可サーバーおよびリソースサーバーの実装の開始点として、
+これらのリファレンス実装を活用してください。
 
 
 ライセンス
@@ -183,7 +185,7 @@ String authorization = ...;
 // 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
 AuthleteApi api = ...;
 
-// TokenRequestHandlerSpi インターフェースの実装
+// TokenRequestHandlerSpi インターフェースの実装。
 TokenRequestHandlerSpi spi = ...;
 
 // TokenRequestHandler クラスのインスタンスを生成する。
@@ -383,7 +385,7 @@ UserInfoRequestHandlerSpi spi = ...;
 // UserInfoRequestHandler クラスのインスタンスを作成する。
 UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
 
-// ユーザー情報リクエストに含まれているアクセストークン
+// ユーザー情報リクエストに含まれているアクセストークン。
 String accessToken = ...;
 
 // ユーザー情報リクエストの処理をハンドラーに委譲する。

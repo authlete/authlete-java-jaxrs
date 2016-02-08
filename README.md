@@ -21,12 +21,14 @@ settings of authorization servers and settings of client applications are
 stored in the Authlete server on cloud.
 
 [java-oauth-server][3] is an authorization server implementation which
-uses this library. The reference implementation is a good starting point
-for your authorization server implementation.
-
-[java-resource-server][19] is a resource server implementation which
-supports a [userinfo endpoint][20] defined in [OpenID Connect Core 1.0][13]
-and includes an example of a protected resource endpoint, too.
+uses this library. It implements not only an authorization endpoint and
+a token endpoint but also a JWK Set endpoint, a configuration endpoint
+and a revocation endpoint. [java-resource-server][19] is a resource
+server implementation which also uses this library. It supports a
+[userinfo endpoint][20] defined in [OpenID Connect Core 1.0][13] and
+includes an example of a protected resource endpoint, too. Use these
+reference implementations as a starting point of your own authorization
+server and resource server.
 
 
 License
@@ -420,8 +422,8 @@ return response;
 Furthermore, `BaseUserInfoEndpoint` class makes the task incredibly
 easier. The following is an example of an implementation of a
 userinfo endpoint. The `handle()` method of `BaseUserInfoEndpoint`
-internally uses `UserInfoRequestHandler`. Note that a userinfo must
-accept an access token as a Bearer Token ([RFC 6750][22]).
+internally uses `UserInfoRequestHandler`. Note that a userinfo
+endpoint must accept an access token as a Bearer Token ([RFC 6750][22]).
 
 ```java
 @Path("/api/userinfo")
