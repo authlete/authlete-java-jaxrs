@@ -27,8 +27,8 @@ and a revocation endpoint. [java-resource-server][19] is a resource
 server implementation which also uses this library. It supports a
 [userinfo endpoint][20] defined in [OpenID Connect Core 1.0][13] and
 includes an example of a protected resource endpoint, too. Use these
-reference implementations as a starting point of your own authorization
-server and resource server.
+reference implementations as a starting point of your own implementations
+of an authorization server and a resource server.
 
 
 License
