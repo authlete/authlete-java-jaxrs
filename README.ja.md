@@ -5,7 +5,8 @@ JAX-RS (Java) 用 Authlete ライブラリ
 ----
 
 このライブラリは、[OAuth 2.0][1] および [OpenID Connect][2]
-をサポートする認可サーバーを実装するためのユーティリティークラス群を提供します。
+をサポートする認可サーバーと、
+リソースサーバーを実装するためのユーティリティークラス群を提供します。
 
 このライブラリは、JAX-RS 2.0 API と [authlete-java-common][4]
 ライブラリを用いて書かれています。 JAX-RS は _The Java API for RESTful Web
@@ -23,6 +24,10 @@ Authlete サーバーに保存されるため、Authlete
 [java-oauth-server][3] はこのライブラリを使用している認可サーバーの実装です。
 あなたの認可サーバーの実装の開始点として、このリファレンス実装を活用してください。
 
+[java-resource-server][19] は [OpenID Connect Core 1.0][13]
+で定義されている[ユーザー情報エンドポイント][20] をサポートし、また、
+保護リソースエンドポイントの例を含んでいます。
+
 
 ライセンス
 ----------
@@ -37,7 +42,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 
@@ -59,8 +64,8 @@ JavaDoc
 
 認可サーバーは次のエンドポイントを公開することが期待されています。
 
-  1. [認可エンドポイント][9]
-  2. [トークンエンドポイント][10]
+  1. 認可エンドポイント ([RFC 6749, 3.1.][9])
+  2. トークンエンドポイント ([RFC 6749, 3.2][10])
 
 このライブラリは、これらのエンドポイントを実装するためのユーティリティークラス群を提供します。
 また、下記のエンドポイント用のユーティリティークラス群も含んでいます。
@@ -68,6 +73,7 @@ JavaDoc
   3. JWK Set エンドポイント ([OpenID Connect Core 1.0][13])
   4. 設定エンドポイント ([OpenID Connect Discovery 1.0][12])
   5. 取り消しエンドポイント ([RFC 7009][14])
+  6. ユーザー情報エンドポイント ([OpenID Connect Core 1.0][13])
 
 
 #### 認可エンドポイント
@@ -288,7 +294,7 @@ _発行者識別子_ は OpenID プロバイダーを識別するための URL �
 (OpenID Connect Core 1.0) の `iss` を参照してください。
 
 
-### 取り消しエンドポイント
+#### 取り消しエンドポイント
 
 認可サーバーは、アクセストークンやリフレッシュトークンを取り消すエンドポイントを公開してもよいです。
 [RFC 7009][18] はそのような取り消しエンドポイントに関する仕様です。
@@ -329,7 +335,7 @@ return response;
 ```
 
 さらに、`BaseRevocationEndpoint` クラスはこの作業を信じられないほど簡単にします。
-下記は、設定エンドポイントの完全な実装例です。 `BaseRevocationEndpoint` の
+下記は、取り消しエンドポイントの完全な実装例です。 `BaseRevocationEndpoint` の
 `handle()` メソッドは内部で `RevocationRequestHandler` を使用しています。
 
 ```java
@@ -349,11 +355,87 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
 ```
 
 
+#### ユーザー情報エンドポイント
+
+ユーザー情報エンドポイントは、ユーザー情報を JSON または [JWT][21]
+フォーマットで返す保護リソースエンドポイントです。 このエンドポイントの動作は
+[OpenID Connect Core 1.0][13] の [5.3. UserInfo Endpoint][20] に記述されています。
+
+`UserInfoRequestHandler` はユーザー情報リクエストを処理するためのクラスです。
+このクラスには、アクセストークンを引数に取る `handle(String)` というメソッドがあります。
+ユーザー情報エンドポイントの実装では、ユーザー情報リクエストの処理をこの `handle()`
+メソッドに委譲することができます。
+
+`UserInfoRequestHandler` クラスのコンストラクタは、実装固有の動作を制御するため、
+`UseInfoRequestHandlerSpi` の実装を要求します。 この SPI クラスの主な目的は、
+ユーザー情報エンドポイントからの応答に埋め込むクレーム値を集めることです。
+
+次のコードは `UserInfoRequestHandler` の使い方を示すものです。
+
+```java
+// AuthleteApi インターフェースの実装。
+// 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
+AuthleteApi api = ...;
+
+// UserInfoRequestHandlerSpi インターフェースの実装。
+UserInfoRequestHandlerSpi spi = ...;
+
+// UserInfoRequestHandler クラスのインスタンスを作成する。
+UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
+
+// ユーザー情報リクエストに含まれているアクセストークン
+String accessToken = ...;
+
+// ユーザー情報リクエストの処理をハンドラーに委譲する。
+Response response = handler.handle(accessToken);
+
+// クライアントアプリケーションにレスポンスを返す。
+return response;
+```
+
+さらに、`BaseUserInfoEndpoint` クラスはこの作業を信じられないほど簡単にします。
+下記は、ユーザー情報エンドポイントの実装例です。 `BaseUserInfoEndpoint` の
+`handle()` メソッドは内部で `UserInfoRequestHandler` を使用しています。
+ユーザー情報エンドポイントはアクセストークンを Bearer Token ([RFC 6750][22])
+として受け取らなければならないことに注意してください。
+
+```java
+@Path("/api/userinfo")
+public class UserInfoEndpoint extends BaseUserInfoEndpoint
+{
+    @GET
+    public Response get(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            @QueryParam("access_token") String accessToken)
+    {
+        return handle(extractAccessToken(authorization, accessToken));
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            @FormParam("access_token") String accessToken)
+    {
+        return handle(extractAccessToken(authorization, accessToken));
+    }
+
+    private Response handle(String accessToken)
+    {
+        return handle(AuthleteApiFactory.getDefaultApi(),
+                new UserInfoRequestHandlerSpiImpl(), accessToken);
+    }
+}
+```
+
+
 まとめ
 ------
 
-このライブラリにより、OAuth 2.0 と OpenID Connect をサポートする認可サーバーの実装作業が簡単になります。
-詳細は [JavaDoc][11] 及びリファレンス実装 ([java-oauth-server][3]) を参照してください。
+このライブラリにより、OAuth 2.0 と OpenID Connect
+をサポートする認可サーバー、およびリソースサーバーの実装作業が簡単になります。
+詳細は [JavaDoc][11] 及びリファレンス実装 ([java-oauth-server][3] および
+[java-resource-server][19]) を参照してください。
 
 
 その他の情報
@@ -361,13 +443,14 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
 
 - [Authlete][7] - Authlete ホームページ
 - [java-oauth-server][3] - 認可サーバーの実装
+- [java-resource-server][19] - リソースサーバーの実装
 - [authlete-java-common][4] - Java 用 Authlete 共通ライブラリ
 
 
 サポート
 --------
 
-[Authlete, Inc.](https://www.authlete.com/)<br/>
+[Authlete, Inc.][7]<br/>
 support@authlete.com
 
 
@@ -389,3 +472,7 @@ support@authlete.com
 [16]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
 [17]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
 [18]: http://tools.ietf.org/html/rfc7009
+[19]: https://github.com/authlete/java-resource-server
+[20]: http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+[21]: http://tools.ietf.org/html/rfc7519
+[22]: http://tools.ietf.org/html/rfc6750

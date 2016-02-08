@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+1.2 (2016-02-08)
+----------------
+
+- Added some `Base*Endpoint` classes.
+
+- Added classes to validate an access token.
+
+- Added utility classes to implement a userinfo endpoint.
+
+
 1.1 (2016-02-06)
 ----------------
 

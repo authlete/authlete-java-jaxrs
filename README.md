@@ -6,7 +6,7 @@ Overview
 
 This library provides utility classes to make it easy for developers
 to implement an authorization server which supports [OAuth 2.0][1] and
-[OpenID Connect][2].
+[OpenID Connect][2] and a resource server.
 
 This library is written using JAX-RS 2.0 API and [authlete-java-common][4]
 library. JAX-RS is _The Java API for RESTful Web Services_. JAX-RS 2.0
@@ -24,6 +24,10 @@ stored in the Authlete server on cloud.
 uses this library. The reference implementation is a good starting point
 for your authorization server implementation.
 
+[java-resource-server][19] is a resource server implementation which
+supports a [userinfo endpoint][20] defined in [OpenID Connect Core 1.0][13]
+and includes an example of a protected resource endpoint, too.
+
 
 License
 -------
@@ -38,7 +42,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 
@@ -60,8 +64,8 @@ Description
 
 An authorization server is expected to expose the following endpoints.
 
-  1. [Authorization endpoint][9]
-  2. [Token endpoint][10]
+  1. Authorization endpoint ([RFC 6749, 3.1][9])
+  2. Token endpoint ([RFC 6749, 3.2][10])
 
 This library provides utility classes to implement these endpoints.
 In addition, utility classes for endpoints listed below are included,
@@ -70,6 +74,7 @@ too.
   3. JWK Set endpoint ([OpenID Connect Core 1.0][13])
   4. Configuration endpoint ([OpenID Connect Discovery 1.0][12])
   5. Revocation endpoint ([RFC 7009][14])
+  6. UserInfo endpoint ([OpenID Connect Core 1.0][13])
 
 
 #### Authorization Endpoint
@@ -306,7 +311,7 @@ in [3. OpenID Provider Meatadata][15] (OpenID Connect Discovery 1.0)
 and `iss` in [2. ID Token][17] (OpenID Connect Core 1.0).
 
 
-### Revocation Endpoint
+#### Revocation Endpoint
 
 An authorization server may expose an endpoint to revoke access tokens
 and/or refresh tokens. [RFC 7009][18] is the specification about such
@@ -371,12 +376,90 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
 ```
 
 
+#### UserInfo Endpoint
+
+A userinfo endpoint is a protected resource endpoint that returns
+user information in JSON or [JWT][21] format. The behavior of this
+endpoint is described in [5.3. UserInfo Endpoint][20] in
+[OpenID Connect Core 1.0][13].
+
+`UserInfoRequestHandler` is a class to process a userinfo request.
+The class has `handle(String)` method which takes an access token.
+An implementation of userinfo endpoint can delegate the task to
+process a userinfo request to the `handle()` method.
+
+The constructor of `UserInfoRequestHandler` class requires an
+implementation of `UserInfoRequestHandlerSpi` to control the
+implementation-specific behaviors. The main purpose of the SPI
+class is to collect claim values that will be embedded in a
+response from a userinfo endpoint.
+
+The following code snippet shows the usage of `UserInfoRequestHandler`.
+
+```java
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
+AuthleteApi api = ...;
+
+// Implementation of UserInfoRequestHandlerSpi interface.
+UserInfoRequestHandlerSpi spi = ...;
+
+// Create an instance of UserInfoRequestHandler class.
+UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
+
+// Access token contained in a userinfo request.
+String accessToken = ...;
+
+// Delegate the task to process the userinfo request to the handler.
+Response response = handler.handle(accessToken);
+
+// Return the response to the client application.
+return response;
+```
+
+Furthermore, `BaseUserInfoEndpoint` class makes the task incredibly
+easier. The following is an example of an implementation of a
+userinfo endpoint. The `handle()` method of `BaseUserInfoEndpoint`
+internally uses `UserInfoRequestHandler`. Note that a userinfo must
+accept an access token as a Bearer Token ([RFC 6750][22]).
+
+```java
+@Path("/api/userinfo")
+public class UserInfoEndpoint extends BaseUserInfoEndpoint
+{
+    @GET
+    public Response get(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            @QueryParam("access_token") String accessToken)
+    {
+        return handle(extractAccessToken(authorization, accessToken));
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+            @FormParam("access_token") String accessToken)
+    {
+        return handle(extractAccessToken(authorization, accessToken));
+    }
+
+    private Response handle(String accessToken)
+    {
+        return handle(AuthleteApiFactory.getDefaultApi(),
+                new UserInfoRequestHandlerSpiImpl(), accessToken);
+    }
+}
+```
+
+
 Summary
 -------
 
 This library makes it easy to implement an authorization server that
-supports OAuth 2.0 and OpenID Connect. See the [JavaDoc][11] and the
-reference implementation ([java-oauth-server][3]) for details.
+supports OAuth 2.0 and OpenID Connect and a resource server. See the
+[JavaDoc][11] and the reference implementations ([java-oauth-server][3]
+and [java-resource-server][19]) for details.
 
 
 See Also
@@ -384,13 +467,14 @@ See Also
 
 - [Authlete][7] - Authlete Home Page
 - [java-oauth-server][3] - Authorization Server Implementation
+- [java-resource-server][19] - Resource Server Implementation
 - [authlete-java-common][4] - Authlete Common Library for Java
 
 
 Support
 -------
 
-[Authlete, Inc.](https://www.authlete.com/)<br/>
+[Authlete, Inc.][7]<br/>
 support@authlete.com
 
 
@@ -412,3 +496,7 @@ support@authlete.com
 [16]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
 [17]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
 [18]: http://tools.ietf.org/html/rfc7009
+[19]: https://github.com/authlete/java-resource-server
+[20]: http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+[21]: http://tools.ietf.org/html/rfc7519
+[22]: http://tools.ietf.org/html/rfc6750
