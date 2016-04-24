@@ -27,6 +27,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
+import com.authlete.common.dto.Property;
 import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 
 
@@ -142,8 +143,12 @@ public class AuthorizationDecisionHandler extends BaseHandler
         // Collect claim values.
         Map<String, Object> claims = collectClaims(subject, claimNames, claimLocales);
 
+        // Extra properties to associate with an access token and/or
+        // an authorization code.
+        Property[] properties = mSpi.getProperties();
+
         // Authorize the authorization request.
-        return authorize(ticket, subject, authTime, acr, claims);
+        return authorize(ticket, subject, authTime, acr, claims, properties);
     }
 
 
@@ -408,10 +413,16 @@ public class AuthorizationDecisionHandler extends BaseHandler
      *         in an ID token that may be issued. Passing {@code null} means
      *         that values of the requested claims are not available.
      *
+     * @param properties
+     *         Extra properties to associate with an access token and/or
+     *         an authorization code.
+     *
      * @return
      *         A response that should be returned to the client application.
      */
-    private Response authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
+    private Response authorize(
+            String ticket, String subject, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties)
     {
         try
         {
@@ -419,7 +430,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // an access token and/or an ID token. If the original authorization
             // request had response_type=none, no tokens will be contained in
             // the generated response, though.
-            return getApiCaller().authorizationIssue(ticket, subject, authTime, acr, claims);
+            return getApiCaller().authorizationIssue(
+                    ticket, subject, authTime, acr, claims, properties);
         }
         catch (WebApplicationException e)
         {

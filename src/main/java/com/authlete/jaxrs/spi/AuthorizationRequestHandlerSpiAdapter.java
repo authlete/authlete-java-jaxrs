@@ -19,6 +19,7 @@ package com.authlete.jaxrs.spi;
 
 import javax.ws.rs.core.Response;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.Property;
 
 
 /**
@@ -67,6 +68,13 @@ public class AuthorizationRequestHandlerSpiAdapter implements AuthorizationReque
 
     @Override
     public Response generateAuthorizationPage(AuthorizationResponse info)
+    {
+        return null;
+    }
+
+
+    @Override
+    public Property[] getProperties()
     {
         return null;
     }

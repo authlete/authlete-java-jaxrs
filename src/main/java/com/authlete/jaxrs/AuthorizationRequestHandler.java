@@ -17,12 +17,14 @@
 package com.authlete.jaxrs;
 
 
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.Property;
 import com.authlete.jaxrs.spi.AuthorizationRequestHandlerSpi;
 
 
@@ -193,8 +195,12 @@ public class AuthorizationRequestHandler extends BaseHandler
         // Check 4. ACR
         noInteractionCheckAcr(response, acr);
 
+        // Extra properties to associate with an access token and/or
+        // an authorization code.
+        Property[] properties = mSpi.getProperties();
+
         // Issue
-        return noInteractionIssue(response, authTime, subject, acr);
+        return noInteractionIssue(response, authTime, subject, acr, properties);
     }
 
 
@@ -304,7 +310,7 @@ public class AuthorizationRequestHandler extends BaseHandler
 
 
     private Response noInteractionIssue(
-            AuthorizationResponse response, long authTime, String subject, String acr)
+            AuthorizationResponse response, long authTime, String subject, String acr, Property[] properties)
     {
         // When prompt=none is contained in an authorization request,
         // response.getClaims() returns null. This means that user
@@ -318,6 +324,7 @@ public class AuthorizationRequestHandler extends BaseHandler
         // Core 1.0, 3.1.2.1. Authentication Request" for details.
 
         return getApiCaller().authorizationIssue(
-            response.getTicket(), subject, authTime, acr, null);
+            response.getTicket(), subject, authTime, acr,
+            (Map<String, Object>)null, properties);
     }
 }

@@ -35,6 +35,7 @@ import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
+import com.authlete.common.dto.Property;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.TokenFailRequest;
@@ -254,14 +255,17 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/auth/authorization/issue} API.
      */
     private AuthorizationIssueResponse callAuthorizationIssue(
-            String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
+            String ticket, String subject, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties)
     {
         // Create a request for /api/auth/authorization/issue API.
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
             .setTicket(ticket)
             .setSubject(subject)
             .setAuthTime(authTime / 1000L)
-            .setAcr(acr);
+            .setAcr(acr)
+            .setProperties(properties)
+            ;
 
         if (claims != null && claims.size() != 0)
         {
@@ -286,11 +290,12 @@ class AuthleteApiCaller
      * This method calls Authlete's {@code /api/auth/authorization/issue} API.
      */
     public Response authorizationIssue(
-            String ticket, String subject, long authTime, String acr, Map<String, Object> claims)
+            String ticket, String subject, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties)
     {
         // Call Authlete's /api/auth/authorization/issue API.
         AuthorizationIssueResponse response =
-            callAuthorizationIssue(ticket, subject, authTime, acr, claims);
+            callAuthorizationIssue(ticket, subject, authTime, acr, claims, properties);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -329,18 +334,21 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/token} API.
      */
-    public TokenResponse callToken(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
+    public TokenResponse callToken(
+            MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
+            Property[] properties)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callToken(params, clientId, clientSecret);
+        return callToken(params, clientId, clientSecret, properties);
     }
 
 
     /**
      * Call Authlete's {@code /api/auth/token} API.
      */
-    private TokenResponse callToken(String parameters, String clientId, String clientSecret)
+    private TokenResponse callToken(
+            String parameters, String clientId, String clientSecret, Property[] properties)
     {
         if (parameters == null)
         {
@@ -354,7 +362,9 @@ class AuthleteApiCaller
         TokenRequest request = new TokenRequest()
             .setParameters(parameters)
             .setClientId(clientId)
-            .setClientSecret(clientSecret);
+            .setClientSecret(clientSecret)
+            .setProperties(properties)
+            ;
 
         try
         {
@@ -444,12 +454,15 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/token/issue} API.
      */
-    private TokenIssueResponse callTokenIssue(String ticket, String subject)
+    private TokenIssueResponse callTokenIssue(
+            String ticket, String subject, Property[] properties)
     {
         // Create a request for Authlete's /api/auth/token/issue API.
         TokenIssueRequest request = new TokenIssueRequest()
             .setTicket(ticket)
-            .setSubject(subject);
+            .setSubject(subject)
+            .setProperties(properties)
+            ;
 
         try
         {
@@ -468,10 +481,10 @@ class AuthleteApiCaller
      * Issue an access token and optionally an ID token.
      * This method calls Authlete's {@code /api/auth/token/issue} API.
      */
-    public Response tokenIssue(String ticket, String subject)
+    public Response tokenIssue(String ticket, String subject, Property[] properties)
     {
         // Call Authlete's /api/auth/token/issue API.
-        TokenIssueResponse response = callTokenIssue(ticket, subject);
+        TokenIssueResponse response = callTokenIssue(ticket, subject, properties);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

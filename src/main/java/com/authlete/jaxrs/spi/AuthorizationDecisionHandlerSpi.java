@@ -16,6 +16,7 @@
  */
 package com.authlete.jaxrs.spi;
 
+import com.authlete.common.dto.Property;
 
 /**
  * Service Provider Interface to work with {@link
@@ -156,4 +157,70 @@ public interface AuthorizationDecisionHandlerSpi
      *         is not available.
      */
     Object getUserClaim(String claimName, String languageTag);
+
+
+    /**
+     * Get extra properties to associate with an access token and/or an
+     * authorization code.
+     *
+     * <p>
+     * This method is expected to return an array of extra properties.
+     * The following is an example that returns an array containing one
+     * extra property.
+     * </p>
+     *
+     * <pre style="border: 1px solid gray; padding: 0.5em; margin: 1em;">
+     * <span style="color: gray;">&#x40;Override</span>
+     * <span style="color: purple; font-weight: bold;">public</span> {@link Property}[] getProperties()
+     * {
+     *     <span style="color: purple; font-weight: bold;">return</span> <span style="color: purple; font-weight: bold;">new</span> {@link Property}[] {
+     *         <span style="color: purple; font-weight: bold;">new</span> {@link Property#Property(String, String)
+     *     Property}(<span style="color: darkred;">"example_parameter"</span>, <span style="color: darkred;">"example_value"</span>)
+     *     };
+     * }</pre>
+     * </blockquote>
+     *
+     * <p>
+     * Extra properties returned from this method will appear as top-level entries
+     * in a JSON response from an authorization server as shown in <a href=
+     * "https://tools.ietf.org/html/rfc6749#section-5.1">5.1. Successful Response</a>
+     * in RFC 6749.
+     * </p>
+     *
+     * <p>
+     * Keys listed below should not be used and they would be ignored on
+     * the server side even if they were used. It's because they are reserved
+     * in <a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a> and
+     * <a href="http://openid.net/specs/openid-connect-core-1_0.html"
+     * >OpenID Connect Core 1.0</a>.
+     * </p>
+     *
+     * <ul>
+     *   <li>{@code access_token}
+     *   <li>{@code token_type}
+     *   <li>{@code expires_in}
+     *   <li>{@code refresh_token}
+     *   <li>{@code scope}
+     *   <li>{@code error}
+     *   <li>{@code error_description}
+     *   <li>{@code error_uri}
+     *   <li>{@code id_token}
+     * </ul>
+     *
+     * <p>
+     * Note that <b>there is an upper limit on the total size of extra properties</b>.
+     * On the server side, the properties will be (1) converted to a multidimensional
+     * string array, (2) converted to JSON, (3) encrypted by AES/CBC/PKCS5Padding, (4)
+     * encoded by base64url, and then stored into the database. The length of the
+     * resultant string must not exceed 65,535 in bytes. This is the upper limit, but
+     * we think it is big enough.
+     * </p>
+     *
+     * @return
+     *         Extra properties. If {@code null} is returned, any extra property will
+     *         not be associated.
+     *
+     * @since 1.3
+     */
+    Property[] getProperties();
 }

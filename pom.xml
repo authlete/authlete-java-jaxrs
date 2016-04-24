@@ -35,13 +35,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <authlete-java-common.version>1.32</authlete-java-common.version>
+        <gson.version>2.6.2</gson.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.authlete</groupId>
             <artifactId>authlete-java-common</artifactId>
-            <version>1.29</version>
+            <version>${authlete-java-common.version}</version>
         </dependency>
 
         <dependency>
@@ -61,7 +63,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.5</version>
+            <version>${gson.version}</version>
         </dependency>
     </dependencies>
 

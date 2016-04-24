@@ -17,6 +17,9 @@
 package com.authlete.jaxrs.spi;
 
 
+import com.authlete.common.dto.Property;
+
+
 /**
  * Empty implementation of {@link AuthorizationDecisionHandlerSpi} interface.
  *
@@ -54,6 +57,13 @@ public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDeci
 
     @Override
     public Object getUserClaim(String claimName, String languageTag)
+    {
+        return null;
+    }
+
+
+    @Override
+    public Property[] getProperties()
     {
         return null;
     }

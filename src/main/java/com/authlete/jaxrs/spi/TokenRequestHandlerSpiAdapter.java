@@ -17,6 +17,9 @@
 package com.authlete.jaxrs.spi;
 
 
+import com.authlete.common.dto.Property;
+
+
 /**
  * Empty implementation of {@link TokenRequestHandlerSpi} interface.
  *
@@ -32,6 +35,13 @@ public class TokenRequestHandlerSpiAdapter implements TokenRequestHandlerSpi
 {
     @Override
     public String authenticateUser(String username, String password)
+    {
+        return null;
+    }
+
+
+    @Override
+    public Property[] getProperties()
     {
         return null;
     }

@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.Property;
 import com.authlete.common.dto.TokenFailRequest.Reason;
 import com.authlete.common.dto.TokenResponse;
 import com.authlete.common.dto.TokenResponse.Action;
@@ -130,8 +131,11 @@ public class TokenRequestHandler extends BaseHandler
      */
     private Response process(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
     {
+        // Extra properties to associate with an access token.
+        Property[] properties = mSpi.getProperties();
+
         // Call Authlete's /api/auth/token API.
-        TokenResponse response = getApiCaller().callToken(parameters, clientId, clientSecret);
+        TokenResponse response = getApiCaller().callToken(parameters, clientId, clientSecret, properties);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -182,13 +186,16 @@ public class TokenRequestHandler extends BaseHandler
         // Validate the credentials.
         String subject = mSpi.authenticateUser(username, password);
 
+        // Extra properties to associate with an access token.
+        Property[] properties = mSpi.getProperties();
+
         // The ticket for Authlete's /api/auth/token/* API.
         String ticket = response.getTicket();
 
         if (subject != null)
         {
             // Issue an access token and optionally an ID token.
-            return getApiCaller().tokenIssue(ticket, subject);
+            return getApiCaller().tokenIssue(ticket, subject, properties);
         }
         else
         {
