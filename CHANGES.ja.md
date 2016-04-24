@@ -1,6 +1,17 @@
 変更点
 ======
 
+1.3 (2016 年 04 月 25 日)
+-------------------------
+
+- アクセストークンにプロパティー群を関連づける仕組みをサポートするため、
+  `AuthorizationDecisionHandlerSpi`, `AuthorizationRequestHandlerSpi`,
+  `TokenRequestHandlerSpi` に `getProperties()` メソッドを追加。
+
+- `AccessTokenInfo` クラスに、`getProperties()` メソッド、
+  `setProperties(Property[])` メソッド、その他のセッターメソッド群を追加。
+
+
 1.2 (2016 年 02 月 08 日)
 -------------------------
 

@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+1.3 (2016-04-25)
+----------------
+
+- Added `getProperties()` method to `AuthorizationDecisionHandlerSpi`,
+  `AuthorizationRequestHandlerSpi` and `TokenRequestHandlerSpi` to
+  support the mechanism to associate extra properties with access tokens.
+
+- Added `getProperties()` method, `setProperties(Property[])` method,
+  and other setter methods to `AccessTokenInfo` class.
+
+
 1.2 (2016-02-08)
 ----------------
 
