@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+1.4 (2016-07-30)
+----------------
+
+- Added `getScopes()` method to `AuthorizationDecisionHandlerSpi` and
+  `AuthorizationRequestHandlerSpi` to provide a function to replace scopes.
+
+- Updated `AuthleteApiImpl` for `AuthleteApi` version 1.34.
+
+
 1.3 (2016-04-25)
 ----------------
 

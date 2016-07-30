@@ -1,6 +1,15 @@
 変更点
 ======
 
+1.4 (2016 年 07 月 30 日)
+-------------------------
+
+- `AuthorizationDecisionHandlerSpi`, `AuthorizationRequestHandlerSpi` に
+  `getScopes()` メソッドを追加。スコープを置き換える機能を提供するため。
+
+- `AuthleteApi` バージョン 1.34 に適合するように `AuthleteApiImpl` を更新。
+
+
 1.3 (2016 年 04 月 25 日)
 -------------------------
 

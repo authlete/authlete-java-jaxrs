@@ -147,8 +147,14 @@ public class AuthorizationDecisionHandler extends BaseHandler
         // an authorization code.
         Property[] properties = mSpi.getProperties();
 
+        // Scopes to associate with an access token and/or an authorization code.
+        // If a non-null value is returned from mSpi.getScopes(), the scope set
+        // replaces the scopes that have been specified in the original
+        // authorization request.
+        String[] scopes = mSpi.getScopes();
+
         // Authorize the authorization request.
-        return authorize(ticket, subject, authTime, acr, claims, properties);
+        return authorize(ticket, subject, authTime, acr, claims, properties, scopes);
     }
 
 
@@ -417,12 +423,21 @@ public class AuthorizationDecisionHandler extends BaseHandler
      *         Extra properties to associate with an access token and/or
      *         an authorization code.
      *
+     * @param scopes
+     *         Scopes to associate with an access token and/or an authorization
+     *         code. If {@code null} is given, the scopes contained in the
+     *         original authorization request are used. Otherwise, including
+     *         the case of an empty array, the scopes given to this method
+     *         replace the scopes. Note that <code>"openid"</code> scope is
+     *         ignored if it is not included in the original authorization
+     *         request.
+     *
      * @return
      *         A response that should be returned to the client application.
      */
     private Response authorize(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties)
+            Map<String, Object> claims, Property[] properties, String[] scopes)
     {
         try
         {
@@ -431,7 +446,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // request had response_type=none, no tokens will be contained in
             // the generated response, though.
             return getApiCaller().authorizationIssue(
-                    ticket, subject, authTime, acr, claims, properties);
+                    ticket, subject, authTime, acr, claims, properties, scopes);
         }
         catch (WebApplicationException e)
         {

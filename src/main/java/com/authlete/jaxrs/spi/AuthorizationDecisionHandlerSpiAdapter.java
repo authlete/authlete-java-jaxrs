@@ -67,4 +67,11 @@ public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDeci
     {
         return null;
     }
+
+
+    @Override
+    public String[] getScopes()
+    {
+        return null;
+    }
 }

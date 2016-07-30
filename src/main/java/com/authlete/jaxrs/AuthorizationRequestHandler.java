@@ -199,8 +199,14 @@ public class AuthorizationRequestHandler extends BaseHandler
         // an authorization code.
         Property[] properties = mSpi.getProperties();
 
+        // Scopes to associate with an access token and/or an authorization code.
+        // If a non-null value is returned from mSpi.getScopes(), the scope set
+        // replaces the scopes that have been specified in the original
+        // authorization request.
+        String[] scopes = mSpi.getScopes();
+
         // Issue
-        return noInteractionIssue(response, authTime, subject, acr, properties);
+        return noInteractionIssue(response, authTime, subject, acr, properties, scopes);
     }
 
 
@@ -310,7 +316,8 @@ public class AuthorizationRequestHandler extends BaseHandler
 
 
     private Response noInteractionIssue(
-            AuthorizationResponse response, long authTime, String subject, String acr, Property[] properties)
+            AuthorizationResponse response, long authTime, String subject,
+            String acr, Property[] properties, String[] scopes)
     {
         // When prompt=none is contained in an authorization request,
         // response.getClaims() returns null. This means that user
@@ -325,6 +332,6 @@ public class AuthorizationRequestHandler extends BaseHandler
 
         return getApiCaller().authorizationIssue(
             response.getTicket(), subject, authTime, acr,
-            (Map<String, Object>)null, properties);
+            (Map<String, Object>)null, properties, scopes);
     }
 }

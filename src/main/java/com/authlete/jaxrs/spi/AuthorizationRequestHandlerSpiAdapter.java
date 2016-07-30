@@ -78,4 +78,11 @@ public class AuthorizationRequestHandlerSpiAdapter implements AuthorizationReque
     {
         return null;
     }
+
+
+    @Override
+    public String[] getScopes()
+    {
+        return null;
+    }
 }

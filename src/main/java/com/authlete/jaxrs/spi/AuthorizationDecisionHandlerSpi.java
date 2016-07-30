@@ -223,4 +223,51 @@ public interface AuthorizationDecisionHandlerSpi
      * @since 1.3
      */
     Property[] getProperties();
+
+
+    /**
+     * Get scopes to associate with an access token and/or an authorization code.
+     *
+     * <p>
+     * If {@code null} is returned, the scopes specified in the original
+     * authorization request from the client application are used. In other
+     * cases, including the case of an empty array, the specified scopes will
+     * replace the original scopes contained in the original authorization
+     * request.
+     * </p>
+     *
+     * <p>
+     * Even scopes that are not included in the original authorization request
+     * can be specified. However, as an exception, <code>"openid"</code> scope
+     * is ignored on the server side if it is not included in the original
+     * request. It is because the existence of <code>"openid"</code> scope
+     * considerably changes the validation steps and because adding
+     * <code>"openid"</code> triggers generation of an ID token (although the
+     * client application has not requested it) and the behavior is a major
+     * violation against the specification.
+     * </p>
+     *
+     * <p>
+     * If you add <code>"offline_access"</code> scope although it is not
+     * included in the original request, keep in mind that the specification
+     * requires explicit consent from the user for the scope (<a href=
+     * "http://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess"
+     * >OpenID Connect Core 1.0, 11. Offline Access</a>). When
+     * <code>"offline_access"</code> is included in the original request, the
+     * current implementation of Authlete's /api/auth/authorization API checks
+     * whether the request has come along with <code>prompt</code> request
+     * parameter and the value includes <code>"consent"</code>. However, note
+     * that the implementation of Authlete's /api/auth/authorization/issue API
+     * does not perform such checking if <code>"offline_access"</code> scope
+     * is added via this <code>scopes</code> parameter.
+     * </p>
+     *
+     * @return
+     *         Scopes to associate with an authorization code and/or an access
+     *         token. If a non-null value is set, the original scopes requested
+     *         by the client application are replaced.
+     *
+     * @since 1.4
+     */
+    String[] getScopes();
 }

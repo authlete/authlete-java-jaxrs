@@ -54,6 +54,8 @@ import com.authlete.common.dto.TokenIssueRequest;
 import com.authlete.common.dto.TokenIssueResponse;
 import com.authlete.common.dto.TokenRequest;
 import com.authlete.common.dto.TokenResponse;
+import com.authlete.common.dto.TokenUpdateRequest;
+import com.authlete.common.dto.TokenUpdateResponse;
 import com.authlete.common.dto.UserInfoIssueRequest;
 import com.authlete.common.dto.UserInfoIssueResponse;
 import com.authlete.common.dto.UserInfoRequest;
@@ -74,29 +76,33 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    private static final String AUTH_AUTHORIZATION_API_PATH       = "/api/auth/authorization";
-    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH  = "/api/auth/authorization/fail";
-    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH = "/api/auth/authorization/issue";
-    private static final String AUTH_TOKEN_API_PATH               = "/api/auth/token";
-    private static final String AUTH_TOKEN_CREATE_API_PATH        = "/api/auth/token/create";
-    private static final String AUTH_TOKEN_FAIL_API_PATH          = "/api/auth/token/fail";
-    private static final String AUTH_TOKEN_ISSUE_API_PATH         = "/api/auth/token/issue";
-    private static final String AUTH_REVOCATION_API_PATH          = "/api/auth/revocation";
-    private static final String AUTH_USERINFO_API_PATH            = "/api/auth/userinfo";
-    private static final String AUTH_USERINFO_ISSUE_API_PATH      = "/api/auth/userinfo/issue";
-    private static final String AUTH_INTROSPECTION_API_PATH       = "/api/auth/introspection";
-    private static final String SERVICE_CONFIGURATION_API_PATH    = "/api/service/configuration";
-    private static final String SERVICE_CREATE_API_PATH           = "/api/service/create";
-    private static final String SERVICE_DELETE_API_PATH           = "/api/service/delete/%d";
-    private static final String SERVICE_GET_API_PATH              = "/api/service/get/%d";
-    private static final String SERVICE_GET_LIST_API_PATH         = "/api/service/get/list";
-    private static final String SERVICE_JWKS_GET_API_PATH         = "/api/service/jwks/get";
-    private static final String SERVICE_UPDATE_API_PATH           = "/api/service/update/%d";
-    private static final String CLIENT_CREATE_API_PATH            = "/api/client/create";
-    private static final String CLIENT_DELETE_API_PATH            = "/api/client/delete/%d";
-    private static final String CLIENT_GET_API_PATH               = "/api/client/get/%d";
-    private static final String CLIENT_GET_LIST_API_PATH          = "/api/client/get/list";
-    private static final String CLIENT_UPDATE_API_PATH            = "/api/client/update/%d";
+    private static final String AUTH_AUTHORIZATION_API_PATH        = "/api/auth/authorization";
+    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH   = "/api/auth/authorization/fail";
+    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH  = "/api/auth/authorization/issue";
+    private static final String AUTH_TOKEN_API_PATH                = "/api/auth/token";
+    private static final String AUTH_TOKEN_CREATE_API_PATH         = "/api/auth/token/create";
+    private static final String AUTH_TOKEN_FAIL_API_PATH           = "/api/auth/token/fail";
+    private static final String AUTH_TOKEN_ISSUE_API_PATH          = "/api/auth/token/issue";
+    private static final String AUTH_TOKEN_UPDATE_API_PATH         = "/api/auth/token/update";
+    private static final String AUTH_REVOCATION_API_PATH           = "/api/auth/revocation";
+    private static final String AUTH_USERINFO_API_PATH             = "/api/auth/userinfo";
+    private static final String AUTH_USERINFO_ISSUE_API_PATH       = "/api/auth/userinfo/issue";
+    private static final String AUTH_INTROSPECTION_API_PATH        = "/api/auth/introspection";
+    private static final String SERVICE_CONFIGURATION_API_PATH     = "/api/service/configuration";
+    private static final String SERVICE_CREATE_API_PATH            = "/api/service/create";
+    private static final String SERVICE_DELETE_API_PATH            = "/api/service/delete/%d";
+    private static final String SERVICE_GET_API_PATH               = "/api/service/get/%d";
+    private static final String SERVICE_GET_LIST_API_PATH          = "/api/service/get/list";
+    private static final String SERVICE_JWKS_GET_API_PATH          = "/api/service/jwks/get";
+    private static final String SERVICE_UPDATE_API_PATH            = "/api/service/update/%d";
+    private static final String CLIENT_CREATE_API_PATH             = "/api/client/create";
+    private static final String CLIENT_DELETE_API_PATH             = "/api/client/delete/%d";
+    private static final String CLIENT_GET_API_PATH                = "/api/client/get/%d";
+    private static final String CLIENT_GET_LIST_API_PATH           = "/api/client/get/list";
+    private static final String CLIENT_UPDATE_API_PATH             = "/api/client/update/%d";
+    private static final String REQUESTABLE_SCOPES_DELETE_API_PATH = "/api/client/extension/requestable_scopes/delete/%d";
+    private static final String REQUESTABLE_SCOPES_GET_API_PATH    = "/api/client/extension/requestable_scopes/get/%d";
+    private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH = "/api/client/extension/requestable_scopes/update/%d";
 
 
     private final WebTarget mTarget;
@@ -570,6 +576,18 @@ public class AuthleteApiImpl implements AuthleteApi
 
 
     /**
+     * Call {@code /api/auth/token/update} API.
+     */
+    @Override
+    public TokenUpdateResponse tokenUpdate(TokenUpdateRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<TokenUpdateResponse>(
+                        TokenUpdateResponse.class, request, AUTH_TOKEN_UPDATE_API_PATH));
+    }
+
+
+    /**
      * Call {@code /api/auth/revocation} API.
      */
     @Override
@@ -875,5 +893,64 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServicePostApiCaller<Client>(
                         Client.class, client, CLIENT_UPDATE_API_PATH, client.getClientId()));
+    }
+
+
+
+    /**
+     * Call <code>/api/client/extension/requestable_scopes/get/<i>{clientId}</i></code> API.
+     */
+    @Override
+    public String[] getRequestableScopes(long clientId) throws AuthleteApiException
+    {
+        // Call the API.
+        RequestableScopes response = executeApiCall(
+                new ServiceGetApiCaller<RequestableScopes>(
+                        RequestableScopes.class, REQUESTABLE_SCOPES_GET_API_PATH, clientId));
+
+        if (response != null)
+        {
+            // Extract 'requestableScopes' from the response.
+            return response.getRequestableScopes();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    @Override
+    public String[] setRequestableScopes(long clientId, String[] scopes) throws AuthleteApiException
+    {
+        // Prepare a request body.
+        RequestableScopes request = new RequestableScopes().setRequestableScopes(scopes);
+
+        // Call the API.
+        RequestableScopes response = executeApiCall(
+                new ServicePostApiCaller<RequestableScopes>(
+                        RequestableScopes.class, request, REQUESTABLE_SCOPES_UPDATE_API_PATH, clientId));
+
+        if (response != null)
+        {
+            // Extract 'requestableScopes' from the response.
+            return response.getRequestableScopes();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    /**
+     * Call <code>/api/client/extension/requestable_scopes/delete/<i>{clientId}</i></code> API.
+     */
+    @Override
+    public void deleteRequestableScopes(long clientId) throws AuthleteApiException
+    {
+        executeApiCall(
+                new ServiceDeleteApiCaller(
+                        REQUESTABLE_SCOPES_DELETE_API_PATH, clientId));
     }
 }
