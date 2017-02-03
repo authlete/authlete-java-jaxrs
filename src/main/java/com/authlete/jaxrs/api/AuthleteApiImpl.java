@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Authlete, Inc.
+ * Copyright (C) 2014-2017 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
 import com.authlete.common.api.AuthleteApi;
@@ -70,6 +71,10 @@ import com.authlete.common.web.BasicCredentials;
  */
 public class AuthleteApiImpl implements AuthleteApi
 {
+    // "application/json;charset=UTF-8"
+    private static final MediaType JSON_UTF8_TYPE = APPLICATION_JSON_TYPE.withCharset("UTF-8");
+
+
     private interface AuthleteApiCall<TResponse>
     {
         TResponse call();
@@ -312,7 +317,7 @@ public class AuthleteApiImpl implements AuthleteApi
                 .path(path)
                 .request(APPLICATION_JSON_TYPE)
                 .header(AUTHORIZATION, auth)
-                .post(Entity.entity(request, APPLICATION_JSON_TYPE), responseClass);
+                .post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
     }
 
 
