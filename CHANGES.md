@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+1.5 (2017-02-03)
+----------------
+
+- Changed `application/json` to `application/json;UTF-8` in `callPostApi()`
+  defined in `AuthleteApiImpl`.
+
+
 1.4 (2016-07-30)
 ----------------
 
