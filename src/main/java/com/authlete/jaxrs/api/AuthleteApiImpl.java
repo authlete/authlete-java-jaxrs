@@ -41,6 +41,7 @@ import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.Client;
 import com.authlete.common.dto.ClientListResponse;
+import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.RevocationRequest;
@@ -108,6 +109,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String REQUESTABLE_SCOPES_DELETE_API_PATH = "/api/client/extension/requestable_scopes/delete/%d";
     private static final String REQUESTABLE_SCOPES_GET_API_PATH    = "/api/client/extension/requestable_scopes/get/%d";
     private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH = "/api/client/extension/requestable_scopes/update/%d";
+    private static final String GRANTED_SCOPES_GET_API_PATH        = "/api/client/granted_scopes/get/%d";
 
 
     private final WebTarget mTarget;
@@ -957,5 +959,44 @@ public class AuthleteApiImpl implements AuthleteApi
         executeApiCall(
                 new ServiceDeleteApiCaller(
                         REQUESTABLE_SCOPES_DELETE_API_PATH, clientId));
+    }
+
+
+    @Override
+    public GrantedScopesGetResponse getGrantedScopes(long clientId, String subject)
+    {
+        // Prepare a request body.
+        GrantedScopesGetRequest request = new GrantedScopesGetRequest(subject);
+
+        // Call the API.
+        return executeApiCall(
+                new ServicePostApiCaller<GrantedScopesGetResponse>(
+                        GrantedScopesGetResponse.class, request, GRANTED_SCOPES_GET_API_PATH, clientId));
+    }
+
+
+    private static final class GrantedScopesGetRequest
+    {
+        private String subject;
+
+
+        public GrantedScopesGetRequest(String subject)
+        {
+            this.subject = subject;
+        }
+
+
+        @SuppressWarnings("unused")
+        public String getSubject()
+        {
+            return subject;
+        }
+
+
+        @SuppressWarnings("unused")
+        public void setSubject(String subject)
+        {
+            this.subject = subject;
+        }
     }
 }
