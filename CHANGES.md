@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+1.6 (2017-02-14)
+----------------
+
+- Updated the version of authlete-java-common to 1.39.
+
+- Implemented `getGrantedScopes(long, String)` method of `AuthleteApi`
+  interface.
+
+
 1.5 (2017-02-03)
 ----------------
 
