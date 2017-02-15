@@ -223,7 +223,7 @@ public class AuthleteApiImpl implements AuthleteApi
         String responseBody = null;
 
         // If the response has response body.
-        if (response.hasEntity())
+        if (hasEntity(response))
         {
             // Get the response body.
             responseBody = extractResponseBody(response);
@@ -234,6 +234,23 @@ public class AuthleteApiImpl implements AuthleteApi
 
         // Create an exception with HTTP response information.
         return new AuthleteApiException(message, cause, statusCode, statusMessage, responseBody, headers);
+    }
+
+
+    private boolean hasEntity(Response response)
+    {
+        try
+        {
+            // True if there is an entity available in the response.
+            return response.hasEntity();
+        }
+        catch (IllegalStateException e)
+        {
+            // IllegalStateException is thrown in case the response has been closed.
+            // A typical error message is "Entity input stream has already been closed."
+            // Anyway, an entity is not available.
+            return false;
+        }
     }
 
 
