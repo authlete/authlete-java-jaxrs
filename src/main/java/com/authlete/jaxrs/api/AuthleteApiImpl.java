@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response.StatusType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.conf.AuthleteConfiguration;
+import com.authlete.common.dto.ApiResponse;
 import com.authlete.common.dto.AuthorizationFailRequest;
 import com.authlete.common.dto.AuthorizationFailResponse;
 import com.authlete.common.dto.AuthorizationIssueRequest;
@@ -110,6 +111,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String REQUESTABLE_SCOPES_GET_API_PATH    = "/api/client/extension/requestable_scopes/get/%d";
     private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH = "/api/client/extension/requestable_scopes/update/%d";
     private static final String GRANTED_SCOPES_GET_API_PATH        = "/api/client/granted_scopes/get/%d";
+    private static final String GRANTED_SCOPES_DELETE_API_PATH     = "/api/client/granted_scopes/delete/%d";
 
 
     private final WebTarget mTarget;
@@ -983,7 +985,7 @@ public class AuthleteApiImpl implements AuthleteApi
     public GrantedScopesGetResponse getGrantedScopes(long clientId, String subject)
     {
         // Prepare a request body.
-        GrantedScopesGetRequest request = new GrantedScopesGetRequest(subject);
+        GrantedScopesRequest request = new GrantedScopesRequest(subject);
 
         // Call the API.
         return executeApiCall(
@@ -992,12 +994,24 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    private static final class GrantedScopesGetRequest
+    @Override
+    public void deleteGrantedScopes(long clientId, String subject)
+    {
+        // Prepare a request body.
+        GrantedScopesRequest request = new GrantedScopesRequest(subject);
+
+        executeApiCall(
+                new ServicePostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, GRANTED_SCOPES_DELETE_API_PATH, clientId));
+    }
+
+
+    private static final class GrantedScopesRequest
     {
         private String subject;
 
 
-        public GrantedScopesGetRequest(String subject)
+        public GrantedScopesRequest(String subject)
         {
             this.subject = subject;
         }
