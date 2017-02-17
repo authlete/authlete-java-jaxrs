@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+1.8 (2017-02-17)
+----------------
+
+- Updated the version of authlete-java-common to 1.40.
+
+- Implemented `deleteGrantedScopes(long, String)` method of `AuthleteApi`
+  interface.
+
+
 1.7 (2017-02-15)
 ----------------
 
