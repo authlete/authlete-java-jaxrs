@@ -1,6 +1,17 @@
 変更点
 ======
 
+2.0 (2017 年 03 月 18 日)
+-------------------------
+
+- authlete-java-common のバージョンを 2.1 に更新。
+
+- `AuthleteApi` インターフェースの新しいメソッド群を実装。
+    * `deleteClientAuthorization(long, String)`
+    * `getClientAuthorizationList(ClientAuthorizationGetListRequest)`
+    * `updateClientAuthorization(long, ClientAuthorizationUpdateRequest)`
+
+
 1.8 (2017 年 02 月 17 日)
 -------------------------
 

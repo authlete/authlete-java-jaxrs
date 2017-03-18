@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.0 (2017-03-18)
+----------------
+
+- Updated the version of authlete-java-common to 2.1.
+
+- Implemented the following new methods of `AuthleteApi` interface.
+    * `deleteClientAuthorization(long, String)`
+    * `getClientAuthorizationList(ClientAuthorizationGetListRequest)`
+    * `updateClientAuthorization(long, ClientAuthorizationUpdateRequest)`
+
+
 1.8 (2017-02-17)
 ----------------
 
