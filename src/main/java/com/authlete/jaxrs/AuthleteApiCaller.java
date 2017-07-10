@@ -262,7 +262,7 @@ class AuthleteApiCaller
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
             .setTicket(ticket)
             .setSubject(subject)
-            .setAuthTime(authTime / 1000L)
+            .setAuthTime(authTime)
             .setAcr(acr)
             .setProperties(properties)
             .setScopes(scopes)

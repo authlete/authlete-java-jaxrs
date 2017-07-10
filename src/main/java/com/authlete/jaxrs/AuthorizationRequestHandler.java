@@ -240,10 +240,10 @@ public class AuthorizationRequestHandler extends BaseHandler
         }
 
         // The time at which the authentication expires.
-        long expiresAt = authTime + maxAge * 1000;
+        long expiresAtMillis = (authTime + maxAge) * 1000L;
 
         // If the authentication has not expired yet.
-        if (System.currentTimeMillis() < expiresAt)
+        if (System.currentTimeMillis() < expiresAtMillis)
         {
             // OK.
             return;
