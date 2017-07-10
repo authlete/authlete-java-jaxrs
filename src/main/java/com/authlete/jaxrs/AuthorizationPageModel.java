@@ -22,6 +22,7 @@ import java.net.URI;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.Client;
 import com.authlete.common.dto.Scope;
+import com.authlete.common.types.User;
 
 
 /**
@@ -101,6 +102,12 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * Currently logged in user, could be null if no user is logged in
+     */
+    private User user;
+    
+    
+    /**
      * The default constructor with default values.
      */
     public AuthorizationPageModel()
@@ -116,8 +123,9 @@ public class AuthorizationPageModel implements Serializable
      * @param info
      *         An {@link AuthorizationResponse} object, which represents a
      *         response from Authlete's {@code /api/auth/authorization} API.
+     * @param user 
      */
-    public AuthorizationPageModel(AuthorizationResponse info)
+    public AuthorizationPageModel(AuthorizationResponse info, User user)
     {
         Client client = info.getClient();
 
@@ -131,6 +139,9 @@ public class AuthorizationPageModel implements Serializable
         scopes          = info.getScopes();
         loginId         = computeLoginId(info);
         loginIdReadOnly = computeLoginIdReadOnly(info);
+        
+        // current logged in user, could be null
+        this.user       = user;
     }
 
 
@@ -430,6 +441,22 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+
+
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+	/**
      * Get the string representation of the given URI.
      *
      * @param uri
