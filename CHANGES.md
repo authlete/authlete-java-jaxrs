@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.1 (2017-07-10)
+----------------
+
+- Fixed bug where user authentication time was being treated as milliseconds instead of seconds.
+
 2.0 (2017-03-18)
 ----------------
 
