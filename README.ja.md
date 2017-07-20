@@ -79,7 +79,7 @@ JavaDoc
   7. イントロスペクションエンドポイント ([RFC 7662][23])
 
 
-#### 認可エンドポイント
+### 認可エンドポイント
 
 `AuthorizationRequestHandler` はクライアントアプリケーションからの認可リクエストを処理するためのクラスです。
 このクラスには、認可リクエストのリクエストパラメーター群を表す `MultivaluedMap<String, String>`
@@ -140,7 +140,7 @@ Response generateAuthorizationPage(AuthorizationResponse info);
 詳細は [JavaDoc][11] 及びリファレンス実装 ([java-oauth-server][3]) を参照してください。
 
 
-#### 認可決定エンドポイント
+### 認可決定エンドポイント
 
 認可ページは、クライアントアプリケーションの名前や要求されている権限等の、認可リクエストに含まれる情報を表示します。
 ユーザーはその情報を確認し、リクエストを認可するか拒否するかを決めます。
@@ -154,7 +154,7 @@ Response generateAuthorizationPage(AuthorizationResponse info);
 インターフェースの実装を要求します。
 
 
-#### トークンエンドポイント
+### トークンエンドポイント
 
 `TokenRequestHandler` はクライアントアプリケーションからのトークンリクエストを処理するためのクラスです。
 このクラスには、`MultivaluedMap<String, String>` と `String` の二つの引数を取る
@@ -200,7 +200,7 @@ return response;
 ```
 
 
-#### JWK Set エンドポイント
+### JWK Set エンドポイント
 
 OpenID プロバイダーは、クライアントアプリケーションが (1) OpenID
 プロバイダーの署名を検証できるように、また、(2) OpenID
@@ -243,7 +243,7 @@ public class JwksEndpoint extends BaseJwksEndpoint
 ```
 
 
-#### 設定エンドポイント
+### 設定エンドポイント
 
 [OpenID Connect Discovery 1.0][12] をサポートする OpenID プロバイダーは、自身の設定情報を
 JSON フォーマットで返すエンドポイントを提供しなければなりません。フォーマットの詳細は
@@ -297,7 +297,7 @@ _発行者識別子_ は OpenID プロバイダーを識別するための URL �
 (OpenID Connect Core 1.0) の `iss` を参照してください。
 
 
-#### 取り消しエンドポイント
+### 取り消しエンドポイント
 
 認可サーバーは、アクセストークンやリフレッシュトークンを取り消すエンドポイントを公開してもよいです。
 [RFC 7009][18] はそのような取り消しエンドポイントに関する仕様です。
@@ -358,7 +358,7 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
 ```
 
 
-#### ユーザー情報エンドポイント
+### ユーザー情報エンドポイント
 
 ユーザー情報エンドポイントは、ユーザー情報を JSON または [JWT][21]
 フォーマットで返す保護リソースエンドポイントです。 このエンドポイントの動作は
@@ -432,7 +432,7 @@ public class UserInfoEndpoint extends BaseUserInfoEndpoint
 ```
 
 
-#### イントロスペクションエンドポイント
+### イントロスペクションエンドポイント
 
 認可サーバーは、アクセストークンやリフレッシュトークンの情報を取得するエンドポイントを公開してもよいです。
 そのようなエンドポイントはイントロスペクションエンドポイントと呼ばれ、[RFC 7662][23]

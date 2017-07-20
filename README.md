@@ -80,7 +80,7 @@ too.
   7. Introspection endpoint ([RFC 7662][23])
 
 
-#### Authorization Endpoint
+### Authorization Endpoint
 
 `AuthorizationRequestHandler` is a class to process an authorization
 request from a client application. The class has `handle()` method
@@ -147,7 +147,7 @@ See the [JavaDoc][11] and the reference implementation
 ([java-oauth-server][3]) for details.
 
 
-#### Authorization Decision Endpoint
+### Authorization Decision Endpoint
 
 An authorization page displays information about an authorization request
 such as the name of the client application and requested permissions. An
@@ -164,7 +164,7 @@ Also, its constructor requires an implementation of
 of `AuthorizationRequestHandler`.
 
 
-#### Token Endpoint
+### Token Endpoint
 
 `TokenRequestHandler` is a class to process a token request from a client
 application. The class has `handle()` method which takes two arguments of
@@ -213,7 +213,7 @@ return response;
 ```
 
 
-#### JWK Set Endpoint
+### JWK Set Endpoint
 
 An OpenID Provider is required to expose its JSON Web Key Set document
 (JWK Set) so that client application can (1) verify signatures by the
@@ -257,7 +257,7 @@ public class JwksEndpoint extends BaseJwksEndpoint
 ```
 
 
-#### Configuration Endpoint
+### Configuration Endpoint
 
 An OpenID Provider that supports [OpenID Connect Discovery 1.0][12]
 must provide an OpenID Provider configuration endpoint that returns
@@ -314,7 +314,7 @@ in [3. OpenID Provider Meatadata][15] (OpenID Connect Discovery 1.0)
 and `iss` in [2. ID Token][17] (OpenID Connect Core 1.0).
 
 
-#### Revocation Endpoint
+### Revocation Endpoint
 
 An authorization server may expose an endpoint to revoke access tokens
 and/or refresh tokens. [RFC 7009][18] is the specification about such
@@ -379,7 +379,7 @@ public class RevocationEndpoint extends BaseRevocationEndpoint
 ```
 
 
-#### UserInfo Endpoint
+### UserInfo Endpoint
 
 A userinfo endpoint is a protected resource endpoint that returns
 user information in JSON or [JWT][21] format. The behavior of this
@@ -456,7 +456,7 @@ public class UserInfoEndpoint extends BaseUserInfoEndpoint
 ```
 
 
-#### Introspection Endpoint
+### Introspection Endpoint
 
 An authorization server may expose an endpoint to introspect access
 tokens and/or refresh tokens. [RFC 7662][23] is the specification
