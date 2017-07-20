@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
 </dependency>
 ```
 
@@ -77,6 +77,7 @@ too.
   4. Configuration endpoint ([OpenID Connect Discovery 1.0][12])
   5. Revocation endpoint ([RFC 7009][14])
   6. UserInfo endpoint ([OpenID Connect Core 1.0][13])
+  7. Introspection endpoint ([RFC 7662][23])
 
 
 #### Authorization Endpoint
@@ -455,6 +456,75 @@ public class UserInfoEndpoint extends BaseUserInfoEndpoint
 ```
 
 
+#### Introspection Endpoint
+
+An authorization server may expose an endpoint to introspect access
+tokens and/or refresh tokens. [RFC 7662][23] is the specification
+about such an introspection endpoint.
+
+`IntrospectionRequestHandler` is a class to process an introspection
+request. The class has `handle()` method which takes one argument of
+type `MultivaluedMap<String, String>`. The argument represents
+request parameters in the introspection request.
+
+```java
+public Response handle(MultivaluedMap<String, String> parameters)
+    throws WebApplicationException
+```
+
+An implementation of introspection endpoint can delegate the task
+to process an introspection request to the `handle()` method.
+
+```java
+// Request parameters of an introspection request.
+MultivaluedMap<String, String> parameters = ...;
+
+// Implementation of AuthleteApi interface.
+// See https://github.com/authlete/authlete-java-common for details.
+AuthleteApi api = ...;
+
+// Create an instance of IntrospectionRequestHandler class.
+IntrospectionRequestHandler handler = new IntrospectionRequestHandler(api);
+
+// Delegate the task to process the introspection request to the handler.
+Response response = handler.handle(parameters);
+
+// Return the response to the client application.
+return response;
+```
+
+Furthermore, `BaseIntrospectionEndpoint` class makes the task incredibly
+easier. The following is an example of an implementation of an
+introspection endpoint. The `handle()` method of `BaseIntrospectionEndpoint`
+internally uses `IntrospectionRequestHandler`.
+
+```java
+@Path("/api/introspection")
+public class IntrospectionEndpoint extends BaseIntrospectionEndpoint
+{
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(MultivaluedMap<String, String> parameters)
+    {
+        // Note that RFC 7662 requires you implement your own means
+        // to protect the introspection endpoint. Therefore, check
+        // whether the API caller has necessary privileges to access
+        // this endpoint before calling the handle() method.
+
+        // Handle the introspection request.
+        return handle(AuthleteApiFactory.getDefaultApi(), parameters);
+    }
+}
+```
+
+Note that [2.1. Introspection Request][24] in [RFC 7662][23] says
+_"To prevent token scanning attacks, the endpoint MUST also require
+some form of authorization to access this endpoint"_. Therefore,
+the actual implementation of your introspection endpoint must check
+whether the API caller has necessary privileges before calling the
+`handle()` method.
+
+
 Summary
 -------
 
@@ -502,3 +572,5 @@ support@authlete.com
 [20]: http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
 [21]: http://tools.ietf.org/html/rfc7519
 [22]: http://tools.ietf.org/html/rfc6750
+[23]: http://tools.ietf.org/html/rfc7662
+[24]: http://tools.ietf.org/html/rfc7662#section-2.1

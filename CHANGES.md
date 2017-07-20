@@ -1,10 +1,21 @@
 CHANGES
 =======
 
+2.2 (2017-07-21)
+----------------
+
+- Updated the version of authlete-java-common to 2.7.
+
+- Implemented `AuthleteApi.standardIntrospection(StandardIntrospectionRequest)` method.
+
+- Added `BaseIntrospectionEndpoint` class and `IntrospectionRequestHandler` class.
+
+
 2.1 (2017-07-10)
 ----------------
 
 - Fixed bug where user authentication time was being treated as milliseconds instead of seconds.
+
 
 2.0 (2017-03-18)
 ----------------

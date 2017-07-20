@@ -1,6 +1,24 @@
 変更点
 ======
 
+2.2 (2017 年 07 月 21 日)
+-------------------------
+
+- authlete-java-common のバージョンを 2.7 に更新。
+
+- `AuthleteApi.standardIntrospection(StandardIntrospectionRequest)`
+  メソッドを実装。
+
+- `BaseIntrospectionEndpoint` クラスと `IntrospectionRequestHandler`
+  クラスを追加。
+
+
+2.1 (2017 年 07 月 10 日)
+-------------------------
+
+- ユーザー認証時刻を秒ではなくミリ秒で扱っていた不具合を修正。
+
+
 2.0 (2017 年 03 月 18 日)
 -------------------------
 

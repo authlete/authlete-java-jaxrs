@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.0</version>
+    <version>2.2</version>
 </dependency>
 ```
 
@@ -76,6 +76,7 @@ JavaDoc
   4. 設定エンドポイント ([OpenID Connect Discovery 1.0][12])
   5. 取り消しエンドポイント ([RFC 7009][14])
   6. ユーザー情報エンドポイント ([OpenID Connect Core 1.0][13])
+  7. イントロスペクションエンドポイント ([RFC 7662][23])
 
 
 #### 認可エンドポイント
@@ -312,7 +313,7 @@ public Response handle(
     throws WebApplicationException
 ```
 
-取り消しエンドポイントの実装は、取り消しリクエストを処理する処理する作業を
+取り消しエンドポイントの実装は、取り消しリクエストを処理する作業を
 `handle()` メソッドに委譲することができます。
 
 ```java
@@ -431,6 +432,72 @@ public class UserInfoEndpoint extends BaseUserInfoEndpoint
 ```
 
 
+#### イントロスペクションエンドポイント
+
+認可サーバーは、アクセストークンやリフレッシュトークンの情報を取得するエンドポイントを公開してもよいです。
+そのようなエンドポイントはイントロスペクションエンドポイントと呼ばれ、[RFC 7662][23]
+で標準仕様が定義されています。
+
+`IntrospectionRequestHandler` はイントロスペクションリクエストを処理するためのクラスです。
+このクラスには、`MultivaluedMap<String, String>` 型の引数を取る `handle()` メソッドがあります。
+この引数はリクエストパラメーター群を表します。
+
+```java
+public Response handle(MultivaluedMap<String, String> parameters)
+    throws WebApplicationException
+```
+
+イントロスペクションエンドポイントの実装は、イントロスペクションリクエストを処理する作業を
+`handle()` メソッドに委譲することができます。
+
+```java
+// イントロスペクションリクエストのリクエストパラメーター群
+MultivaluedMap<String, String> parameters = ...;
+
+// AuthleteApi インターフェースの実装。
+// 詳細は https://github.com/authlete/authlete-java-common を参照のこと。
+AuthleteApi api = ...;
+
+// IntrospectionRequestHandler クラスのインスタンスを作成する。
+IntrospectionRequestHandler handler = new IntrospectionRequestHandler(api);
+
+// イントロスペクションリクエストの処理をハンドラーに委譲する。
+Response response = handler.handle(parameters);
+
+// クライアントアプリケーションにレスポンスを返す。
+return response;
+```
+
+さらに、`BaseIntrospectionEndpoint` クラスはこの作業を信じられないほど簡単にします。
+下記は、イントロスペクションエンドポイントの実装例です。 `BaseIntrospectionEndpoint` の
+`handle()` メソッドは内部で `IntrospectionRequestHandler` を使用しています。
+
+```java
+@Path("/api/introspection")
+public class IntrospectionEndpoint extends BaseIntrospectionEndpoint
+{
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response post(MultivaluedMap<String, String> parameters)
+    {
+        // RFC 7662 はイントロスペクションエンドポイントを保護することを
+        // 要求しています。ですので、handle() メソッドを呼ぶ前に、API
+        // 呼出し者が必要な権限を持っているか確認してください。
+
+        // イントロスペクションリクエストを処理する。
+        return handle(AuthleteApiFactory.getDefaultApi(), parameters);
+    }
+}
+```
+
+[RFC 7662][23] の [2.1. Introspection Request][24] には _"To prevent
+token scanning attacks, the endpoint MUST also require some form of
+authorization to access this endpoint"_
+（トークンスキャン攻撃を防ぐため、エンドポイントへのアクセスには何らかの権限を要求しなければならない）
+という記述があるので注意してください。このため、イントロスペクションエンドポイントの実際の実装では
+`handle()` メソッドを呼ぶ前に API 呼出し者が必要な権限を持っていることを確認する必要があります。
+
+
 まとめ
 ------
 
@@ -478,3 +545,5 @@ support@authlete.com
 [20]: http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
 [21]: http://tools.ietf.org/html/rfc7519
 [22]: http://tools.ietf.org/html/rfc6750
+[23]: http://tools.ietf.org/html/rfc7662
+[24]: http://tools.ietf.org/html/rfc7662#section-2.1
