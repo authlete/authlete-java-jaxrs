@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2017 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
+import com.authlete.common.dto.StandardIntrospectionRequest;
+import com.authlete.common.dto.StandardIntrospectionResponse;
 import com.authlete.common.dto.TokenFailRequest;
 import com.authlete.common.dto.TokenFailResponse;
 import com.authlete.common.dto.TokenIssueRequest;
@@ -749,6 +751,47 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/auth/introspection", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/introspection/standard} API.
+     */
+    public StandardIntrospectionResponse callStandardIntrospection(MultivaluedMap<String, String> parameters)
+    {
+        String params = URLCoder.formUrlEncode(parameters);
+
+        return callStandardIntrospection(params);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/auth/introspection/standard} API.
+     */
+    private StandardIntrospectionResponse callStandardIntrospection(String parameters)
+    {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
+        // Create a request for Authlete's /api/auth/introspection/standard API.
+        StandardIntrospectionRequest request = new StandardIntrospectionRequest()
+            .setParameters(parameters);
+
+        try
+        {
+            // Call Authlete's /api/auth/introspection/standard API.
+            return mApi.standardIntrospection(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/auth/introspection/standard", e);
         }
     }
 }
