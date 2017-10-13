@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
+import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.dto.ApiResponse;
 import com.authlete.common.dto.AuthorizationFailRequest;
@@ -124,9 +125,14 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH   = "/api/client/authorization/update/%d";
 
 
-    private final WebTarget mTarget;
+    private final String mBaseUrl;
     private final String mServiceOwnerAuth;
     private final String mServiceAuth;
+    private final Settings mSettings;
+    private javax.ws.rs.client.Client mJaxRsClient;
+
+    private Object mConnectionTimeoutLock = new Object();
+    private int mCurrentConnectionTimeout;
 
 
     /**
@@ -147,9 +153,10 @@ public class AuthleteApiImpl implements AuthleteApi
             throw new IllegalArgumentException("configuration is null.");
         }
 
-        mTarget           = ClientBuilder.newClient().target(configuration.getBaseUrl());
+        mBaseUrl          = configuration.getBaseUrl();
         mServiceOwnerAuth = createServiceOwnerCredentials(configuration).format();
         mServiceAuth      = createServiceCredentials(configuration).format();
+        mSettings         = new Settings();
     }
 
 
@@ -174,6 +181,89 @@ public class AuthleteApiImpl implements AuthleteApi
         String secret = configuration.getServiceApiSecret();
 
         return new BasicCredentials(key, secret);
+    }
+
+
+    /**
+     * Get an instance of JAX-RS client.
+     */
+    private javax.ws.rs.client.Client getJaxRsClient()
+    {
+        // If a JAX-RS client has not been created yet.
+        if (mJaxRsClient == null)
+        {
+            // Create a JAX-RS client.
+            javax.ws.rs.client.Client client = createJaxRsClient();
+
+            synchronized (this)
+            {
+                if (mJaxRsClient == null)
+                {
+                    mJaxRsClient = client;
+                }
+            }
+        }
+
+        // Set a connection timeout.
+        setConnectionTimeout(mJaxRsClient);
+
+        return mJaxRsClient;
+    }
+
+
+    /**
+     * Create an instance of JAX-RS client.
+     */
+    private javax.ws.rs.client.Client createJaxRsClient()
+    {
+        return ClientBuilder.newClient();
+    }
+
+
+    /**
+     * Set a connection timeout.
+     */
+    private void setConnectionTimeout(javax.ws.rs.client.Client client)
+    {
+        // The timeout value.
+        int timeout = mSettings.getConnectionTimeout();
+
+        synchronized (mConnectionTimeoutLock)
+        {
+            if (mCurrentConnectionTimeout == timeout)
+            {
+                // The given value is the same as the current one.
+                // Let's skip calling property() method.
+                return;
+            }
+
+            // The given value is different from the current value.
+            // Let's update the configuration.
+            mCurrentConnectionTimeout = timeout;
+        }
+
+        //----------------------------------------------------------------------
+        // Note that there is no standardized way to set the connection timeout.
+        //----------------------------------------------------------------------
+
+        // Convert int to Integer before calling property() method multiple times
+        // in order to reduce the number of object creation by autoboxing.
+        Integer value = Integer.valueOf(timeout);
+
+        // For Jersey
+        client.property("jersey.config.client.connectTimeout", value);
+
+        // For Apache CXF
+        client.property("http.connection.timeout", value);
+
+        // For IBM
+        client.property("com.ibm.ws.jaxrs.client.timeout", value);
+    }
+
+
+    private WebTarget getTarget()
+    {
+        return getJaxRsClient().target(mBaseUrl);
     }
 
 
@@ -287,7 +377,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private <TResponse> TResponse callGetApi(
             String auth, String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        WebTarget webTarget = mTarget.path(path);
+        WebTarget webTarget = getTarget().path(path);
 
         if (params != null)
         {
@@ -320,7 +410,7 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private Void callDeleteApi(String auth, String path)
     {
-        mTarget
+        getTarget()
             .path(path)
             .request()
             .header(AUTHORIZATION, auth)
@@ -344,7 +434,7 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private <TResponse> TResponse callPostApi(String auth, String path, Object request, Class<TResponse> responseClass)
     {
-        return mTarget
+        return getTarget()
                 .path(path)
                 .request(APPLICATION_JSON_TYPE)
                 .header(AUTHORIZATION, auth)
@@ -755,7 +845,7 @@ public class AuthleteApiImpl implements AuthleteApi
      */
     private ServiceListResponse callGetServiceList(int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mTarget.path(SERVICE_GET_LIST_API_PATH);
+        WebTarget target = getTarget().path(SERVICE_GET_LIST_API_PATH);
 
         if (rangeGiven)
         {
@@ -914,7 +1004,7 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private ClientListResponse callGetClientList(String developer, int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mTarget.path(CLIENT_GET_LIST_API_PATH);
+        WebTarget target = getTarget().path(CLIENT_GET_LIST_API_PATH);
 
         if (developer != null)
         {
@@ -1082,5 +1172,12 @@ public class AuthleteApiImpl implements AuthleteApi
         executeApiCall(
                 new ServicePostApiCaller<ApiResponse>(
                         ApiResponse.class, request, CLIENT_AUTHORIZATION_UPDATE_API_PATH, clientId));
+    }
+
+
+    @Override
+    public Settings getSettings()
+    {
+        return mSettings;
     }
 }
