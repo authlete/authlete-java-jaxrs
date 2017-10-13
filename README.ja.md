@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.2</version>
+    <version>2.3</version>
 </dependency>
 ```
 
@@ -498,6 +498,20 @@ authorization to access this endpoint"_
 `handle()` メソッドを呼ぶ前に API 呼出し者が必要な権限を持っていることを確認する必要があります。
 
 
+注意
+----
+
+[authlete-java-common][4] のバージョン 2.9 で追加された `Settings` クラスの
+`setConnectionTimeout(int)` メソッドを使うことで、接続タイムアウトを設定することができます。
+しかし、JAX-RS クライアント API では、接続タイムアウトを設定する方法が標準化されていません。
+このため、JAX-RS クライアント API の実装によっては、`setConnectionTimeout(int)`
+による設定が反映されません。
+
+本ライブラリの `setConnectionTimeout(int)` の[実装][25]は、[Jersey][26] 等、幾つかの
+JAX-RS クライアント実装をサポートしています。
+具体的なサポート状況については[ソースコード][25]を参照してください。
+
+
 まとめ
 ------
 
@@ -547,3 +561,5 @@ support@authlete.com
 [22]: http://tools.ietf.org/html/rfc6750
 [23]: http://tools.ietf.org/html/rfc7662
 [24]: http://tools.ietf.org/html/rfc7662#section-2.1
+[25]: https://github.com/authlete/authlete-java-jaxrs/blob/master/src/main/java/com/authlete/jaxrs/api/AuthleteApiImpl.java
+[26]: https://jersey.github.io/

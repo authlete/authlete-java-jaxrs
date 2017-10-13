@@ -525,6 +525,21 @@ whether the API caller has necessary privileges before calling the
 `handle()` method.
 
 
+Note
+----
+
+You can set a connection timeout value by calling `setConnectionTimeout(int)`
+method of `Settings` class which has been available since the version 2.9
+of [authlete-java-common][4]. However, because JAX-RS Client API has not
+standardized the way to set a connection timeout value yet, depending on
+implementations of JAX-RS Client API, `setConnectionTimeout(int)` may not
+work.
+
+The [implementation][25] of `setConnectionTimeout(int)` in this library
+supports a few JAX-RS Client implementations such as [Jersey][26]. Please
+see the [source code][25] for the exact list of supported implementations.
+
+
 Summary
 -------
 
@@ -574,3 +589,5 @@ support@authlete.com
 [22]: http://tools.ietf.org/html/rfc6750
 [23]: http://tools.ietf.org/html/rfc7662
 [24]: http://tools.ietf.org/html/rfc7662#section-2.1
+[25]: https://github.com/authlete/authlete-java-jaxrs/blob/master/src/main/java/com/authlete/jaxrs/api/AuthleteApiImpl.java
+[26]: https://jersey.github.io/

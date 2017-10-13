@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.3 (2017-10-13)
+----------------
+
+- Updated the version of authlete-java-common to 2.9.
+
+- Implemented `AuthleteApi.getSettings()` method.
+
+
 2.2 (2017-07-21)
 ----------------
 
