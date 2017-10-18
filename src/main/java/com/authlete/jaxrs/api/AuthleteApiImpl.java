@@ -134,6 +134,9 @@ public class AuthleteApiImpl implements AuthleteApi
     private Object mConnectionTimeoutLock = new Object();
     private int mCurrentConnectionTimeout;
 
+    private Object mReadTimeoutLock = new Object();
+    private int mCurrentReadTimeout;
+
 
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
@@ -207,6 +210,9 @@ public class AuthleteApiImpl implements AuthleteApi
         // Set a connection timeout.
         setConnectionTimeout(mJaxRsClient);
 
+        // Set a read timeout.
+        setReadTimeout(mJaxRsClient);
+
         return mJaxRsClient;
     }
 
@@ -243,7 +249,8 @@ public class AuthleteApiImpl implements AuthleteApi
         }
 
         //----------------------------------------------------------------------
-        // Note that there is no standardized way to set the connection timeout.
+        // Note that there was no standardized way to set the connection timeout
+        // before JAX-RS API 2.1 (Java EE 8) (cf. ClientBuilder.connectTimeout).
         //----------------------------------------------------------------------
 
         // Convert int to Integer before calling property() method multiple times
@@ -256,8 +263,50 @@ public class AuthleteApiImpl implements AuthleteApi
         // For Apache CXF
         client.property("http.connection.timeout", value);
 
-        // For IBM
-        client.property("com.ibm.ws.jaxrs.client.timeout", value);
+        // For WebSphere (8.5.5.7+)
+        client.property("com.ibm.ws.jaxrs.client.connection.timeout", value);
+    }
+
+
+    /**
+     * Set a read timeout.
+     */
+    private void setReadTimeout(javax.ws.rs.client.Client client)
+    {
+        // The timeout value.
+        int timeout = mSettings.getReadTimeout();
+
+        synchronized (mReadTimeoutLock)
+        {
+            if (mCurrentReadTimeout == timeout)
+            {
+                // The given value is the same as the current one.
+                // Let's skip calling property() method.
+                return;
+            }
+
+            // The given value is different from the current value.
+            // Let's update the configuration.
+            mCurrentReadTimeout = timeout;
+        }
+
+        //----------------------------------------------------------------------
+        // Note that there was no standardized way to set the read timeout
+        // before JAX-RS API 2.1 (Java EE 8) (cf. ClientBuilder.readTimeout).
+        //----------------------------------------------------------------------
+
+        // Convert int to Integer before calling property() method multiple times
+        // in order to reduce the number of object creation by autoboxing.
+        Integer value = Integer.valueOf(timeout);
+
+        // For Jersey
+        client.property("jersey.config.client.readTimeout", value);
+
+        // For Apache CXF
+        client.property("http.receive.timeout", value);
+
+        // For WebSphere (8.5.5.7+)
+        client.property("com.ibm.ws.jaxrs.client.receive.timeout", value);
     }
 
 
