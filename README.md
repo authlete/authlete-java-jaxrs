@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.2</version>
+    <version>2.4</version>
 </dependency>
 ```
 
@@ -530,14 +530,18 @@ Note
 
 You can set a connection timeout value by calling `setConnectionTimeout(int)`
 method of `Settings` class which has been available since the version 2.9
-of [authlete-java-common][4]. However, because JAX-RS Client API has not
-standardized the way to set a connection timeout value yet, depending on
-implementations of JAX-RS Client API, `setConnectionTimeout(int)` may not
-work.
+of [authlete-java-common][4]. However, because there is no standard way to
+set a connection timeout value before JAX-RS API 2.1 (which is a part of
+Java EE 8), depending on implementations of JAX-RS Client API,
+`setConnectionTimeout(int)` may not work.
 
 The [implementation][25] of `setConnectionTimeout(int)` in this library
 supports a few JAX-RS Client implementations such as [Jersey][26]. Please
 see the [source code][25] for the exact list of supported implementations.
+
+`setReadTimeout(int)` method which has been available since the verison
+2.10 of [authlete-java-common][4] has the same issue as
+`setConnectionTimeout(int)` does.
 
 
 Summary

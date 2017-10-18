@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.3</version>
+    <version>2.4</version>
 </dependency>
 ```
 
@@ -503,13 +503,16 @@ authorization to access this endpoint"_
 
 [authlete-java-common][4] のバージョン 2.9 で追加された `Settings` クラスの
 `setConnectionTimeout(int)` メソッドを使うことで、接続タイムアウトを設定することができます。
-しかし、JAX-RS クライアント API では、接続タイムアウトを設定する方法が標準化されていません。
-このため、JAX-RS クライアント API の実装によっては、`setConnectionTimeout(int)`
-による設定が反映されません。
+しかし、(Java EE 8 の一部である) JAX-RS API 2.1
+策定前は、接続タイムアウトを設定する方法が標準化されていないため、JAX-RS クライアント
+API の実装によっては、`setConnectionTimeout(int)` による設定が反映されません。
 
 本ライブラリの `setConnectionTimeout(int)` の[実装][25]は、[Jersey][26] 等、幾つかの
 JAX-RS クライアント実装をサポートしています。
 具体的なサポート状況については[ソースコード][25]を参照してください。
+
+[authlete-java-common][4] のバージョン 2.10 で追加された `setReadTimeout(int)`
+メソッドも `setConnectionTimeout(int)` メソッドと同じ問題を抱えています。
 
 
 まとめ

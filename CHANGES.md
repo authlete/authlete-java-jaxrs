@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.4 (2017-10-18)
+----------------
+
+- Updated the version of authlete-java-common to 2.10.
+
+- Supported `Settings.setReadTimeout(int)` method.
+
+
 2.3 (2017-10-13)
 ----------------
 
