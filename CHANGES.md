@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.5 (2017-11-16)
+----------------
+
+- Updated the version of authlete-java-common to 2.11.
+
+- Implemented new `AuthleteApi` methods added by authlete-java-common-2.11.
+
+
 2.4 (2017-10-18)
 ----------------
 
