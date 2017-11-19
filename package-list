@@ -1,3 +1,4 @@
 com.authlete.jaxrs
 com.authlete.jaxrs.api
 com.authlete.jaxrs.spi
+com.authlete.jaxrs.util
