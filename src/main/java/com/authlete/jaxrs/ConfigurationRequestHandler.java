@@ -120,7 +120,7 @@ public class ConfigurationRequestHandler extends BaseHandler
     {
         try
         {
-            // Get Authlete's /api/service/configuration API.
+            // Call Authlete's /api/service/configuration API.
             // The API returns a JSON that complies with
             // OpenID Connect Discovery 1.0.
             String json = getApiCaller().callServiceConfiguration(pretty);
