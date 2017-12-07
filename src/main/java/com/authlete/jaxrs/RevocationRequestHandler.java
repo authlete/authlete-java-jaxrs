@@ -143,7 +143,7 @@ public class RevocationRequestHandler extends BaseHandler
 
             case OK:
                 // 200 OK
-                return ResponseUtil.ok(content);
+                return ResponseUtil.javaScript(content);
 
             default:
                 // This never happens.

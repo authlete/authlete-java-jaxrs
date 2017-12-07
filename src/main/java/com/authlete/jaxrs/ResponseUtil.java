@@ -53,6 +53,13 @@ class ResponseUtil
 
 
     /**
+     * {@code "application/javascript;charset=UTF-8"}
+     */
+    private static final MediaType MEDIA_TYPE_JAVASCRIPT =
+            new MediaType("application", "javascript", "UTF-8");
+
+
+    /**
      * {@code "Cache-Control: no-store"}
      */
     private static final CacheControl CACHE_CONTROL;
@@ -95,6 +102,17 @@ class ResponseUtil
     public static Response form(String entity)
     {
         return builder(Status.OK, entity, MEDIA_TYPE_HTML).build();
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/javascript;charset=UTF-8"}.
+     */
+    public static Response javaScript(String entity)
+    {
+        return builder(Status.OK, entity, MEDIA_TYPE_JAVASCRIPT).build();
     }
 
 
