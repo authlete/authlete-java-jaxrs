@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+2.7 (2017-12-08)
+----------------
+
+- Fixed a bug in `RevocationRequestHandler`. When the `action` response
+  parameter in a response from `/api/auth/revocation` is `OK`,
+  Content-Type of the response returned from the revocation endpoint to
+  the client application should be `application/javascript` instead of
+  `application/json`.
+
+
 2.6 (2017-11-20)
 ----------------
 

@@ -1,6 +1,16 @@
 変更点
 ======
 
+2.7 (2017 年 12 月 08 日)
+-------------------------
+
+- `RevocationRequestHandler` 内の不具合を修正。 `/api/auth/revocation` API
+  からのレスポンスに含まれる `action` レスポンスパラメーターの値が `OK` の場合、
+  リボケーションエンドポイントからクライアントアプリケーションに返すレスポンスの
+  Content-Type は `application/json` ではなく `application/javascript`
+  であるべき。
+
+
 2.6 (2017 年 11 月 20 日)
 -------------------------
 
