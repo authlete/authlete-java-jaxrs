@@ -736,13 +736,14 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/introspection} API.
      */
-    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject)
+    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject, String clientCertificate)
     {
         // Create a request for /api/auth/introspection API.
         IntrospectionRequest request = new IntrospectionRequest()
             .setToken(accessToken)
             .setScopes(scopes)
-            .setSubject(subject);
+            .setSubject(subject)
+            .setClientCertificate(clientCertificate);
 
         try
         {

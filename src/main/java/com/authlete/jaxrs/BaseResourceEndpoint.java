@@ -95,7 +95,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
      */
     public AccessTokenInfo validateAccessToken(AuthleteApi api, String accessToken) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, null, null);
+        return validateAccessToken(api, accessToken, null, null, null);
     }
 
 
@@ -129,7 +129,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
     public AccessTokenInfo validateAccessToken(
             AuthleteApi api, String accessToken, String[] requiredScopes) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, requiredScopes, null);
+        return validateAccessToken(api, accessToken, requiredScopes, null, null);
     }
 
 
@@ -168,6 +168,11 @@ public class BaseResourceEndpoint extends BaseEndpoint
      * @param requiredSubject
      *         Subject (= user's unique identifier) that must be associated
      *         with the access token. {@code null} is okay.
+     *         
+     * @param clientCertificate 
+     *         TLS Certificate of the client presented during a call to
+     *         the resource server, used with TLS-bound access tokens. 
+     *         Can be {@code null} if no certificate is presented.
      *
      * @return
      *         Information about the access token.
@@ -183,13 +188,13 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *         </ol>
      */
     public AccessTokenInfo validateAccessToken(
-            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject) throws WebApplicationException
+            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate) throws WebApplicationException
     {
         try
         {
             // Validate the access token and obtain the information about it.
             return new AccessTokenValidator(api)
-                    .validate(accessToken, requiredScopes, requiredSubject);
+                    .validate(accessToken, requiredScopes, requiredSubject, clientCertificate);
         }
         catch (WebApplicationException e)
         {
