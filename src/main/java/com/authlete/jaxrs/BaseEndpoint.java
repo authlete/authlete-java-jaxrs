@@ -17,15 +17,8 @@
 package com.authlete.jaxrs;
 
 
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
-
-import org.apache.commons.codec.binary.Base64;
 
 
 /**
@@ -37,20 +30,10 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class BaseEndpoint
 {
-    /** 
-     * Headers to check for certificate path with proxy-forwarded certificate 
-     * information; the first entry is the client's certificate itself 
-     */
-    private String[] clientCertificatePathHeaders = {
-            "X-Ssl-Cert", // the client's certificate 
-            "X-Ssl-Cert-Chain-1", "X-Ssl-Cert-Chain-2", "X-Ssl-Cert-Chain-3", "X-Ssl-Cert-Chain-4" // the intermediate certificate path, not including the client's certificate or root
-    };
     
-    /*
-     * Used for handling PEM format certificates.
-     */
-    private Base64 base64 = new Base64(Base64.PEM_CHUNK_SIZE, "\n".getBytes());
-    
+    private HeaderClientCertificateExtractor headerExtractor;
+    private HttpsRequestClientCertificateExtractor directExtractor;
+
     /**
      * Called when the internal request handler raises an exception.
      * The default implementation of this method calls {@code
@@ -65,64 +48,66 @@ public class BaseEndpoint
         exception.printStackTrace();
     }
 
+    /**
+     * Utility method for extracting a single client certificate from the default
+     * certificate extractors. First checks the request itself for an attached
+     * certificate using {@link javax.servlet.request.X509Certificate}, then
+     * checks the incoming request headers for reverse-proxied certificates
+     * using default headers.
+     * 
+     * @see ClientCertificateExtractor
+     * 
+     * @see 
+     * 
+     * @param request
+     *          The incoming HTTP request to search for the client's certificate
+     *          
+     * @return
+     *          The client's mutual TLS certificate.
+     */
     protected String[] extractClientCertificateChain(HttpServletRequest request)
     {
-        // try to get the certificates from the servlet context directly
-        X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+        String[] chain = getHttpsRequestClientCertificateExtractor().extractClientCertificateChain(request);
         
-        if (certs == null || certs.length == 0)
+        if (chain == null || chain.length < 1)
         {
-            // we didn't find any certificates in the servlet request, try extracting them from the headers instead
-            List<String> headerCerts = new ArrayList<>();
-            
-            for (String headerName : clientCertificatePathHeaders)
-            {
-                String header = request.getHeader(headerName);
-                if (header != null)
-                {
-                    headerCerts.add(header);
-                }
-            }
-
-            if (headerCerts.isEmpty())
-            {
-                return null;
-            }
-            else
-            {
-                return headerCerts.toArray(new String[] {});
-            }
+            return getHeaderClientCertificateExtractor().extractClientCertificateChain(request);
         }
-        else 
+        else
         {
-            String[] pemEncoded = new String[certs.length];
-            
-            try
-            {
-                for (int i = 0; i < certs.length; i++)
-                {
-                    // encode each certificate in PEM format
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("-----BEGIN CERTIFICATE-----\n");
-                    sb.append(base64.encode(certs[i].getEncoded()));
-                    sb.append("\n-----END CERTIFICATE-----\n");
-
-                    pemEncoded[i] = sb.toString();
-                    
-                }
-            } catch (CertificateEncodingException e)
-            {
-                // TODO What should be done with this error?
-                e.printStackTrace();
-                return null;
-            }
-            
-            return pemEncoded;
-            
+            return chain;
         }
-        
+    }
+
+    private ClientCertificateExtractor getHttpsRequestClientCertificateExtractor()
+    {
+        if (directExtractor == null)
+        {
+            directExtractor = new HttpsRequestClientCertificateExtractor();
+        }
+        return directExtractor;
     }
     
+    private ClientCertificateExtractor getHeaderClientCertificateExtractor()
+    {
+        if (headerExtractor == null)
+        {
+            headerExtractor = new HeaderClientCertificateExtractor();
+        }
+        return headerExtractor;
+    }
+
+    /**
+     * Utility method for extracting a single client certificate from the default
+     * certificate extractors. Calls extractClientCertificateChain and returns the
+     * first entry in the array, if any, null otherwise.
+     * 
+     * @param request
+     *          The incoming HTTP request to search for the client's certificate
+     *          
+     * @return
+     *          The client's mutual TLS certificate.
+     */
     protected String extractClientCertificate(HttpServletRequest request)
     {
         String[] certs = extractClientCertificateChain(request);
