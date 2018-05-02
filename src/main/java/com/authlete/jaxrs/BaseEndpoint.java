@@ -17,6 +17,9 @@
 package com.authlete.jaxrs;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 
@@ -31,8 +34,10 @@ import javax.ws.rs.WebApplicationException;
 public class BaseEndpoint
 {
     
-    private HeaderClientCertificateExtractor headerExtractor;
-    private HttpsRequestClientCertificateExtractor directExtractor;
+    private List<ClientCertificateExtractor> clientCertificateExtractors = Arrays.asList(
+            new HttpsRequestClientCertificateExtractor(),
+            new HeaderClientCertificateExtractor()
+            );
 
     /**
      * Called when the internal request handler raises an exception.
@@ -67,34 +72,16 @@ public class BaseEndpoint
      */
     protected String[] extractClientCertificateChain(HttpServletRequest request)
     {
-        String[] chain = getHttpsRequestClientCertificateExtractor().extractClientCertificateChain(request);
+        for (ClientCertificateExtractor extractor : clientCertificateExtractors)
+        {
+            String[] chain = extractor.extractClientCertificateChain(request);
+            if (chain != null && chain.length > 0)
+            {
+                return chain;
+            }
+        }
         
-        if (chain == null || chain.length < 1)
-        {
-            return getHeaderClientCertificateExtractor().extractClientCertificateChain(request);
-        }
-        else
-        {
-            return chain;
-        }
-    }
-
-    private ClientCertificateExtractor getHttpsRequestClientCertificateExtractor()
-    {
-        if (directExtractor == null)
-        {
-            directExtractor = new HttpsRequestClientCertificateExtractor();
-        }
-        return directExtractor;
-    }
-    
-    private ClientCertificateExtractor getHeaderClientCertificateExtractor()
-    {
-        if (headerExtractor == null)
-        {
-            headerExtractor = new HeaderClientCertificateExtractor();
-        }
-        return headerExtractor;
+        return null;
     }
 
     /**
