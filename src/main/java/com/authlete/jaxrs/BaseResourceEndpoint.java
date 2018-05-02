@@ -78,7 +78,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
     /**
      * Validate an access token. This method is an alias of {@link
      * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, null, null)</code>.
+     * validate}<code>(api, accessToken, null, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -102,7 +102,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
     /**
      * Validate an access token. This method is an alias of {@link
      * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, requiredScopes, null)</code>.
+     * validate}<code>(api, accessToken, requiredScopes, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -130,6 +130,44 @@ public class BaseResourceEndpoint extends BaseEndpoint
             AuthleteApi api, String accessToken, String[] requiredScopes) throws WebApplicationException
     {
         return validateAccessToken(api, accessToken, requiredScopes, null, null);
+    }
+
+
+    /**
+     * Validate an access token. This method is an alias of {@link
+     * #validateAccessToken(AuthleteApi, String, String[], String)
+     * validate}<code>(api, accessToken, requiredScopes, requiredSubject, null)</code>.
+     *
+     * @param api
+     *         Implementation of {@link AuthleteApi} interface.
+     *
+     * @param accessToken
+     *         An access token to validate.
+     *
+     * @param requiredScopes
+     *         Scopes that must be associated with the access token.
+     *         {@code null} is okay.
+     *
+     * @param requiredSubject
+     *         Subject (= user's unique identifier) that must be associated
+     *         with the access token. {@code null} is okay.
+     *         
+     * @return
+     *         Information about the access token.
+     *
+     * @throws WebApplicationException
+     *         The access token is invalid. To be concrete, one or more of
+     *         the following conditions meet.
+     *         <ol>
+     *           <li>The access token does not exist.
+     *           <li>The access token has expired.
+     *           <li>The access token does not cover the required scopes.
+     *         </ol>
+     */
+    public AccessTokenInfo validateAccessToken(
+            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject) throws WebApplicationException
+    {
+        return validateAccessToken(api, accessToken, requiredScopes, requiredSubject, null);
     }
 
 
