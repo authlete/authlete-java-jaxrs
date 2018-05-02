@@ -1,6 +1,7 @@
 package com.authlete.jaxrs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +25,10 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
      * Headers to check for certificate path with proxy-forwarded certificate 
      * information; the first entry is the client's certificate itself 
      */
-    private String[] clientCertificateChainHeaders = {
+    private List<String> clientCertificateChainHeaders = Arrays.asList(
             "X-Ssl-Cert", // the client's certificate 
             "X-Ssl-Cert-Chain-1", "X-Ssl-Cert-Chain-2", "X-Ssl-Cert-Chain-3", "X-Ssl-Cert-Chain-4" // the intermediate certificate path, not including the client's certificate or root
-    };
+    );
     
     /* (non-Javadoc)
      * @see com.authlete.jaxrs.ClientCertificateExtractor#extractClientCertificateChain(javax.servlet.http.HttpServletRequest)
@@ -62,7 +63,7 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
      * the list is header for the client's own certificate. Each additional header in the list
      * will be checked and added to the resulting output.
      */
-    public String[] getClientCertificateChainHeaders()
+    public List<String> getClientCertificateChainHeaders()
     {
         return clientCertificateChainHeaders;
     }
@@ -72,7 +73,7 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
      * the list is header for the client's own certificate. Each additional header in the list
      * will be checked and added to the resulting output.
      */
-    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(String[] clientCertificateChainHeaders)
+    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(List<String> clientCertificateChainHeaders)
     {
         this.clientCertificateChainHeaders = clientCertificateChainHeaders;
         
