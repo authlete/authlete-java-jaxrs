@@ -77,8 +77,8 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, null, null)</code>.
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, null, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -95,14 +95,14 @@ public class BaseResourceEndpoint extends BaseEndpoint
      */
     public AccessTokenInfo validateAccessToken(AuthleteApi api, String accessToken) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, null, null);
+        return validateAccessToken(api, accessToken, null, null, null);
     }
 
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, requiredScopes, null)</code>.
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, requiredScopes, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -129,7 +129,45 @@ public class BaseResourceEndpoint extends BaseEndpoint
     public AccessTokenInfo validateAccessToken(
             AuthleteApi api, String accessToken, String[] requiredScopes) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, requiredScopes, null);
+        return validateAccessToken(api, accessToken, requiredScopes, null, null);
+    }
+
+
+    /**
+     * Validate an access token. This method is an alias of {@link
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, requiredScopes, requiredSubject, null)</code>.
+     *
+     * @param api
+     *         Implementation of {@link AuthleteApi} interface.
+     *
+     * @param accessToken
+     *         An access token to validate.
+     *
+     * @param requiredScopes
+     *         Scopes that must be associated with the access token.
+     *         {@code null} is okay.
+     *
+     * @param requiredSubject
+     *         Subject (= user's unique identifier) that must be associated
+     *         with the access token. {@code null} is okay.
+     *         
+     * @return
+     *         Information about the access token.
+     *
+     * @throws WebApplicationException
+     *         The access token is invalid. To be concrete, one or more of
+     *         the following conditions meet.
+     *         <ol>
+     *           <li>The access token does not exist.
+     *           <li>The access token has expired.
+     *           <li>The access token does not cover the required scopes.
+     *         </ol>
+     */
+    public AccessTokenInfo validateAccessToken(
+            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject) throws WebApplicationException
+    {
+        return validateAccessToken(api, accessToken, requiredScopes, requiredSubject, null);
     }
 
 
@@ -138,7 +176,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link AccessTokenValidator} instance and
-     * calls its {@link AccessTokenValidator#validate(String, String[], String)
+     * calls its {@link AccessTokenValidator#validate(String, String[], String, String)
      * validate()} method. Then, this method uses the value returned from the
      * {@code validate()} method as a response from this method.
      * </p>
@@ -168,6 +206,11 @@ public class BaseResourceEndpoint extends BaseEndpoint
      * @param requiredSubject
      *         Subject (= user's unique identifier) that must be associated
      *         with the access token. {@code null} is okay.
+     *         
+     * @param clientCertificate 
+     *         TLS Certificate of the client presented during a call to
+     *         the resource server, used with TLS-bound access tokens. 
+     *         Can be {@code null} if no certificate is presented.
      *
      * @return
      *         Information about the access token.
@@ -183,13 +226,13 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *         </ol>
      */
     public AccessTokenInfo validateAccessToken(
-            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject) throws WebApplicationException
+            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate) throws WebApplicationException
     {
         try
         {
             // Validate the access token and obtain the information about it.
             return new AccessTokenValidator(api)
-                    .validate(accessToken, requiredScopes, requiredSubject);
+                    .validate(accessToken, requiredScopes, requiredSubject, clientCertificate);
         }
         catch (WebApplicationException e)
         {

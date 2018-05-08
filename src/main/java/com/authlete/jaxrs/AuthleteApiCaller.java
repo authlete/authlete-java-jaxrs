@@ -339,11 +339,11 @@ class AuthleteApiCaller
      */
     public TokenResponse callToken(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
-            Property[] properties)
+            Property[] properties, String clientCertificate, String[] clientCertificatePath)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callToken(params, clientId, clientSecret, properties);
+        return callToken(params, clientId, clientSecret, properties, clientCertificate, clientCertificatePath);
     }
 
 
@@ -351,7 +351,7 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/auth/token} API.
      */
     private TokenResponse callToken(
-            String parameters, String clientId, String clientSecret, Property[] properties)
+            String parameters, String clientId, String clientSecret, Property[] properties, String clientCertificate, String[] clientCertificatePath)
     {
         if (parameters == null)
         {
@@ -367,6 +367,8 @@ class AuthleteApiCaller
             .setClientId(clientId)
             .setClientSecret(clientSecret)
             .setProperties(properties)
+            .setClientCertificate(clientCertificate)
+            .setClientCertificatePath(clientCertificatePath)
             ;
 
         try
@@ -734,13 +736,14 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/introspection} API.
      */
-    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject)
+    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject, String clientCertificate)
     {
         // Create a request for /api/auth/introspection API.
         IntrospectionRequest request = new IntrospectionRequest()
             .setToken(accessToken)
             .setScopes(scopes)
-            .setSubject(subject);
+            .setSubject(subject)
+            .setClientCertificate(clientCertificate);
 
         try
         {

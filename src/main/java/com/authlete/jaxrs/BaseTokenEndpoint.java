@@ -70,13 +70,17 @@ public class BaseTokenEndpoint extends BaseEndpoint
      *
      * @param authorization
      *         The value of {@code Authorization} header of the token request.
+     *         
+     * @param clientCertificatePath
+     *         The certificate path used in mutual TLS authentication, in PEM format. The
+     *         client's own certificate is the first in this array. Can be {@code null}.
      *
      * @return
      *         A response that should be returned to the client application.
      */
     public Response handle(
             AuthleteApi api, TokenRequestHandlerSpi spi,
-            MultivaluedMap<String, String> parameters, String authorization)
+            MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath)
     {
         try
         {
@@ -84,7 +88,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
             TokenRequestHandler handler = new TokenRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization);
+            return handler.handle(parameters, authorization, clientCertificatePath);
         }
         catch (WebApplicationException e)
         {
