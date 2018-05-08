@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Authlete, Inc.
+ * Copyright (C) 2014-2018 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -832,11 +832,22 @@ public class AuthleteApiImpl implements AuthleteApi
      * Call {@code /api/service/create} API.
      */
     @Override
-    public Service createServie(Service service) throws AuthleteApiException
+    public Service createService(Service service) throws AuthleteApiException
     {
         return executeApiCall(
                 new ServiceOwnerPostApiCaller<Service>(
                         Service.class, service, SERVICE_CREATE_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/service/create} API.
+     */
+    @Override
+    @Deprecated
+    public Service createServie(Service service) throws AuthleteApiException
+    {
+        return createService(service);
     }
 
 
