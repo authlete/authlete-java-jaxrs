@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.7</version>
+    <version>2.8</version>
 </dependency>
 ```
 
@@ -562,11 +562,15 @@ See Also
 - [authlete-java-common][4] - Authlete Common Library for Java
 
 
-Support
+Contact
 -------
 
-[Authlete, Inc.][7]<br/>
-support@authlete.com
+| Purpose   | Email Address        |
+|:----------|:---------------------|
+| General   | info@authlete.com    |
+| Sales     | sales@authlete.com   |
+| PR        | pr@authlete.com      |
+| Technical | support@authlete.com |
 
 
 [1]: http://tools.ietf.org/html/rfc6749

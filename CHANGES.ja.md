@@ -1,6 +1,34 @@
 変更点
 ======
 
+2.8 (2018 年 05 月 09 日)
+-------------------------
+
+- `BaseEndpoint` クラス
+    * `onError(WebApplicationException)` メソッドの実装を若干変更。古い実装では
+      `exception.printStackTrace()` を呼んでいたが、新しい実装は何もしない。
+    * `extractClientCertificateChain(HttpServletRequest)` メソッドを追加。
+    * `extractClientCertificate(HttpServletRequest)` メソッドを追加。
+
+- `BaseResourceEndpoint` クラス
+    * `String clientCertificate` を 5 番目の引数として取る `validateAccessToken()`
+      メソッドのバリアントを追加。
+
+- `BaseTokenEndpoint` クラス
+    * 5 つの引数を取る `handle()` メソッドのバリアントを追加。
+
+- `TokenRequestHandler` クラス
+    * 3 つの引数を取る `handle()` メソッドのバリアントを追加。
+
+- 新しい部品
+    * `ClientCertificateExtractor` インターフェース
+    * `HeaderClientCertificateExtractor` クラス
+    * `HttpsRequestClientCertificateExtractor` クラス
+
+- authlete-java-common のバージョンを 2.18 に更新し、 `AuthleteApiImpl`
+　もそれに合わせて更新。
+
+
 2.7 (2017 年 12 月 08 日)
 -------------------------
 

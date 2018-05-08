@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.7</version>
+    <version>2.8</version>
 </dependency>
 ```
 
@@ -533,11 +533,15 @@ JAX-RS クライアント実装をサポートしています。
 - [authlete-java-common][4] - Java 用 Authlete 共通ライブラリ
 
 
-サポート
---------
+コンタクト
+----------
 
-[Authlete, Inc.][7]<br/>
-support@authlete.com
+| 目的 | メールアドレス       |
+|:-----|:---------------------|
+| 一般 | info@authlete.com    |
+| 営業 | sales@authlete.com   |
+| 広報 | pr@authlete.com      |
+| 技術 | support@authlete.com |
 
 
 [1]: http://tools.ietf.org/html/rfc6749

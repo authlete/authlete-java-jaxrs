@@ -1,6 +1,35 @@
 CHANGES
 =======
 
+2.8 (2018-05-09)
+----------------
+
+- `BaseEndpoint` class
+    * Slightly changed the behavior of `onError(WebApplicationException)`.
+      The old implementation called `exception.printStackTrace()`, but the new
+      implementation does nothing.
+    * Added `extractClientCertificateChain(HttpServletRequest)` method.
+    * Added `extractClientCertificate(HttpServletRequest)` method.
+
+- `BaseResourceEndpoint` class
+    * Added a variant of `validateAccessToken()` method which accepts
+      `String clientCertificate` as the 5th parameter.
+
+- `BaseTokenEndpoint` class
+    * Added a variant of `handle()` method which accepts 5 arguments.
+
+- `TokenRequestHandler` class
+    * Added a variant of `handle()` method which accepts 3 arguments.
+
+- New parts
+    * `ClientCertificateExtractor` interface
+    * `HeaderClientCertificateExtractor` class
+    * `HttpsRequestClientCertificateExtractor` class
+
+- Updated the version of authlete-java-common to 2.18 and updated
+  `AuthleteApiImpl` accordingly.
+
+
 2.7 (2017-12-08)
 ----------------
 
