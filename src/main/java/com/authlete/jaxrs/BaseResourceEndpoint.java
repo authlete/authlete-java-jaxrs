@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Authlete, Inc.
+ * Copyright (C) 2016-2018 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
      * @param requiredSubject
      *         Subject (= user's unique identifier) that must be associated
      *         with the access token. {@code null} is okay.
-     *         
+     *
      * @return
      *         Information about the access token.
      *
@@ -206,10 +206,10 @@ public class BaseResourceEndpoint extends BaseEndpoint
      * @param requiredSubject
      *         Subject (= user's unique identifier) that must be associated
      *         with the access token. {@code null} is okay.
-     *         
-     * @param clientCertificate 
+     *
+     * @param clientCertificate
      *         TLS Certificate of the client presented during a call to
-     *         the resource server, used with TLS-bound access tokens. 
+     *         the resource server, used with TLS-bound access tokens.
      *         Can be {@code null} if no certificate is presented.
      *
      * @return

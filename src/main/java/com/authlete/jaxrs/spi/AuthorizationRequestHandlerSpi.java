@@ -136,7 +136,7 @@ public interface AuthorizationRequestHandlerSpi
      * </blockquote>
      *
      * @return
-     *         The time when the end-user was authenticated in milliseconds
+     *         The time when the end-user was authenticated in seconds
      *         since Unix epoch (1970-01-01).
      */
     long getUserAuthenticatedAt();
@@ -189,8 +189,7 @@ public interface AuthorizationRequestHandlerSpi
      *
      * <p>
      * The value returned by this method has an important meaning only
-     * when an authorization requests {@code acr} claim as an essential
-     * claim. Practically speaking, it is unlikely to happen. See "<a
+     * when {@code acr} claim is requested as an essential claim. See "<a
      * href="http://openid.net/specs/openid-connect-core-1_0.html#acrSemantics"
      * >5.5.1.1. Requesting the "acr" Claim</a>" in <a href=
      * "http://openid.net/specs/openid-connect-core-1_0.html">OpenID
