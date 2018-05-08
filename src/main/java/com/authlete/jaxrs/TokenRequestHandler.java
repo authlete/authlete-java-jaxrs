@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2018 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import java.util.Arrays;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -79,6 +78,36 @@ public class TokenRequestHandler extends BaseHandler
 
 
     /**
+     * Handle a token request.
+     *
+     * This method is an alias of the {@link #handle(MultivaluedMap, String,
+     * String[]) handle()} method which accepts 3 arguments.
+     *
+     * @param parameters
+     *         Request parameters of a token request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header in the token request.
+     *         A client application may embed its pair of client ID and client
+     *         secret in a token request using <a href=
+     *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
+     *         Authentication</a>.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization) throws WebApplicationException
+    {
+        return handle(parameters, authorization, null);
+    }
+
+
+    /**
      * Handle a token request to a <a href="https://tools.ietf.org/html/rfc6749#section-3.2"
      * >token endpoint</a> of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749"
      * >RFC 6749</a>).
@@ -92,7 +121,7 @@ public class TokenRequestHandler extends BaseHandler
      *         secret in a token request using <a href=
      *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
      *         Authentication</a>.
-     *         
+     *
      * @param clientCertificatePath
      *         The path of the client's certificate, each in PEM format. The first
      *         item in the array is the client's certificate itself. May be {@code null} if
@@ -104,8 +133,12 @@ public class TokenRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *         An error occurred.
+     *
+     * @since 2.8
      */
-    public Response handle(MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath) throws WebApplicationException
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization,
+            String[] clientCertificatePath) throws WebApplicationException
     {
         // Convert the value of Authorization header (credentials of
         // the client application), if any, into BasicCredentials.
@@ -136,7 +169,9 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Process the parameters of the token request.
      */
-    private Response process(MultivaluedMap<String, String> parameters, String clientId, String clientSecret, String[] clientCertificatePath)
+    private Response process(
+            MultivaluedMap<String, String> parameters, String clientId,
+            String clientSecret, String[] clientCertificatePath)
     {
         // Extra properties to associate with an access token.
         Property[] properties = mSpi.getProperties();
@@ -144,17 +179,21 @@ public class TokenRequestHandler extends BaseHandler
         String clientCertificate = null;
         if (clientCertificatePath != null && clientCertificatePath.length > 0)
         {
-            clientCertificate = clientCertificatePath[0]; // the first one is the client's certificate
-            
+            // The first one is the client's certificate.
+            clientCertificate = clientCertificatePath[0];
+
             // if we have more in the path, pass them along separately without the first one
             if (clientCertificatePath.length > 1)
             {
-                clientCertificatePath = Arrays.copyOfRange(clientCertificatePath, 1, clientCertificatePath.length);
+                clientCertificatePath = Arrays.copyOfRange(
+                        clientCertificatePath, 1, clientCertificatePath.length);
             }
         }
-        
+
         // Call Authlete's /api/auth/token API.
-        TokenResponse response = getApiCaller().callToken(parameters, clientId, clientSecret, properties, clientCertificate, clientCertificatePath);
+        TokenResponse response = getApiCaller().callToken(
+                parameters, clientId, clientSecret, properties,
+                clientCertificate, clientCertificatePath);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
