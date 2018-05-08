@@ -71,12 +71,9 @@ public class BaseTokenEndpoint extends BaseEndpoint
      * @param authorization
      *         The value of {@code Authorization} header of the token request.
      *         
-     * @param clientCertificate
-     *         The client certificate used in mutual TLS authentication, in PEM format.
-     *          
      * @param clientCertificatePath
-     *         The certificate path used in mutual TLS authentication, in PEM format, not
-     *         including the client's certificate. 
+     *         The certificate path used in mutual TLS authentication, in PEM format. The
+     *         client's own certificate is the first in this array. Can be {@code null}.
      *
      * @return
      *         A response that should be returned to the client application.

@@ -77,8 +77,8 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, null, null, null)</code>.
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, null, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -101,8 +101,8 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, requiredScopes, null, null)</code>.
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, requiredScopes, null, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -135,8 +135,8 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String)
-     * validate}<code>(api, accessToken, requiredScopes, requiredSubject, null)</code>.
+     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * validateAccessToken}<code>(api, accessToken, requiredScopes, requiredSubject, null)</code>.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -176,7 +176,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link AccessTokenValidator} instance and
-     * calls its {@link AccessTokenValidator#validate(String, String[], String)
+     * calls its {@link AccessTokenValidator#validate(String, String[], String, String)
      * validate()} method. Then, this method uses the value returned from the
      * {@code validate()} method as a response from this method.
      * </p>

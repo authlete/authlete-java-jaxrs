@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 
  * Extracts the client certificate from headers defined by the {@code 
- * clientCertificatePathHeaders} member list. The first element in the list is 
+ * clientCertificateChainHeaders} member list. The first element in the list is 
  * header for the client's own certificate. Each additional header in the list
  * will be checked and added to the resulting output.
  * 

@@ -93,14 +93,9 @@ public class TokenRequestHandler extends BaseHandler
      *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
      *         Authentication</a>.
      *         
-     * @param clientCertificate 
-     *         The value of the client's mutual TLS certificate, in PEM format.
-     *         May be {@code null} if the client did not send a certificate.
-     *          
      * @param clientCertificatePath
-     *         The path of the client's certificate, each in PEM format. Does not
-     *         include the client's certificate itself, this is passed in the
-     *         {@code clientCertificate} parameter. May be {@code null} if
+     *         The path of the client's certificate, each in PEM format. The first
+     *         item in the array is the client's certificate itself. May be {@code null} if
      *         the client did not send a certificate or path.
      *
      * @return
