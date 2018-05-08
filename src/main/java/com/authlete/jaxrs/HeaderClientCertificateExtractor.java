@@ -1,43 +1,61 @@
+/*
+ * Copyright (C) 2018 Authlete, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the
+ * License.
+ */
 package com.authlete.jaxrs;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
+
 /**
- * 
- * Extracts the client certificate from headers defined by the {@code 
- * clientCertificateChainHeaders} member list. The first element in the list is 
+ *
+ * Extracts the client certificate from headers defined by the {@code
+ * clientCertificateChainHeaders} member list. The first element in the list is
  * header for the client's own certificate. Each additional header in the list
  * will be checked and added to the resulting output.
- * 
+ *
  * @author jricher
  *
  * @since 2.8
- *
  */
 public class HeaderClientCertificateExtractor implements ClientCertificateExtractor
 {
 
-    /** 
-     * Headers to check for certificate path with proxy-forwarded certificate 
-     * information; the first entry is the client's certificate itself 
+    /**
+     * Headers to check for certificate path with proxy-forwarded certificate
+     * information; the first entry is the client's certificate itself
      */
     private List<String> clientCertificateChainHeaders = Arrays.asList(
-            "X-Ssl-Cert", // the client's certificate 
-            "X-Ssl-Cert-Chain-1", "X-Ssl-Cert-Chain-2", "X-Ssl-Cert-Chain-3", "X-Ssl-Cert-Chain-4" // the intermediate certificate path, not including the client's certificate or root
+            "X-Ssl-Cert", // the client's certificate
+            "X-Ssl-Cert-Chain-1",
+            "X-Ssl-Cert-Chain-2",
+            "X-Ssl-Cert-Chain-3",
+            "X-Ssl-Cert-Chain-4"
+            // the intermediate certificate path, not including the client's certificate or root
     );
-    
-    /* (non-Javadoc)
-     * @see com.authlete.jaxrs.ClientCertificateExtractor#extractClientCertificateChain(javax.servlet.http.HttpServletRequest)
-     */
+
+
     @Override
     public String[] extractClientCertificateChain(HttpServletRequest request)
     {
         List<String> headerCerts = new ArrayList<>();
-        
+
         // look through all the headers that we've been configured with and pull out their values
         for (String headerName : getClientCertificateChainHeaders())
         {
@@ -58,26 +76,30 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
         }
     }
 
+
     /**
-     * Get the headers that will be checked for the client certificate chain. The first element in 
-     * the list is header for the client's own certificate. Each additional header in the list
-     * will be checked and added to the resulting output.
+     * Get the headers that will be checked for the client certificate chain.
+     * The first element in the list is header for the client's own certificate.
+     * Each additional header in the list will be checked and added to the
+     * resulting output.
      */
     public List<String> getClientCertificateChainHeaders()
     {
         return clientCertificateChainHeaders;
     }
 
+
     /**
-     * Set the headers that will be checked for the client certificate chain. The first element in 
-     * the list is header for the client's own certificate. Each additional header in the list
-     * will be checked and added to the resulting output.
+     * Set the headers that will be checked for the client certificate chain.
+     * The first element in the list is header for the client's own certificate.
+     * Each additional header in the list will be checked and added to the
+     * resulting output.
      */
-    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(List<String> clientCertificateChainHeaders)
+    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(
+            List<String> clientCertificateChainHeaders)
     {
         this.clientCertificateChainHeaders = clientCertificateChainHeaders;
-        
+
         return this;
     }
-
 }
