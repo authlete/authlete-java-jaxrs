@@ -24,19 +24,22 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- *
  * Extracts the client certificate from headers defined by the {@code
  * clientCertificateChainHeaders} member list. The first element in the list is
  * header for the client's own certificate. Each additional header in the list
  * will be checked and added to the resulting output.
- * 
- * Headers that are missing, empty, or contain only the string {@code (null)}
+ *
+ * <p>
+ * Headers that are missing, empty, or contain only the string {@code "(null)"}
  * are not returned in the list.
- * 
+ * </p>
+ *
+ * <p>
  * Different proxy servers use different configuration methods. For the Apache
  * server, one possible method using the default headers for this class is below:
- * 
- * <pre>{@code
+ * </p>
+ *
+ * <pre>
  *   SSLEngine on
  *   SSLCertificateFile /etc/certs/tls.crt
  *   SSLCertificateKeyFile /etc/certs/tls.key
@@ -53,7 +56,7 @@ import javax.servlet.http.HttpServletRequest;
  *   ProxyPreserveHost on
  *   ProxyPass "/" "http://localhost:8081/"
  *   ProxyPassReverse "/" "http://localhost:8081/"
- *}</pre>
+ * </pre>
  *
  * @author jricher
  *
@@ -72,7 +75,8 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
             "X-Ssl-Cert-Chain-2",
             "X-Ssl-Cert-Chain-3",
             "X-Ssl-Cert-Chain-4"
-            // the intermediate certificate path, not including the client's certificate or root
+            // the intermediate certificate path, not including the client's
+            // certificate or root
     );
 
 
@@ -81,11 +85,15 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
     {
         List<String> headerCerts = new ArrayList<>();
 
-        // look through all the headers that we've been configured with and pull out their values
+        // look through all the headers that we've been configured with and
+        // pull out their values
         for (String headerName : getClientCertificateChainHeaders())
         {
             String header = request.getHeader(headerName);
-            if (header != null && !header.isEmpty() && !header.equals("(null)")) // "(null)" is a value that misconfigured Apache servers will send instead of a missing header
+
+            // "(null)" is a value that misconfigured Apache servers will send
+            // instead of a missing header.
+            if (header != null && !header.isEmpty() && !header.equals("(null)"))
             {
                 headerCerts.add(header);
             }
