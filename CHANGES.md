@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+2.9 (2018-05-26)
+----------------
+
+- `HeaderClientCertificateExtractor` class
+    * Updated the implementation of `extractClientCertificateChain()` method
+      to ignore wrong `X-Ssl-Cert[-*]` headers sent from misconfigured Apache
+      servers.
+
+
 2.8 (2018-05-09)
 ----------------
 
