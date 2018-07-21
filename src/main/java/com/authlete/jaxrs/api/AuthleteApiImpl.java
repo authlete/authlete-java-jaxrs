@@ -47,12 +47,16 @@ import com.authlete.common.dto.ClientAuthorizationDeleteRequest;
 import com.authlete.common.dto.ClientAuthorizationGetListRequest;
 import com.authlete.common.dto.ClientAuthorizationUpdateRequest;
 import com.authlete.common.dto.ClientListResponse;
+import com.authlete.common.dto.ClientRegistrationRequest;
+import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
 import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
 import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
+import com.authlete.common.dto.JoseVerifyRequest;
+import com.authlete.common.dto.JoseVerifyResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.Service;
@@ -114,6 +118,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String SERVICE_JWKS_GET_API_PATH              = "/api/service/jwks/get";
     private static final String SERVICE_UPDATE_API_PATH                = "/api/service/update/%d";
     private static final String CLIENT_CREATE_API_PATH                 = "/api/client/create";
+    private static final String CLIENT_REGISTER_API_PATH               = "/api/client/register";
     private static final String CLIENT_DELETE_API_PATH                 = "/api/client/delete/%d";
     private static final String CLIENT_GET_API_PATH                    = "/api/client/get/%d";
     private static final String CLIENT_GET_LIST_API_PATH               = "/api/client/get/list";
@@ -128,6 +133,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String CLIENT_AUTHORIZATION_DELETE_API_PATH   = "/api/client/authorization/delete/%d";
     private static final String CLIENT_AUTHORIZATION_GET_LIST_API_PATH = "/api/client/authorization/get/list";
     private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH   = "/api/client/authorization/update/%d";
+    private static final String JOSE_VERIFY_API_PATH                   = "/api/jose/verify";
 
 
     private final String mBaseUrl;
@@ -1000,6 +1006,18 @@ public class AuthleteApiImpl implements AuthleteApi
 
 
     /**
+     * Call {@code /api/client/register} API.
+     */
+    @Override
+    public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTER_API_PATH));
+    }
+
+
+    /**
      * Call <code>/api/client/delete/<i>{clientId}</i></code> API.
      */
     @Override
@@ -1284,5 +1302,17 @@ public class AuthleteApiImpl implements AuthleteApi
     public Settings getSettings()
     {
         return mSettings;
+    }
+
+
+    /**
+     * Call {@code /api/jose/verify} API.
+     */
+    @Override
+    public JoseVerifyResponse verifyJose(JoseVerifyRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<JoseVerifyResponse>(
+                        JoseVerifyResponse.class, request, JOSE_VERIFY_API_PATH));
     }
 }
