@@ -1,6 +1,17 @@
 変更点
 ======
 
+2.10 (2018 年 07 月 21 日)
+--------------------------
+
+- `authlete-java-common` ライブラリ
+    * バージョン 2.18 から 2.23 へ更新
+
+- `AuthleteApiImpl` クラス
+    * `registerClient(ClientRegistrationRequest)` メソッドを実装。
+    * `verifyJose(JoseVerifyRequest)` メソッドを実装。
+
+
 2.9 (2018 年 05 月 26 日)
 -------------------------
 

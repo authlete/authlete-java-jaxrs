@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.10 (2018-07-21)
+-----------------
+
+- `authlete-java-common` library
+    * Updated the version from 2.18 to 2.23.
+
+- `AuthleteApiImpl` class
+    * Implemented `registerClient(ClientRegistrationRequest)` method.
+    * Implemented `verifyJose(JoseVerifyRequest)` method.
+
+
 2.9 (2018-05-26)
 ----------------
 
