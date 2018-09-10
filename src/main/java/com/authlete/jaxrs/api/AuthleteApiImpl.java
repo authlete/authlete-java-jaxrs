@@ -148,6 +148,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private Object mReadTimeoutLock = new Object();
     private int mCurrentReadTimeout;
 
+    private ClientBuilder jaxRsClientBuilder;
 
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
@@ -233,7 +234,13 @@ public class AuthleteApiImpl implements AuthleteApi
      */
     private javax.ws.rs.client.Client createJaxRsClient()
     {
-        return ClientBuilder.newClient();
+        if (getJaxRsClientBuilder() != null) {
+            // if we have a builder configured, use it
+            return getJaxRsClientBuilder().build();
+        } else {
+            // otherwise just use the system discovered default
+            return ClientBuilder.newClient();
+        }
     }
 
 
@@ -1315,4 +1322,18 @@ public class AuthleteApiImpl implements AuthleteApi
                 new ServicePostApiCaller<JoseVerifyResponse>(
                         JoseVerifyResponse.class, request, JOSE_VERIFY_API_PATH));
     }
+
+
+    public ClientBuilder getJaxRsClientBuilder()
+    {
+        return jaxRsClientBuilder;
+    }
+
+
+    public void setJaxRsClientBuilder(ClientBuilder jaxRsClientBuilder)
+    {
+        this.jaxRsClientBuilder = jaxRsClientBuilder;
+    }
+
+
 }
