@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.11 (2018-09-11)
+-----------------
+
+- `AuthleteApiImpl` class
+    * Added `getJaxRsClientBuilder()` method.
+    * Added `setJaxRsClientBuilder(ClientBuilder)` method.
+
+- `pom.xml`
+    * Updated the version of `javax.ws.rs-api` from 2.0 to 2.1.
+
+
 2.10 (2018-07-21)
 -----------------
 

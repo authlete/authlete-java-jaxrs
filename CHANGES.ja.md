@@ -1,6 +1,17 @@
 変更点
 ======
 
+2.11 (2018 年 09 月 11 日)
+--------------------------
+
+- `AuthleteApiImpl` クラス
+    * `getJaxRsClientBuilder()` メソッドを追加。
+    * `setJaxRsClientBuilder(ClientBuilder)` メソッドを追加。
+
+- `pom.xml`
+    * `javax.ws.rs-api` のバージョンを 2.0 から 2.1 へ更新。
+
+
 2.10 (2018 年 07 月 21 日)
 --------------------------
 
