@@ -171,33 +171,49 @@ public class AuthleteApiImpl implements AuthleteApi
         }
 
         mBaseUrl          = configuration.getBaseUrl();
-        mServiceOwnerAuth = createServiceOwnerCredentials(configuration).format();
-        mServiceAuth      = createServiceCredentials(configuration).format();
+        mServiceOwnerAuth = createServiceOwnerCredentials(configuration);
+        mServiceAuth      = createServiceCredentials(configuration);
         mSettings         = new Settings();
     }
 
 
     /**
-     * Create a {@link BasicCredentials} for the service owner.
+     * Create an authorization header for the service owner.
      */
-    private BasicCredentials createServiceOwnerCredentials(AuthleteConfiguration configuration)
+    private String createServiceOwnerCredentials(AuthleteConfiguration configuration)
     {
-        String key    = configuration.getServiceOwnerApiKey();
-        String secret = configuration.getServiceOwnerApiSecret();
-
-        return new BasicCredentials(key, secret);
+        if (configuration.getServiceOwnerAccessToken() != null)
+        {
+            return "Basic " + configuration.getServiceOwnerAccessToken();
+        } 
+        else
+        {
+        
+            String key    = configuration.getServiceOwnerApiKey();
+            String secret = configuration.getServiceOwnerApiSecret();
+    
+            return new BasicCredentials(key, secret).format();
+        }
     }
 
 
     /**
-     * Create a {@link BasicCredentials} for the service.
+     * Create an authorization header for the service.
      */
-    private BasicCredentials createServiceCredentials(AuthleteConfiguration configuration)
+    private String createServiceCredentials(AuthleteConfiguration configuration)
     {
-        String key    = configuration.getServiceApiKey();
-        String secret = configuration.getServiceApiSecret();
-
-        return new BasicCredentials(key, secret);
+        if (configuration.getServiceAccessToken() != null)
+        {
+            return "Basic " + configuration.getServiceAccessToken();
+        }
+        else
+        {
+            String key    = configuration.getServiceApiKey();
+            String secret = configuration.getServiceApiSecret();
+            
+            return new BasicCredentials(key, secret).format();
+        }
+        
     }
 
 
