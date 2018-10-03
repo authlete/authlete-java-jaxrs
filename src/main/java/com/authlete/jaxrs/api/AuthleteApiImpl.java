@@ -184,7 +184,7 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         if (configuration.getServiceOwnerAccessToken() != null)
         {
-            return "Basic " + configuration.getServiceOwnerAccessToken();
+            return "Bearer " + configuration.getServiceOwnerAccessToken();
         } 
         else
         {
@@ -204,7 +204,7 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         if (configuration.getServiceAccessToken() != null)
         {
-            return "Basic " + configuration.getServiceAccessToken();
+            return "Bearer " + configuration.getServiceAccessToken();
         }
         else
         {
