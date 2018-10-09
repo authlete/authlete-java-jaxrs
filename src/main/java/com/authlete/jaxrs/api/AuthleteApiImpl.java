@@ -69,6 +69,7 @@ import com.authlete.common.dto.TokenFailRequest;
 import com.authlete.common.dto.TokenFailResponse;
 import com.authlete.common.dto.TokenIssueRequest;
 import com.authlete.common.dto.TokenIssueResponse;
+import com.authlete.common.dto.TokenListResponse;
 import com.authlete.common.dto.TokenRequest;
 import com.authlete.common.dto.TokenResponse;
 import com.authlete.common.dto.TokenUpdateRequest;
@@ -103,6 +104,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String AUTH_TOKEN_API_PATH                    = "/api/auth/token";
     private static final String AUTH_TOKEN_CREATE_API_PATH             = "/api/auth/token/create";
     private static final String AUTH_TOKEN_FAIL_API_PATH               = "/api/auth/token/fail";
+    private static final String AUTH_TOKEN_GET_LIST_API_PATH           = "/api/auth/token/get/list";
     private static final String AUTH_TOKEN_ISSUE_API_PATH              = "/api/auth/token/issue";
     private static final String AUTH_TOKEN_UPDATE_API_PATH             = "/api/auth/token/update";
     private static final String AUTH_REVOCATION_API_PATH               = "/api/auth/revocation";
@@ -777,6 +779,75 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServicePostApiCaller<TokenUpdateResponse>(
                         TokenUpdateResponse.class, request, AUTH_TOKEN_UPDATE_API_PATH));
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList() throws AuthleteApiException
+    {
+        return getTokenList(null, null, 0, 0, false);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(String clientIdentifier, String subject) throws AuthleteApiException
+    {
+        return getTokenList(clientIdentifier, subject, 0, 0, false);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(int start, int end) throws AuthleteApiException
+    {
+        return getTokenList(null, null, start, end, true);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(String clientIdentifier, String subject, int start, int end) throws AuthleteApiException
+    {
+        return getTokenList(clientIdentifier, subject, start, end, true);
+    }
+
+
+    private TokenListResponse getTokenList(
+            final String clientIdentifier, final String subject,
+            final int start, final int end, final boolean rangeGiven) throws AuthleteApiException
+    {
+        return executeApiCall(new AuthleteApiCall<TokenListResponse>() {
+            @Override
+            public TokenListResponse call()
+            {
+                return callGetTokenList(clientIdentifier, subject, start, end, rangeGiven);
+            }
+        });
+    }
+
+
+    private TokenListResponse callGetTokenList(
+            String clientIdentifier, String subject, int start, int end, boolean rangeGiven)
+    {
+        WebTarget target = getTarget().path(AUTH_TOKEN_GET_LIST_API_PATH);
+
+        if (clientIdentifier != null)
+        {
+            target = target.queryParam("clientIdentifier", clientIdentifier);
+        }
+
+        if (subject != null)
+        {
+            target = target.queryParam("subject", subject);
+        }
+
+        if (rangeGiven)
+        {
+            target = target.queryParam("start", start).queryParam("end", end);
+        }
+
+        return target
+                .request(APPLICATION_JSON_TYPE)
+                .header(AUTHORIZATION, mServiceAuth)
+                .get(TokenListResponse.class);
     }
 
 
