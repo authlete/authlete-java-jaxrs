@@ -185,13 +185,12 @@ public class AuthleteApiImpl implements AuthleteApi
         if (configuration.getServiceOwnerAccessToken() != null)
         {
             return "Bearer " + configuration.getServiceOwnerAccessToken();
-        } 
+        }
         else
         {
-        
             String key    = configuration.getServiceOwnerApiKey();
             String secret = configuration.getServiceOwnerApiSecret();
-    
+
             return new BasicCredentials(key, secret).format();
         }
     }
@@ -210,10 +209,9 @@ public class AuthleteApiImpl implements AuthleteApi
         {
             String key    = configuration.getServiceApiKey();
             String secret = configuration.getServiceApiSecret();
-            
+
             return new BasicCredentials(key, secret).format();
         }
-        
     }
 
 
