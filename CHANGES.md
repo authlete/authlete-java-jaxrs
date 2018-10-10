@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.12 (2018-10-10)
+-----------------
+
+- `AuthleteApiImpl` class
+    * Implemented `getTokenList` methods.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.23 to 2.30.
+    * Updated the version o `gson` from 2.6.2 to 2.8.5.
+
+
 2.11 (2018-09-11)
 -----------------
 
