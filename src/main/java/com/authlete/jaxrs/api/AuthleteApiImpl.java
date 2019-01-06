@@ -42,6 +42,14 @@ import com.authlete.common.dto.AuthorizationIssueResponse;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.AuthorizedClientListResponse;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
+import com.authlete.common.dto.BackchannelAuthenticationFailRequest;
+import com.authlete.common.dto.BackchannelAuthenticationFailResponse;
+import com.authlete.common.dto.BackchannelAuthenticationIssueRequest;
+import com.authlete.common.dto.BackchannelAuthenticationIssueResponse;
+import com.authlete.common.dto.BackchannelAuthenticationRequest;
+import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.dto.Client;
 import com.authlete.common.dto.ClientAuthorizationDeleteRequest;
 import com.authlete.common.dto.ClientAuthorizationGetListRequest;
@@ -98,44 +106,48 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    private static final String AUTH_AUTHORIZATION_API_PATH            = "/api/auth/authorization";
-    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH       = "/api/auth/authorization/fail";
-    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH      = "/api/auth/authorization/issue";
-    private static final String AUTH_TOKEN_API_PATH                    = "/api/auth/token";
-    private static final String AUTH_TOKEN_CREATE_API_PATH             = "/api/auth/token/create";
-    private static final String AUTH_TOKEN_FAIL_API_PATH               = "/api/auth/token/fail";
-    private static final String AUTH_TOKEN_GET_LIST_API_PATH           = "/api/auth/token/get/list";
-    private static final String AUTH_TOKEN_ISSUE_API_PATH              = "/api/auth/token/issue";
-    private static final String AUTH_TOKEN_UPDATE_API_PATH             = "/api/auth/token/update";
-    private static final String AUTH_REVOCATION_API_PATH               = "/api/auth/revocation";
-    private static final String AUTH_USERINFO_API_PATH                 = "/api/auth/userinfo";
-    private static final String AUTH_USERINFO_ISSUE_API_PATH           = "/api/auth/userinfo/issue";
-    private static final String AUTH_INTROSPECTION_API_PATH            = "/api/auth/introspection";
-    private static final String AUTH_INTROSPECTION_STANDARD_API_PATH   = "/api/auth/introspection/standard";
-    private static final String SERVICE_CONFIGURATION_API_PATH         = "/api/service/configuration";
-    private static final String SERVICE_CREATE_API_PATH                = "/api/service/create";
-    private static final String SERVICE_DELETE_API_PATH                = "/api/service/delete/%d";
-    private static final String SERVICE_GET_API_PATH                   = "/api/service/get/%d";
-    private static final String SERVICE_GET_LIST_API_PATH              = "/api/service/get/list";
-    private static final String SERVICE_JWKS_GET_API_PATH              = "/api/service/jwks/get";
-    private static final String SERVICE_UPDATE_API_PATH                = "/api/service/update/%d";
-    private static final String CLIENT_CREATE_API_PATH                 = "/api/client/create";
-    private static final String CLIENT_REGISTER_API_PATH               = "/api/client/register";
-    private static final String CLIENT_DELETE_API_PATH                 = "/api/client/delete/%d";
-    private static final String CLIENT_GET_API_PATH                    = "/api/client/get/%d";
-    private static final String CLIENT_GET_LIST_API_PATH               = "/api/client/get/list";
-    private static final String CLIENT_SECRET_REFRESH_API_PATH         = "/api/client/secret/refresh/%s";
-    private static final String CLIENT_SECRET_UPDATE_API_PATH          = "/api/client/secret/update/%s";
-    private static final String CLIENT_UPDATE_API_PATH                 = "/api/client/update/%d";
-    private static final String REQUESTABLE_SCOPES_DELETE_API_PATH     = "/api/client/extension/requestable_scopes/delete/%d";
-    private static final String REQUESTABLE_SCOPES_GET_API_PATH        = "/api/client/extension/requestable_scopes/get/%d";
-    private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH     = "/api/client/extension/requestable_scopes/update/%d";
-    private static final String GRANTED_SCOPES_GET_API_PATH            = "/api/client/granted_scopes/get/%d";
-    private static final String GRANTED_SCOPES_DELETE_API_PATH         = "/api/client/granted_scopes/delete/%d";
-    private static final String CLIENT_AUTHORIZATION_DELETE_API_PATH   = "/api/client/authorization/delete/%d";
-    private static final String CLIENT_AUTHORIZATION_GET_LIST_API_PATH = "/api/client/authorization/get/list";
-    private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH   = "/api/client/authorization/update/%d";
-    private static final String JOSE_VERIFY_API_PATH                   = "/api/jose/verify";
+    private static final String AUTH_AUTHORIZATION_API_PATH                   = "/api/auth/authorization";
+    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH              = "/api/auth/authorization/fail";
+    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH             = "/api/auth/authorization/issue";
+    private static final String AUTH_TOKEN_API_PATH                           = "/api/auth/token";
+    private static final String AUTH_TOKEN_CREATE_API_PATH                    = "/api/auth/token/create";
+    private static final String AUTH_TOKEN_FAIL_API_PATH                      = "/api/auth/token/fail";
+    private static final String AUTH_TOKEN_GET_LIST_API_PATH                  = "/api/auth/token/get/list";
+    private static final String AUTH_TOKEN_ISSUE_API_PATH                     = "/api/auth/token/issue";
+    private static final String AUTH_TOKEN_UPDATE_API_PATH                    = "/api/auth/token/update";
+    private static final String AUTH_REVOCATION_API_PATH                      = "/api/auth/revocation";
+    private static final String AUTH_USERINFO_API_PATH                        = "/api/auth/userinfo";
+    private static final String AUTH_USERINFO_ISSUE_API_PATH                  = "/api/auth/userinfo/issue";
+    private static final String AUTH_INTROSPECTION_API_PATH                   = "/api/auth/introspection";
+    private static final String AUTH_INTROSPECTION_STANDARD_API_PATH          = "/api/auth/introspection/standard";
+    private static final String SERVICE_CONFIGURATION_API_PATH                = "/api/service/configuration";
+    private static final String SERVICE_CREATE_API_PATH                       = "/api/service/create";
+    private static final String SERVICE_DELETE_API_PATH                       = "/api/service/delete/%d";
+    private static final String SERVICE_GET_API_PATH                          = "/api/service/get/%d";
+    private static final String SERVICE_GET_LIST_API_PATH                     = "/api/service/get/list";
+    private static final String SERVICE_JWKS_GET_API_PATH                     = "/api/service/jwks/get";
+    private static final String SERVICE_UPDATE_API_PATH                       = "/api/service/update/%d";
+    private static final String CLIENT_CREATE_API_PATH                        = "/api/client/create";
+    private static final String CLIENT_REGISTER_API_PATH                      = "/api/client/register";
+    private static final String CLIENT_DELETE_API_PATH                        = "/api/client/delete/%d";
+    private static final String CLIENT_GET_API_PATH                           = "/api/client/get/%d";
+    private static final String CLIENT_GET_LIST_API_PATH                      = "/api/client/get/list";
+    private static final String CLIENT_SECRET_REFRESH_API_PATH                = "/api/client/secret/refresh/%s";
+    private static final String CLIENT_SECRET_UPDATE_API_PATH                 = "/api/client/secret/update/%s";
+    private static final String CLIENT_UPDATE_API_PATH                        = "/api/client/update/%d";
+    private static final String REQUESTABLE_SCOPES_DELETE_API_PATH            = "/api/client/extension/requestable_scopes/delete/%d";
+    private static final String REQUESTABLE_SCOPES_GET_API_PATH               = "/api/client/extension/requestable_scopes/get/%d";
+    private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH            = "/api/client/extension/requestable_scopes/update/%d";
+    private static final String GRANTED_SCOPES_GET_API_PATH                   = "/api/client/granted_scopes/get/%d";
+    private static final String GRANTED_SCOPES_DELETE_API_PATH                = "/api/client/granted_scopes/delete/%d";
+    private static final String CLIENT_AUTHORIZATION_DELETE_API_PATH          = "/api/client/authorization/delete/%d";
+    private static final String CLIENT_AUTHORIZATION_GET_LIST_API_PATH        = "/api/client/authorization/get/list";
+    private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH          = "/api/client/authorization/update/%d";
+    private static final String JOSE_VERIFY_API_PATH                          = "/api/jose/verify";
+    private static final String BACKCHANNEL_AUTHENTICATION_API_PATH           = "/api/backchannel/authentication";
+    private static final String BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH  = "/api/backchannel/authentication/complete";
+    private static final String BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH      = "/api/backchannel/authentication/fail";
+    private static final String BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH     = "/api/backchannel/authentication/issue";
 
 
     private final String mBaseUrl;
@@ -1421,4 +1433,50 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
+    /**
+     * Call {@code /api/backchannel/authentication} API.
+     */
+    @Override
+    public BackchannelAuthenticationResponse backchannelAuthentication(BackchannelAuthenticationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<BackchannelAuthenticationResponse>(
+                        BackchannelAuthenticationResponse.class, request, BACKCHANNEL_AUTHENTICATION_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/backchannel/authentication/issue} API.
+     */
+    @Override
+    public BackchannelAuthenticationIssueResponse backchannelAuthenticationIssue(BackchannelAuthenticationIssueRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<BackchannelAuthenticationIssueResponse>(
+                        BackchannelAuthenticationIssueResponse.class, request, BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/backchannel/authentication/fail} API.
+     */
+    @Override
+    public BackchannelAuthenticationFailResponse backchannelAuthenticationFail(BackchannelAuthenticationFailRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<BackchannelAuthenticationFailResponse>(
+                        BackchannelAuthenticationFailResponse.class, request, BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/backchannel/authentication/complete} API.
+     */
+    @Override
+    public BackchannelAuthenticationCompleteResponse backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<BackchannelAuthenticationCompleteResponse>(
+                        BackchannelAuthenticationCompleteResponse.class, request, BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH));
+    }
 }
