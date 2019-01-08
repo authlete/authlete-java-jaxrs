@@ -1,6 +1,33 @@
 CHANGES
 =======
 
+2.13 (2019-01-08)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Added `callBackchannelAuthentication(MultivaluedMap<String, String>, String, String, String, String[] clientCertificatePath)` method.
+    * Added `backchannelAuthenticationFail(String, BackchannelAuthenticationFailRequest.Reason)` method.
+    * Added `callBackchannelAuthenticationIssue(String)` method.
+    * Added `callBackchannelAuthenticationComplete(String, String, Result, long, String, Map<String, Object>, Property[], String[])` method.
+
+- `AuthleteApiImpl` class
+    * Implemented `backchannelAuthentication(BackchannelAuthenticationRequest)` method.
+    * Implemented `backchannelAuthenticationIssue(BackchannelAuthenticationIssueRequest)` method.
+    * Implemented `backchannelAuthenticationFail(BackchannelAuthenticationFailRequest)` method.
+    * Implemented `backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest)` method.
+
+- Added `BackchannelAuthenticationCompleteRequestHandler` class.
+- Added `BackchannelAuthenticationCompleteRequestHandlerSpi` interface.
+- Added `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` class.
+- Added `BackchannelAuthenticationRequestHandler` class.
+- Added `BackchannelAuthenticationRequestHandlerSpi` interface.
+- Added `BackchannelAuthenticationRequestHandlerSpiAdapter` class.
+- Added `BaseBackchannelAuthenticationEndpoint` class.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.30 to 2.33.
+
+
 2.12 (2018-10-10)
 -----------------
 

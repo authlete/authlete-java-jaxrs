@@ -1,6 +1,32 @@
 変更点
 ======
 
+2.13 (2019-01-08)
+
+- `AuthleteApiCaller` クラス
+    * `callBackchannelAuthentication(MultivaluedMap<String, String>, String, String, String, String[] clientCertificatePath)` メソッドを追加。
+    * `backchannelAuthenticationFail(String, BackchannelAuthenticationFailRequest.Reason)` メソッドを追加。
+    * `callBackchannelAuthenticationIssue(String)` メソッドを追加。
+    * `callBackchannelAuthenticationComplete(String, String, Result, long, String, Map<String, Object>, Property[], String[])` メソッドを追加。
+
+- `AuthleteApiImpl` クラス
+    * `backchannelAuthentication(BackchannelAuthenticationRequest)` を実装。
+    * `backchannelAuthenticationIssue(BackchannelAuthenticationIssueRequest)` を実装。
+    * `backchannelAuthenticationFail(BackchannelAuthenticationFailRequest)` を実装。
+    * `backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest)` を実装。
+
+- `BackchannelAuthenticationCompleteRequestHandler` クラスを追加。
+- `BackchannelAuthenticationCompleteRequestHandlerSpi` インターフェースを追加。
+- `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` クラスを追加。
+- `BackchannelAuthenticationRequestHandler` クラスを追加。
+- `BackchannelAuthenticationRequestHandlerSpi` インターフェースを追加。
+- `BackchannelAuthenticationRequestHandlerSpiAdapter` クラスを追加。
+- `BaseBackchannelAuthenticationEndpoint` クラスを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.30 から 2.33 へ更新。
+
+
 2.12 (2018 年 10 月 10 日)
 --------------------------
 
