@@ -23,8 +23,8 @@ import com.authlete.common.types.UserIdentificationHintType;
 
 
 /**
- * Service Provider Interface to work with {@link
- * com.authlete.jaxrs.BackchannelAuthenticationRequestHandler BackchannelAuthenticationRequestHandler}.
+ * Service Provider Interface to work with {@link com.authlete.jaxrs.BackchannelAuthenticationRequestHandler
+ * BackchannelAuthenticationRequestHandler}.
  *
  * <p>
  * An implementation of this interface must be given to the constructor
@@ -42,15 +42,21 @@ public interface BackchannelAuthenticationRequestHandlerSpi
      * Get a user by the hint.
      *
      * @param hintType
-     *         The type of the hint.
+     *         The type of the hint contained in the backchannel authentication
+     *         request.
      *
      * @param hint
-     *         The hint to identify a user.
+     *         The hint contained in the backchannel authentication request.
+     *         This value is equivalent to the value of the {@code "login_hint"}
+     *         request parameter, the {@code "id_token_hint"} request parameter
+     *         or the {@code "login_hint_token"} request parameter contained in
+     *         the backchannel authentication request.
      *
      * @param sub
-     *         The value of the "sub" claim contained in the ID token hint included
-     *         in the backchannel authentication request. This value is {@code null}
-     *         unless the backchannel authentication request contains the "id_token_hint"
+     *         The value of the {@code "sub"} claim of the ID token hint contained
+     *         in the backchannel authentication request as the {@code "id_token_hint"}
+     *         request parameter. This value is {@code null} if the backchannel
+     *         authentication request does not contain the {@code "id_token_hint"}
      *         request parameter.
      *
      * @return
@@ -109,20 +115,18 @@ public interface BackchannelAuthenticationRequestHandlerSpi
      *         A user code contained in the backchannel authentication request.
      *
      * @return
-     *
      *         {@code true} if a user code is valid. Otherwise, {@code false}.
      */
     boolean isValidUserCode(User user, String userCode);
 
 
     /**
-     * Start a background process where this authorization server communicates
-     * with an authentication device for the end-user to be authenticated and
-     * authorize the client application.
+     * Start a background process where the authorization server starts communicating
+     * with an authentication device for end-user authentication and authorization.
      *
      * <p>
-     * Typically, this method will invoke a new thread in which the communication
-     * between this authorization server and the authentication device will happen.
+     * Typically this method will invoke a new thread in which the communication
+     * between the authorization server and the authentication device will occur.
      * </p>
      *
      * @param user

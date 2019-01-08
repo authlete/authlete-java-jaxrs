@@ -31,7 +31,8 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationCompleteRequestHandlerSpi
 
 
 /**
- * Handler for the result of end-user authentication and authorization.
+ * Handler for the result of end-user authentication and authorization in CIBA
+ * (Client Initiated Backchannel Authentication) flow.
  *
  * <p>
  * {@link #handle(String, String[]) handle()} method should be called after the
@@ -75,7 +76,8 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
 
 
     /**
-     * Handle the result of end-user authentication and authorization.
+     * Handle the result of end-user authentication and authorization in CIBA
+     * (Client Initiated Backchannel Authentication) flow.
      *
      * @param ticket
      *         A ticket that was issued by Authlete's {@code /api/backchannel/authentication}
@@ -111,7 +113,8 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
 
     private void process(String ticket, String[] claimNames)
     {
-        // Complete processing the backchannel authentication request.
+        // Complete the process with the result of end-user authentication and
+        // authorization.
         BackchannelAuthenticationCompleteResponse response = complete(ticket, claimNames);
 
         // 'action' in the response denotes the next action which
@@ -127,12 +130,12 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
                 return;
 
             case NO_ACTION:
-                // No actions is required. This happens when the backchannel token
+                // No action is required. This happens when the backchannel token
                 // delivery mode is "poll".
                 return;
 
             case NOTIFICATION:
-                // Send a notification to the client. This happens when backchannel
+                // Send a notification to the client. This happens when the backchannel
                 // token delivery mode is "ping" or "push".
                 handleNotification(response);
                 return;
@@ -185,7 +188,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
 
 
     /**
-     * Call Authlete's {@code /api/backchannel/authentication} API with an unsuccessful
+     * Call Authlete's {@code /api/backchannel/authentication/complete} API with an unsuccessful
      * result.
      *
      * @param ticket
@@ -199,7 +202,8 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         The result of end-user authentication and authorization.
      *
      * @return
-     *         A response from Authlete's /api/backchannel/authentication/complete API.
+     *         A response from Authlete's {@code /api/backchannel/authentication/complete}
+     *         API.
      */
     private BackchannelAuthenticationCompleteResponse fail(String ticket, String subject, Result result)
     {
@@ -246,7 +250,8 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         the scopes given to this method replace the scopes.
      *
      * @return
-     *         A response from Authlete's /api/backchannel/authentication/complete API.
+     *         A response from Authlete's {@code /api/backchannel/authentication/complete}
+     *         API.
      */
     private BackchannelAuthenticationCompleteResponse authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims, Property[] properties, String[] scopes)
     {

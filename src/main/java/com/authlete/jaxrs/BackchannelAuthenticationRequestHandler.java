@@ -226,8 +226,9 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
                 return ResponseUtil.internalServerError(content);
 
             case OK:
-                // Start authenticating the user.
-                startUserAuthentication(user, baRes);
+                // Start communicating with the authentication device for end-user
+                // authentication and authorization.
+                startCommunicationWithAuthenticationDevice(user, baRes);
 
                 // 200 OK.
                 return ResponseUtil.ok(content);
@@ -305,10 +306,10 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
     }
 
 
-    private void startUserAuthentication(User user, BackchannelAuthenticationResponse baRes)
+    private void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)
     {
-        // Start communicating with an authentication device for the end-user
-        // authentication and authorization.
+        // Start communicating with an authentication device for end-user authentication
+        // and authorization.
         mSpi.startCommunicationWithAuthenticationDevice(user, baRes);
     }
 }

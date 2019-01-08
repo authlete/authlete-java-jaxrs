@@ -25,7 +25,8 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
 
 
 /**
- * A base class for backchannel authentication endpoints.
+ * A base class for backchannel authentication endpoints of CIBA (Client Initiated
+ * Backchannel Authentication).
  *
  * @since 2.13
  *
@@ -34,7 +35,8 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
 public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a backchannel authentication request.
+     * Handle a backchannel authentication request in CIBA (Client Initiated
+     * Backchannel Authentication) flow.
      *
      * <p>
      * This method internally creates a {@link BackchannelAuthenticationRequestHandler}

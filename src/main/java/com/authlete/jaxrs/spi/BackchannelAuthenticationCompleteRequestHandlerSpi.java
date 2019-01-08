@@ -176,8 +176,8 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
 
 
     /**
-     * Get scopes associated with the access token. If this method returns a
-     * non-null value, the set of scopes will be used instead of the scopes
+     * Get scopes to be associated with the access token. If this method returns
+     * a non-null value, the set of scopes will be used instead of the scopes
      * specified in the original backchannel authentication request.
      *
      * @return
@@ -193,10 +193,9 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      * CIBA Core specification.
      *
      * <p>
-     * Note that the specification defines some items that the Open ID provider
-     * should/must follow regarding how to deal with responses from the client
-     * notification endpoint. The following is an excerpt from "10.2. Ping Callback"
-     * and "10.3.1. Successful Token Delivery" of the specification.
+     * Note that the specification defines how the Open ID provider deals with
+     * responses from the client notification endpoint. The following is an excerpt
+     * from "10.2. Ping Callback" and "10.3.1. Successful Token Delivery" of the specification.
      *
      * <blockquote>
      * For valid requests, the Client Notification Endpoint SHOULD respond with
@@ -212,7 +211,7 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      *
      * @param info
      *         An object having information required to send a notification to
-     *         the client application.
+     *         the client notification endpoint.
      */
     void sendNotification(BackchannelAuthenticationCompleteResponse info);
 }

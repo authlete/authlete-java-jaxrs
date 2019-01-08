@@ -975,7 +975,7 @@ class AuthleteApiCaller
             .setAcr(acr)
             .setProperties(properties)
             .setScopes(scopes)
-        ;
+            ;
 
         if (claims != null && claims.size() != 0)
         {
