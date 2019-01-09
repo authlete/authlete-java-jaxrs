@@ -265,7 +265,7 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
     {
         if (baRes.getHintType() != UserIdentificationHintType.LOGIN_HINT_TOKEN)
         {
-            // The hint is not a ID token hint.
+            // The hint is not an ID token hint.
             return;
         }
 
@@ -288,7 +288,7 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
     {
         if (mSpi.shouldCheckUserCode(user, baRes) == false)
         {
-            // A user code is should not checked.
+            // A user code should not be checked.
             return;
         }
 

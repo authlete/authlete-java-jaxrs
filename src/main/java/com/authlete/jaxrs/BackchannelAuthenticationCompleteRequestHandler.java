@@ -240,14 +240,13 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         that values of the requested claims are not available.
      *
      * @param properties
-     *         Extra properties to associate with an access token and/or
-     *         an authorization code.
+     *         Extra properties to associate with an access token.
      *
      * @param scopes
      *         Scopes to associate with an access token. If {@code null} is given,
      *         the scopes contained in the original backchannel authentication
-     *         request are used. Otherwise, including the case of an empty array,
-     *         the scopes given to this method replace the scopes.
+     *         request are used. Otherwise, the scopes given to this method replace
+     *         the scopes.
      *
      * @return
      *         A response from Authlete's {@code /api/backchannel/authentication/complete}

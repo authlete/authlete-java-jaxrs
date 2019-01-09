@@ -64,7 +64,8 @@ public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
      *         Request parameters of the backchannel authentication request.
      *
      * @param authorization
-     *         The value of {@code Authorization} header of the token request.
+     *         The value of {@code Authorization} header of the backchannel authentication
+     *         request.
      *
      * @param clientCertificatePath
      *         The certificate path used in mutual TLS authentication, in PEM format. The

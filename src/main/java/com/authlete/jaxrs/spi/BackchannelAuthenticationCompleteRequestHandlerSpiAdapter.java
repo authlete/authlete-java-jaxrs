@@ -61,7 +61,7 @@ public class BackchannelAuthenticationCompleteRequestHandlerSpiAdapter implement
     @Override
     public Object getUserClaim(String claimName)
     {
-        return false;
+        return null;
     }
 
 
