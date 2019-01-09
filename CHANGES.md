@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.13 (2019-01-08)
+2.13 (2019-01-09)
 -----------------
 
 - `AuthleteApiCaller` class
@@ -16,13 +16,14 @@ CHANGES
     * Implemented `backchannelAuthenticationFail(BackchannelAuthenticationFailRequest)` method.
     * Implemented `backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest)` method.
 
-- Added `BackchannelAuthenticationCompleteRequestHandler` class.
-- Added `BackchannelAuthenticationCompleteRequestHandlerSpi` interface.
-- Added `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` class.
-- Added `BackchannelAuthenticationRequestHandler` class.
-- Added `BackchannelAuthenticationRequestHandlerSpi` interface.
-- Added `BackchannelAuthenticationRequestHandlerSpiAdapter` class.
-- Added `BaseBackchannelAuthenticationEndpoint` class.
+- New classes and interfaces
+    * `BackchannelAuthenticationCompleteRequestHandler` class
+    * `BackchannelAuthenticationCompleteRequestHandlerSpi` interface
+    * `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` class
+    * `BackchannelAuthenticationRequestHandler` class
+    * `BackchannelAuthenticationRequestHandlerSpi` interface
+    * `BackchannelAuthenticationRequestHandlerSpiAdapter` class
+    * `BaseBackchannelAuthenticationEndpoint` class
 
 - `pom.xml`
     * Updated the version of `authlete-java-common` from 2.30 to 2.33.
