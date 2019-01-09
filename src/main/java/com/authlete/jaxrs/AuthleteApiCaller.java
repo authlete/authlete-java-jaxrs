@@ -33,6 +33,15 @@ import com.authlete.common.dto.AuthorizationIssueRequest;
 import com.authlete.common.dto.AuthorizationIssueResponse;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
+import com.authlete.common.dto.BackchannelAuthenticationFailRequest;
+import com.authlete.common.dto.BackchannelAuthenticationFailResponse;
+import com.authlete.common.dto.BackchannelAuthenticationIssueRequest;
+import com.authlete.common.dto.BackchannelAuthenticationIssueResponse;
+import com.authlete.common.dto.BackchannelAuthenticationRequest;
+import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
@@ -795,6 +804,193 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/auth/introspection/standard", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/backchannel/authentication} API.
+     */
+    public BackchannelAuthenticationResponse callBackchannelAuthentication(
+            MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath)
+    {
+        String params = URLCoder.formUrlEncode(parameters);
+
+        return callBackchannelAuthentication(params, clientId, clientSecret, clientCertificate, clientCertificatePath);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/backchannel/authentication} API.
+     */
+    private BackchannelAuthenticationResponse callBackchannelAuthentication(
+            String parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath)
+    {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
+        // Create a request for Authlete's /api/backchannel/authentication API.
+        BackchannelAuthenticationRequest request = new BackchannelAuthenticationRequest()
+            .setParameters(parameters)
+            .setClientId(clientId)
+            .setClientSecret(clientSecret)
+            .setClientCertificate(clientCertificate)
+            .setClientCertificatePath(clientCertificatePath)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/backchannel/authentication API.
+            return mApi.backchannelAuthentication(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/backchannel/authentication", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/backchannel/authentication/fail} API.
+     */
+    private BackchannelAuthenticationFailResponse callBackchannelAuthenticationFail(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    {
+        // Create a request for /api/backchannel/authentication/fail API.
+        BackchannelAuthenticationFailRequest request = new BackchannelAuthenticationFailRequest()
+            .setTicket(ticket)
+            .setReason(reason)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/backchannel/authentication/fail API.
+            return mApi.backchannelAuthenticationFail(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/backchannel/authentication/fail", e);
+        }
+    }
+
+
+    /**
+     * Create a response that describes the failure. This method
+     * calls Authlete's {@code /api/backchannel/authentication/fail} API.
+     */
+    private Response createBackchannelAuthenticationFailResponse(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    {
+        // Call Authlete's /api/backchannel/authentication/fail API.
+        BackchannelAuthenticationFailResponse response = callBackchannelAuthenticationFail(ticket, reason);
+
+        // 'action' in the response denotes the next action which
+        // this service implementation should take.
+        BackchannelAuthenticationFailResponse.Action action = response.getAction();
+
+        // The content of the response to the client application.
+        // The format of the content varies depending on the action.
+        String content = response.getResponseContent();
+
+        // Dispatch according to the action.
+        switch (action)
+        {
+            case INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error
+                return ResponseUtil.internalServerError(content);
+
+            case FORBIDDEN:
+                // 403 Forbidden.
+                return ResponseUtil.forbidden(content);
+
+            case BAD_REQUEST:
+                // 400 Bad Request
+                return ResponseUtil.badRequest(content);
+
+            default:
+                // This never happens.
+                throw unknownAction("/api/backchannel/authentication/fail", action);
+        }
+    }
+
+
+    /**
+     * Create an exception that describes the failure. This method
+     * calls Authlete's {@code /api/backchannel/authentication/fail} API.
+     */
+    public WebApplicationException backchannelAuthenticationFail(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    {
+        // Create a response to the client application with the help of
+        // Authlete's /api/backchannel/authentication/fail API.
+        Response response = createBackchannelAuthenticationFailResponse(ticket, reason);
+
+        // Create an exception containing the response.
+        return new WebApplicationException(response);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/backchannel/authentication/issue} API.
+     */
+    public BackchannelAuthenticationIssueResponse callBackchannelAuthenticationIssue(String ticket)
+    {
+        // Create a request for /api/backchannel/authentication/issue API.
+        BackchannelAuthenticationIssueRequest request = new BackchannelAuthenticationIssueRequest()
+            .setTicket(ticket)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/backchannel/authentication/issue API.
+            return mApi.backchannelAuthenticationIssue(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/backchannel/authentication/issue", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/backchannel/authentication/complete} API.
+     */
+    public BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(
+            String ticket, String subject, Result result, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties, String[] scopes)
+    {
+        // Create a request for /api/backchannel/authentication/issue API.
+        BackchannelAuthenticationCompleteRequest request = new BackchannelAuthenticationCompleteRequest()
+            .setTicket(ticket)
+            .setSubject(subject)
+            .setResult(result)
+            .setAuthTime(authTime)
+            .setAcr(acr)
+            .setProperties(properties)
+            .setScopes(scopes)
+            ;
+
+        if (claims != null && claims.size() != 0)
+        {
+            request.setClaims(claims);
+        }
+
+        try
+        {
+            // Call Authlete's /api/backchannel/authentication/complete API.
+            return mApi.backchannelAuthenticationComplete(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/backchannel/authentication/complete", e);
         }
     }
 }
