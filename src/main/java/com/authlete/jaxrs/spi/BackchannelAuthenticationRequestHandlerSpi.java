@@ -67,7 +67,7 @@ public interface BackchannelAuthenticationRequestHandlerSpi
 
 
     /**
-     * Check whether the login hint token expired or not.
+     * Check whether a login hint token expired or not.
      *
      * <p>
      * This method is called only when the {@code "login_hint_token"} request parameter
@@ -137,4 +137,24 @@ public interface BackchannelAuthenticationRequestHandlerSpi
      *         The information about the backchannel authentication request.
      */
     void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse info);
+
+
+    /**
+     * Check if a binding message is valid or not.
+     *
+     * <p>
+     * This method is called only when the {@code binding_message} request parameter
+     * is contained in the backchannel authentication request.
+     * </p>
+     *
+     * @param bindingMessage
+     *         The value of the {@code binding_message} request parameter contained
+     *         in the backchannel authentication request.
+     *
+     * @return
+     *         {@code true} if the binding message is valid. Otherwise, {@code false}.
+     *
+     * @since 2.14
+     */
+    boolean isValidBindingMessage(String bindingMessage);
 }

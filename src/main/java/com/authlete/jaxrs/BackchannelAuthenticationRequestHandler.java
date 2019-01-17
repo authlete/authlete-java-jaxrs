@@ -205,6 +205,10 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
         // if necessary.
         checkUserCode(baRes, user);
 
+        // Check the binding message in the backchannel authentication request
+        // if necessary.
+        checkBindingMessage(baRes);
+
         // Issue an 'auth_req_id'.
         BackchannelAuthenticationIssueResponse baiRes =
                 getApiCaller().callBackchannelAuthenticationIssue(baRes.getTicket());
@@ -303,6 +307,28 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
 
         // The user code is invalid.
         throw getApiCaller().backchannelAuthenticationFail(baRes.getTicket(), Reason.INVALID_USER_CODE);
+    }
+
+
+    private void checkBindingMessage(BackchannelAuthenticationResponse baRes)
+    {
+        // The binding message in the backchannel authentication request.
+        String bindingMessage = baRes.getBindingMessage();
+
+        if (bindingMessage == null || bindingMessage.length() == 0)
+        {
+            // The binding message is not contained in the request.
+            return;
+        }
+
+        if (mSpi.isValidBindingMessage(bindingMessage))
+        {
+            // OK. The binding message is valid.
+            return;
+        }
+
+        // The binding message is invalid.
+        throw getApiCaller().backchannelAuthenticationFail(baRes.getTicket(), Reason.INVALID_BINDING_MESSAGE);
     }
 
 
