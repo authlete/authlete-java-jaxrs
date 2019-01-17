@@ -1,6 +1,23 @@
 CHANGES
 =======
 
+2.14 (2019-01-17)
+--------------------------
+
+- `BackchannelAuthenticationRequestHandler` class
+    * Updated the implementation of `handleUserIdentification(BackchannelAuthenticationResponse)`
+      method to validate the `binding_message` request parameter.
+
+- `BackchannelAuthenticationRequestHandlerSpi` interface
+    * Added `isValidBindingMessage(String)` method.
+
+- `BackchannelAuthenticationRequestHandlerSpiAdapter` class
+    * Implemented `isValidBindingMessage(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.33 to 2.36.
+
+
 2.13 (2019-01-09)
 -----------------
 

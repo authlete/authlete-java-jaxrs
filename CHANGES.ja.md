@@ -1,6 +1,23 @@
 変更点
 ======
 
+2.14 (2019 年 01 月 17 日)
+--------------------------
+
+- `BackchannelAuthenticationRequestHandler` クラス
+    * `binding_message` リクエストパラメーターの検証を行うよう、 `handleUserIdentification(BackchannelAuthenticationResponse)`
+      メソッドの実装を変更。
+
+- `BackchannelAuthenticationRequestHandlerSpi` インターフェース
+    * `isValidBindingMessage(String)` メソッドを追加。
+
+- `BackchannelAuthenticationRequestHandlerSpiAdapter` クラス
+    * `isValidBindingMessage(String)` を実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.33 から 2.36 へ更新。
+
+
 2.13 (2019 年 01 月 09 日)
 --------------------------
 
