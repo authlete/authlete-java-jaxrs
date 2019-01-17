@@ -63,4 +63,11 @@ public class BackchannelAuthenticationRequestHandlerSpiAdapter implements Backch
     public void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse info)
     {
     }
+
+
+    @Override
+    public boolean isValidBindingMessage(String bindingMessage)
+    {
+        return false;
+    }
 }
