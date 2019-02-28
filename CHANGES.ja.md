@@ -1,6 +1,24 @@
 変更点
 ======
 
+2.15 (2019 年 02 月 28 日)
+--------------------------
+
+- `AuthleteApiCaller` クラス
+    * error description と error URI をサポートするよう、 `callBackchannelAuthenticationComplete(String, String, Result, long, String, Map<String, Object>, Property[], String[])` メソッドを変更。
+
+- `BackchannelAuthenticationCompleteRequestHandler` クラス
+    * error description と error URI をサポートするよう実装を変更。
+
+- `BackchannelAuthenticationCompleteRequestHandlerSpi` インターフェース
+    * `getErrorDescription()` メソッドを追加。
+    * `getErrorUri()` メソッドを追加。
+
+- `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` クラス
+    * `getErrorDescription()` メソッドを実装。
+    * `getErrorUri()` メソッドを実装。
+
+
 2.14 (2019 年 01 月 17 日)
 --------------------------
 

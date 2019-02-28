@@ -1,6 +1,24 @@
 CHANGES
 =======
 
+2.15 (2019-02-28)
+--------------------------
+
+- `AuthleteApiCaller` class
+    * Added error description and error URI support to `callBackchannelAuthenticationComplete(String, String, Result, long, String, Map<String, Object>, Property[], String[])` method.
+
+- `BackchannelAuthenticationCompleteRequestHandler` class
+    * Added error description and error URI support.
+
+- `BackchannelAuthenticationCompleteRequestHandlerSpi` interface
+    * Added `getErrorDescription()` method.
+    * Added `getErrorUri()` method.
+
+- `BackchannelAuthenticationCompleteRequestHandlerSpiAdapter` class
+    * Implemented `getErrorDescription()` method.
+    * Implemented `getErrorUri()` method.
+
+
 2.14 (2019-01-17)
 --------------------------
 
