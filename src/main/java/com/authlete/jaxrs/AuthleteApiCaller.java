@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.InternalServerErrorException;
@@ -964,9 +965,10 @@ class AuthleteApiCaller
      */
     public BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(
             String ticket, String subject, Result result, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes)
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String errorDescription, URI errorUri)
     {
-        // Create a request for /api/backchannel/authentication/issue API.
+        // Create a request for /api/backchannel/authentication/complete API.
         BackchannelAuthenticationCompleteRequest request = new BackchannelAuthenticationCompleteRequest()
             .setTicket(ticket)
             .setSubject(subject)
@@ -975,6 +977,8 @@ class AuthleteApiCaller
             .setAcr(acr)
             .setProperties(properties)
             .setScopes(scopes)
+            .setErrorDescription(errorDescription)
+            .setErrorUri(errorUri)
             ;
 
         if (claims != null && claims.size() != 0)

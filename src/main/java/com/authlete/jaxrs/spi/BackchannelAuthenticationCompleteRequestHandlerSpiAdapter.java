@@ -17,6 +17,7 @@
 package com.authlete.jaxrs.spi;
 
 
+import java.net.URI;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
 import com.authlete.common.dto.Property;
@@ -82,5 +83,19 @@ public class BackchannelAuthenticationCompleteRequestHandlerSpiAdapter implement
     @Override
     public void sendNotification(BackchannelAuthenticationCompleteResponse info)
     {
+    }
+
+
+    @Override
+    public String getErrorDescription()
+    {
+        return null;
+    }
+
+
+    @Override
+    public URI getErrorUri()
+    {
+        return null;
     }
 }

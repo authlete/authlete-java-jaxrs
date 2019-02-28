@@ -17,6 +17,7 @@
 package com.authlete.jaxrs.spi;
 
 
+import java.net.URI;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
@@ -214,4 +215,29 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      *         the client notification endpoint.
      */
     void sendNotification(BackchannelAuthenticationCompleteResponse info);
+
+
+    /**
+     * Get the description of the error. This corresponds to the
+     * {@code error_description} property in the response to the client.
+     *
+     * @return
+     *         The description of the error.
+     *
+     * @since 2.15
+     */
+    String getErrorDescription();
+
+
+    /**
+     * Get the URI of a document which describes the error in detail. This
+     * corresponds to the {@code error_uri} property in the response to the
+     * client.
+     *
+     * @return
+     *         The URI of a document which describes the error in detail.
+     *
+     * @since 2.15
+     */
+    URI getErrorUri();
 }
