@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.InternalServerErrorException;
@@ -157,9 +158,15 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
 
         if (result != Result.AUTHORIZED)
         {
+            // Get the description of the error.
+            String errorDescription = mSpi.getErrorDescription();
+
+            // Get the URI of a document which describes the error in detail.
+            URI errorUri = mSpi.getErrorUri();
+
             // The end-user authorization has not been successfully done.
             // Then, complete the process with failure.
-            return fail(ticket, subject, result);
+            return fail(ticket, subject, result, errorDescription, errorUri);
         }
 
         // OK. The end-user has successfully authorized the client.
@@ -201,13 +208,23 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      * @param result
      *         The result of end-user authentication and authorization.
      *
+     * @param errorDescription
+     *         The description of the error.
+     *
+     * @param errorUri
+     *         The URI of a document which describes the error in detail.
+     *
      * @return
      *         A response from Authlete's {@code /api/backchannel/authentication/complete}
      *         API.
      */
-    private BackchannelAuthenticationCompleteResponse fail(String ticket, String subject, Result result)
+    private BackchannelAuthenticationCompleteResponse fail(
+            String ticket, String subject, Result result, String errorDescription,
+            URI errorUri)
     {
-        return callBackchannelAuthenticationComplete(ticket, subject, result, 0, null, null, null, null);
+        return callBackchannelAuthenticationComplete(
+                ticket, subject, result, 0, null, null, null, null, errorDescription,
+                errorUri);
     }
 
 
@@ -252,15 +269,24 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         A response from Authlete's {@code /api/backchannel/authentication/complete}
      *         API.
      */
-    private BackchannelAuthenticationCompleteResponse authorize(String ticket, String subject, long authTime, String acr, Map<String, Object> claims, Property[] properties, String[] scopes)
+    private BackchannelAuthenticationCompleteResponse authorize(
+            String ticket, String subject, long authTime, String acr, Map<String, Object> claims,
+            Property[] properties, String[] scopes)
     {
-        return callBackchannelAuthenticationComplete(ticket, subject, Result.AUTHORIZED, authTime, acr, claims, properties, scopes);
+        return callBackchannelAuthenticationComplete(
+                ticket, subject, Result.AUTHORIZED, authTime, acr, claims, properties,
+                scopes, null, null);
     }
 
 
-    private BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(String ticket, String subject, Result result, long authTime, String acr, Map<String, Object> claims, Property[] properties, String[] scopes)
+    private BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(
+            String ticket, String subject, Result result, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String errorDescription, URI errorUri)
     {
-        return getApiCaller().callBackchannelAuthenticationComplete(ticket, subject, result, authTime, acr, claims, properties, scopes);
+        return getApiCaller().callBackchannelAuthenticationComplete(
+                ticket, subject, result, authTime, acr, claims, properties, scopes,
+                errorDescription, errorUri);
     }
 
 
