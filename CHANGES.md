@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+2.16 (2019-03-05)
+--------------------------
+
+- `BackchannelAuthenticationRequestHandler` class
+    * Modified some parts according the change to `BackchannelAuthenticationRequestHandlerSpi` interface.
+
+- `BackchannelAuthenticationRequestHandlerSpi` interface
+    * Added a `BackchannelAuthenticationIssueResponse` parameter to the arguments of `startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)` method.
+
+- `BackchannelAuthenticationRequestHandlerAdapter` class
+    * Modified `startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)` method according the change to `BackchannelAuthenticationRequestHandlerSpi` interface.
+
+
 2.15 (2019-02-28)
 --------------------------
 

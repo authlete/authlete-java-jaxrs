@@ -1,6 +1,19 @@
 変更点
 ======
 
+2.16 (2019 年 03 月 05 日)
+--------------------------
+
+- `BackchannelAuthenticationRequestHandler` クラス
+    * `BackchannelAuthenticationRequestHandlerSpi` インターフェースに対する変更に応じて、いくつかの箇所を修正。
+
+- `BackchannelAuthenticationRequestHandlerSpi` インターフェース
+    * `BackchannelAuthenticationIssueResponse` 型の引数を `startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)` メソッドに追加。
+
+- `BackchannelAuthenticationRequestHandlerAdapter` クラス
+    * `BackchannelAuthenticationRequestHandlerSpi` インターフェースに対する変更に応じて、 `startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)` メソッドを修正。
+
+
 2.15 (2019 年 02 月 28 日)
 --------------------------
 
