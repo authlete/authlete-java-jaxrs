@@ -17,6 +17,7 @@
 package com.authlete.jaxrs.spi;
 
 
+import com.authlete.common.dto.BackchannelAuthenticationIssueResponse;
 import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.types.User;
 import com.authlete.common.types.UserIdentificationHintType;
@@ -133,10 +134,16 @@ public interface BackchannelAuthenticationRequestHandlerSpi
      *         A user who is to be authenticated and asked to authorize the
      *         client application.
      *
-     * @param info
-     *         The information about the backchannel authentication request.
+     * @param baRes
+     *         The response from Authlete's {@code /api/backchannel/authentication}
+     *         API.
+     *
+     * @param baiRes
+     *         The response from Authlete's {@code /api/backchannel/authentication/issue}
+     *         API.
      */
-    void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse info);
+    void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes,
+            BackchannelAuthenticationIssueResponse baiRes);
 
 
     /**

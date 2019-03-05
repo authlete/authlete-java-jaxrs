@@ -232,7 +232,7 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
             case OK:
                 // Start communicating with the authentication device for end-user
                 // authentication and authorization.
-                startCommunicationWithAuthenticationDevice(user, baRes);
+                startCommunicationWithAuthenticationDevice(user, baRes, baiRes);
 
                 // 200 OK.
                 return ResponseUtil.ok(content);
@@ -332,10 +332,11 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
     }
 
 
-    private void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes)
+    private void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes,
+            BackchannelAuthenticationIssueResponse baiRes)
     {
         // Start communicating with an authentication device for end-user authentication
         // and authorization.
-        mSpi.startCommunicationWithAuthenticationDevice(user, baRes);
+        mSpi.startCommunicationWithAuthenticationDevice(user, baRes, baiRes);
     }
 }

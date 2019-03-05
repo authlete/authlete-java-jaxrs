@@ -17,6 +17,7 @@
 package com.authlete.jaxrs.spi;
 
 
+import com.authlete.common.dto.BackchannelAuthenticationIssueResponse;
 import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.types.User;
 import com.authlete.common.types.UserIdentificationHintType;
@@ -60,7 +61,8 @@ public class BackchannelAuthenticationRequestHandlerSpiAdapter implements Backch
 
 
     @Override
-    public void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse info)
+    public void startCommunicationWithAuthenticationDevice(User user, BackchannelAuthenticationResponse baRes,
+            BackchannelAuthenticationIssueResponse baiRes)
     {
     }
 
