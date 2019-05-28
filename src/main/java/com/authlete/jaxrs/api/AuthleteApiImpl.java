@@ -128,7 +128,10 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String SERVICE_JWKS_GET_API_PATH                     = "/api/service/jwks/get";
     private static final String SERVICE_UPDATE_API_PATH                       = "/api/service/update/%d";
     private static final String CLIENT_CREATE_API_PATH                        = "/api/client/create";
-    private static final String CLIENT_REGISTER_API_PATH                      = "/api/client/register";
+    private static final String CLIENT_REGISTRATION_API_PATH                  = "/api/client/registration";
+    private static final String CLIENT_REGISTRATION_GET_API_PATH              = "/api/client/registration/get";
+    private static final String CLIENT_REGISTRATION_UPDATE_API_PATH           = "/api/client/registration/update";
+    private static final String CLIENT_REGISTRATION_DELETE_API_PATH           = "/api/client/registration/delete";
     private static final String CLIENT_DELETE_API_PATH                        = "/api/client/delete/%d";
     private static final String CLIENT_GET_API_PATH                           = "/api/client/get/%d";
     private static final String CLIENT_GET_LIST_API_PATH                      = "/api/client/get/list";
@@ -1110,14 +1113,50 @@ public class AuthleteApiImpl implements AuthleteApi
 
 
     /**
-     * Call {@code /api/client/register} API.
+     * Call {@code /api/client/registration} API.
      */
     @Override
     public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
-                        ClientRegistrationResponse.class, request, CLIENT_REGISTER_API_PATH));
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/client/registration/get} API.
+     */
+    @Override
+    public ClientRegistrationResponse dynamicClientGet(ClientRegistrationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_GET_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/client/registration/update} API.
+     */
+    @Override
+    public ClientRegistrationResponse dynamicClientUpdate(ClientRegistrationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_UPDATE_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/client/registration/delete} API.
+     */
+    @Override
+    public ClientRegistrationResponse dynamicClientDelete(ClientRegistrationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_DELETE_API_PATH));
     }
 
 
