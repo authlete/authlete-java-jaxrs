@@ -72,7 +72,7 @@ import com.authlete.common.web.BearerToken;
  * @see <a href="https://openid.net/specs/openid-connect-registration-1_0.html"
  *      >OpenID Connect Dynamic Client Registration</a>
  *
- * @since 2.XX
+ * @since 2.17
  */
 public class ClientRegistrationRequestHandler extends BaseHandler
 {
@@ -103,8 +103,6 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *          An error occurred.
-     *
-     * @since 2.XX
      */
     public Response handleRegister(String json, String authorization)
     {
@@ -142,8 +140,6 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *          An error occurred.
-     *
-     * @since 2.XX
      */
     public Response handleGet(String clientId, String authorization)
     {
@@ -184,8 +180,6 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *          An error occurred.
-     *
-     * @since 2.XX
      */
     public Response handleUpdate(String clientId, String json, String authorization)
     {
@@ -223,8 +217,6 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *          An error occurred.
-     *
-     * @since 2.XX
      */
     public Response handleDelete(String clientId, String authorization)
     {

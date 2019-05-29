@@ -1,8 +1,29 @@
 CHANGES
 =======
 
+2.17 (2019-05-30)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Added `callClientRegistration(String json)` method.
+    * Added `callClientRegistration(String json, String initialAccessToken)` method.
+    * Added `callClientRegistrationGet(String clientId, String registrationAccessToken)` method.
+    * Added `callClientRegistrationUpdate(String clientId, String json, String registrationAccessToken)` method.
+    * Added `callClientRegistrationDelete(String clientId, String registrationAccessToken)` method.
+
+- `ResponseUtil` class
+    * Added `created(String entity)` method.
+
+- New classes
+    * `BaseClientRegistrationEndpoint` class
+    * `ClientRegistrationRequestHandler` class
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.36 to 2.41.
+
+
 2.16 (2019-03-05)
---------------------------
+-----------------
 
 - `BackchannelAuthenticationRequestHandler` class
     * Modified some parts according the change to `BackchannelAuthenticationRequestHandlerSpi` interface.
@@ -15,7 +36,7 @@ CHANGES
 
 
 2.15 (2019-02-28)
---------------------------
+-----------------
 
 - `AuthleteApiCaller` class
     * Added error description and error URI support to `callBackchannelAuthenticationComplete(String, String, Result, long, String, Map<String, Object>, Property[], String[])` method.
@@ -33,7 +54,7 @@ CHANGES
 
 
 2.14 (2019-01-17)
---------------------------
+-----------------
 
 - `BackchannelAuthenticationRequestHandler` class
     * Updated the implementation of `handleUserIdentification(BackchannelAuthenticationResponse)`

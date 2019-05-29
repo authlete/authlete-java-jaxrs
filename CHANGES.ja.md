@@ -1,6 +1,27 @@
 変更点
 ======
 
+2.17 (2019 年 05 月 30 日)
+--------------------------
+
+- `AuthleteApiCaller` クラス
+    * `callClientRegistration(String json)` メソッドを追加。
+    * `callClientRegistration(String json, String initialAccessToken)` メソッドを追加。
+    * `callClientRegistrationGet(String clientId, String registrationAccessToken)` メソッドを追加。
+    * `callClientRegistrationUpdate(String clientId, String json, String registrationAccessToken)` メソッドを追加。
+    * `callClientRegistrationDelete(String clientId, String registrationAccessToken)` メソッドを追加。
+
+- `ResponseUtil` クラス
+    * `created(String entity)` メソッドを追加。
+
+- 新しいクラス
+    * `BaseClientRegistrationEndpoint` クラス
+    * `ClientRegistrationRequestHandler` クラス
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.36 から 2.41 へ更新。
+
+
 2.16 (2019 年 03 月 05 日)
 --------------------------
 

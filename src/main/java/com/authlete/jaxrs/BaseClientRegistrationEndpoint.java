@@ -26,7 +26,7 @@ import com.authlete.common.api.AuthleteApi;
  * A base class for dynamic client registration and dynamic client
  * registration management endpoints.
  *
- * @since 2.XX
+ * @since 2.17
  *
  * @see <a href="https://tools.ietf.org/html/rfc7591">RFC 7591</a>
  *
@@ -69,8 +69,6 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the client application.
-     *
-     * @since 2.XX
      */
     public Response handleRegister(
             AuthleteApi api,
@@ -128,8 +126,6 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the client application.
-     *
-     * @since 2.XX
      */
     public Response handleGet(
             AuthleteApi api,
@@ -190,8 +186,6 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the client application.
-     *
-     * @since 2.XX
      */
     public Response handleUpdate(
             AuthleteApi api,
@@ -250,8 +244,6 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the client application.
-     *
-     * @since 2.XX
      */
     public Response handleDelete(
             AuthleteApi api,
