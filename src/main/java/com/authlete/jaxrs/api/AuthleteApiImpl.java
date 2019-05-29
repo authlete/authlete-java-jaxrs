@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Authlete, Inc.
+ * Copyright (C) 2014-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1116,7 +1116,7 @@ public class AuthleteApiImpl implements AuthleteApi
      * Call {@code /api/client/registration} API.
      */
     @Override
-    public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) throws AuthleteApiException
+    public ClientRegistrationResponse dynamicClientRegister(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
