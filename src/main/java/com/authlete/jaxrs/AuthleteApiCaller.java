@@ -43,6 +43,8 @@ import com.authlete.common.dto.BackchannelAuthenticationIssueRequest;
 import com.authlete.common.dto.BackchannelAuthenticationIssueResponse;
 import com.authlete.common.dto.BackchannelAuthenticationRequest;
 import com.authlete.common.dto.BackchannelAuthenticationResponse;
+import com.authlete.common.dto.ClientRegistrationRequest;
+import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
@@ -995,6 +997,103 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/backchannel/authentication/complete", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/client/registration} API.
+     */
+    public ClientRegistrationResponse callClientRegistration(
+            String json)
+    {
+        return callClientRegistration(json, null);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/client/registration} API
+     * with an initial access token.
+     */
+    public ClientRegistrationResponse callClientRegistration(
+            String json, String initialAccessToken)
+    {
+        ClientRegistrationRequest request = new ClientRegistrationRequest()
+                .setJson(json)
+                .setToken(initialAccessToken); // TODO: we should mark this field as the initial access
+                                               //       token and not use the registration access token field
+
+        try
+        {
+            return mApi.registerClient(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            throw apiFailure("/api/client/registration", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/client/registration/get} API.
+     */
+    public ClientRegistrationResponse callClientRegistrationGet(
+            String clientId, String registrationAccessToken)
+    {
+        ClientRegistrationRequest request = new ClientRegistrationRequest()
+                .setClientId(clientId)
+                .setToken(registrationAccessToken);
+
+        try
+        {
+            return mApi.dynamicClientGet(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            throw apiFailure("/api/client/registration/get", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/client/registration/update} API.
+     */
+    public ClientRegistrationResponse callClientRegistrationUpdate(
+            String clientId, String json, String registrationAccessToken)
+    {
+        ClientRegistrationRequest request = new ClientRegistrationRequest()
+                .setClientId(clientId)
+                .setJson(json)
+                .setToken(registrationAccessToken);
+
+        try
+        {
+            return mApi.dynamicClientUpdate(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            throw apiFailure("/api/client/registration/update", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/client/registration/delete} API.
+     */
+    public ClientRegistrationResponse callClientRegistrationDelete(
+            String clientId, String registrationAccessToken)
+    {
+        ClientRegistrationRequest request = new ClientRegistrationRequest()
+                .setClientId(clientId)
+                .setToken(registrationAccessToken);
+
+        try
+        {
+            return mApi.dynamicClientDelete(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            throw apiFailure("/api/client/registration/delete", e);
         }
     }
 }

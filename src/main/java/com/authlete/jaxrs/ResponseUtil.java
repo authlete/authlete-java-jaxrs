@@ -197,6 +197,17 @@ class ResponseUtil
 
 
     /**
+     * Create a response of {@code "201 Created"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     */
+    public static Response created(String entity)
+    {
+        return builder(Status.CREATED, entity, MEDIA_TYPE_JSON).build();
+    }
+
+
+    /**
      * Create a response of {@code "500 Internal Server Error"}
      * with the given entity.
      */
