@@ -80,7 +80,7 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      * Constructor with an implementation of {@link AuthleteApi} interface.
      *
      * @param api
-     *            Implementation of {@link AuthleteApi} interface.
+     *         Implementation of {@link AuthleteApi} interface.
      */
     public ClientRegistrationRequestHandler(AuthleteApi api)
     {
@@ -92,17 +92,17 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      * Handle a dynamic client registration request.
      *
      * @param json
-     *            The serialized JSON body of the client registration request.
+     *         The serialized JSON body of the client registration request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the token request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the token request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *          An error occurred.
      *
      * @since 2.XX
      */
@@ -131,17 +131,17 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      * Handle a dynamic client management GET request.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request.
+     *         The client ID as determined by the incoming request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *          An error occurred.
      *
      * @since 2.XX
      */
@@ -170,20 +170,20 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      * Handle a dynamic client management PUT request.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request.
+     *         The client ID as determined by the incoming request.
      *
      * @param json
-     *            The serialized JSON body of the client update request.
+     *         The serialized JSON body of the client update request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *          An error occurred.
      *
      * @since 2.XX
      */
@@ -212,17 +212,17 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      * Handle a dynamic client management DELETE request.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request.
+     *         The client ID as determined by the incoming request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *          An error occurred.
      *
      * @since 2.XX
      */
@@ -249,10 +249,10 @@ public class ClientRegistrationRequestHandler extends BaseHandler
 
     /**
      * Process the Action in the response.
-     * 
+     *
      * @param response
-     *            The Authlete API response to process.
-     * 
+     *         The Authlete API response to process.
+     *
      * @return
      *         The response to return to the client.
      */

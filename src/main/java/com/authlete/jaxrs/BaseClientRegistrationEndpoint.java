@@ -34,13 +34,12 @@ import com.authlete.common.api.AuthleteApi;
  *
  * @see <a href="https://openid.net/specs/openid-connect-registration-1_0.html"
  *      >OpenID Connect Dynamic Client Registration</a>
- *
  */
 public class BaseClientRegistrationEndpoint extends BaseEndpoint
 {
     /**
      * Handle a client registration request.
-     * 
+     *
      * <p>
      * This method internally creates a {@link ClientRegistrationRequestHandler}
      * instance and calls its
@@ -48,7 +47,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
-     * 
+     *
      * <p>
      * When {@code ClientRegistrationRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
@@ -59,14 +58,14 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
      *
      * @param json
-     *            The serialized JSON body of the client registration request.
+     *         The serialized JSON body of the client registration request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
@@ -95,7 +94,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
 
     /**
      * Handle a client registration management get request.
-     * 
+     *
      * <p>
      * This method internally creates a {@link ClientRegistrationRequestHandler}
      * instance and calls its
@@ -103,7 +102,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
-     * 
+     *
      * <p>
      * When {@code ClientRegistrationRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
@@ -114,18 +113,18 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request. You will
-     *            commonly parse this from the incoming request URL as a path
-     *            component. If your Service has its {@code registrationManagementEndpoint}
-     *            property set, Authlete will add the client ID as a path parameter
-     *            to this URI automatically.
+     *         The client ID as determined by the incoming request. You will
+     *         commonly parse this from the incoming request URL as a path
+     *         component. If your Service has its {@code registrationManagementEndpoint}
+     *         property set, Authlete will add the client ID as a path parameter
+     *         to this URI automatically.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
@@ -154,7 +153,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
 
     /**
      * Handle a client registration management update request.
-     * 
+     *
      * <p>
      * This method internally creates a {@link ClientRegistrationRequestHandler}
      * instance and calls its
@@ -162,7 +161,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
-     * 
+     *
      * <p>
      * When {@code ClientRegistrationRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
@@ -173,21 +172,21 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request. You will
-     *            commonly parse this from the incoming request URL as a path
-     *            component. If your Service has its {@code registrationManagementEndpoint}
-     *            property set, Authlete will add the client ID as a path parameter
-     *            to this URI automatically.
+     *         The client ID as determined by the incoming request. You will
+     *         commonly parse this from the incoming request URL as a path
+     *         component. If your Service has its {@code registrationManagementEndpoint}
+     *         property set, Authlete will add the client ID as a path parameter
+     *         to this URI automatically.
      *
      * @param json
-     *            The serialized JSON body of the client update request.
+     *         The serialized JSON body of the client update request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
@@ -217,7 +216,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
 
     /**
      * Handle a client registration management delete request.
-     * 
+     *
      * <p>
      * This method internally creates a {@link ClientRegistrationRequestHandler}
      * instance and calls its
@@ -225,7 +224,7 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
-     * 
+     *
      * <p>
      * When {@code ClientRegistrationRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
@@ -236,18 +235,18 @@ public class BaseClientRegistrationEndpoint extends BaseEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
      *
      * @param clientId
-     *            The client ID as determined by the incoming request. You will
-     *            commonly parse this from the incoming request URL as a path
-     *            component. If your Service has its {@code registrationManagementEndpoint}
-     *            property set, Authlete will add the client ID as a path parameter
-     *            to this URI automatically.
+     *         The client ID as determined by the incoming request. You will
+     *         commonly parse this from the incoming request URL as a path
+     *         component. If your Service has its {@code registrationManagementEndpoint}
+     *         property set, Authlete will add the client ID as a path parameter
+     *         to this URI automatically.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the registration request.
-     *            This is optional.
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
      *
      * @return
      *         A response that should be returned to the client application.
