@@ -1029,7 +1029,7 @@ class AuthleteApiCaller
         }
         catch (AuthleteApiException e)
         {
-            throw apiFailure("/api/client/register", e);
+            throw apiFailure("/api/client/registration", e);
         }
     }
 
@@ -1050,7 +1050,7 @@ class AuthleteApiCaller
         }
         catch (AuthleteApiException e)
         {
-            throw apiFailure("/api/client/register", e);
+            throw apiFailure("/api/client/registration/get", e);
         }
     }
 
@@ -1072,7 +1072,7 @@ class AuthleteApiCaller
         }
         catch (AuthleteApiException e)
         {
-            throw apiFailure("/api/client/register", e);
+            throw apiFailure("/api/client/registration/update", e);
         }
     }
 
@@ -1093,7 +1093,7 @@ class AuthleteApiCaller
         }
         catch (AuthleteApiException e)
         {
-            throw apiFailure("/api/client/register", e);
+            throw apiFailure("/api/client/registration/delete", e);
         }
     }
 }
