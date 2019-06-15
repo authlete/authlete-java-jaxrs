@@ -45,6 +45,12 @@ import com.authlete.common.dto.BackchannelAuthenticationRequest;
 import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
+import com.authlete.common.dto.DeviceAuthorizationRequest;
+import com.authlete.common.dto.DeviceAuthorizationResponse;
+import com.authlete.common.dto.DeviceCompleteRequest;
+import com.authlete.common.dto.DeviceCompleteResponse;
+import com.authlete.common.dto.DeviceVerificationRequest;
+import com.authlete.common.dto.DeviceVerificationResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
@@ -1094,6 +1100,114 @@ class AuthleteApiCaller
         catch (AuthleteApiException e)
         {
             throw apiFailure("/api/client/registration/delete", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/device/authorization} API.
+     */
+    public DeviceAuthorizationResponse callDeviceAuthorization(
+            MultivaluedMap<String, String> parameters,
+            String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath)
+    {
+        String params = URLCoder.formUrlEncode(parameters);
+
+        return callDeviceAuthorization(
+                params, clientId, clientSecret,
+                clientCertificate, clientCertificatePath);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/device/authorization} API.
+     */
+    private DeviceAuthorizationResponse callDeviceAuthorization(
+            String parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath)
+    {
+        if (parameters == null)
+        {
+            // Authlete returns different error codes for null and an empty string.
+            // 'null' is regarded as a caller's error. An empty string is regarded
+            // as a client application's error.
+            parameters = "";
+        }
+
+        // Create a request for Authlete's /api/device/authorization API.
+        DeviceAuthorizationRequest request = new DeviceAuthorizationRequest()
+            .setParameters(parameters)
+            .setClientId(clientId)
+            .setClientSecret(clientSecret)
+            .setClientCertificate(clientCertificate)
+            .setClientCertificatePath(clientCertificatePath)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/device/authorization API.
+            return mApi.deviceAuthorization(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/device/authorization", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/device/complete} API.
+     */
+    public DeviceCompleteResponse callDeviceComplete(
+            String userCode, String subject, DeviceCompleteRequest.Result result,
+            Property[] properties, String[] scopes,
+            String errorDescription, URI errorUri)
+    {
+        // Create a request for /api/device/complete API.
+        DeviceCompleteRequest request = new DeviceCompleteRequest()
+            .setUserCode(userCode)
+            .setSubject(subject)
+            .setResult(result)
+            .setProperties(properties)
+            .setScopes(scopes)
+            .setErrorDescription(errorDescription)
+            .setErrorUri(errorUri)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/device/complete API.
+            return mApi.deviceComplete(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/device/complete", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/device/verification} API.
+     */
+    public DeviceVerificationResponse callDeviceVerification(String userCode)
+    {
+        // Create a request for /api/device/verification API.
+        DeviceVerificationRequest request = new DeviceVerificationRequest()
+            .setUserCode(userCode)
+            ;
+
+        try
+        {
+            // Call Authlete's /api/device/verification API.
+            return mApi.deviceVerification(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/device/verification", e);
         }
     }
 }
