@@ -60,6 +60,12 @@ import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
 import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
+import com.authlete.common.dto.DeviceAuthorizationRequest;
+import com.authlete.common.dto.DeviceAuthorizationResponse;
+import com.authlete.common.dto.DeviceCompleteRequest;
+import com.authlete.common.dto.DeviceCompleteResponse;
+import com.authlete.common.dto.DeviceVerificationRequest;
+import com.authlete.common.dto.DeviceVerificationResponse;
 import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
@@ -151,6 +157,9 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH  = "/api/backchannel/authentication/complete";
     private static final String BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH      = "/api/backchannel/authentication/fail";
     private static final String BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH     = "/api/backchannel/authentication/issue";
+    private static final String DEVICE_AUTHORIZATION_API_PATH                 = "/api/device/authorization";
+    private static final String DEVICE_COMPLETE_API_PATH                      = "/api/device/complete";
+    private static final String DEVICE_VERIFICATION_API_PATH                  = "/api/device/verification";
 
 
     private final String mBaseUrl;
@@ -1517,5 +1526,41 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServicePostApiCaller<BackchannelAuthenticationCompleteResponse>(
                         BackchannelAuthenticationCompleteResponse.class, request, BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/device/authorization} API.
+     */
+    @Override
+    public DeviceAuthorizationResponse deviceAuthorization(DeviceAuthorizationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<DeviceAuthorizationResponse>(
+                        DeviceAuthorizationResponse.class, request, DEVICE_AUTHORIZATION_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/device/complete} API.
+     */
+    @Override
+    public DeviceCompleteResponse deviceComplete(DeviceCompleteRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<DeviceCompleteResponse>(
+                        DeviceCompleteResponse.class, request, DEVICE_COMPLETE_API_PATH));
+    }
+
+
+    /**
+     * Call {@code /api/device/verification} API.
+     */
+    @Override
+    public DeviceVerificationResponse deviceVerification(DeviceVerificationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<DeviceVerificationResponse>(
+                        DeviceVerificationResponse.class, request, DEVICE_VERIFICATION_API_PATH));
     }
 }
