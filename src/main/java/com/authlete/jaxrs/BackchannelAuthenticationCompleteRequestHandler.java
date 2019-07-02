@@ -39,7 +39,7 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationCompleteRequestHandlerSpi
  * {@link #handle(String, String[]) handle()} method should be called after the
  * authorization server receives the result of end-user authentication and authorization
  * from the authentication device, or even in the case where the server gave up
- * receiving a response from the authentication device for some reasons. {@code handle()}
+ * receiving a response from the authentication device for some reasons. The {@code handle()}
  * method calls Authlete's {@code /api/backchannel/authentication/complete} API,
  * receives a response from the API, and dispatches processing according to the
  * {@code action} parameter in the response.
@@ -85,7 +85,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         API.
      *
      * @param claimNames
-     *         Names of requested claims. Use the value of the {@code claims}
+     *         Names of requested claims. Use the value of the {@code claimNames}
      *         parameter in a response from Authlete's {@code /api/backchannel/authentication}
      *         API.
      *

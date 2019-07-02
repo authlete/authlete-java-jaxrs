@@ -18,35 +18,32 @@ package com.authlete.jaxrs;
 
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
-import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
+import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
 
 
 /**
- * A base class for backchannel authentication endpoints of CIBA (Client Initiated
- * Backchannel Authentication).
+ * A base class for device verification endpoints.
  *
- * @since 2.13
+ * @since 2.18
  *
  * @author Hideki Ikeda
  */
-public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
+public class BaseDeviceVerificationEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a backchannel authentication request in CIBA (Client Initiated
-     * Backchannel Authentication) flow.
+     * Handle a device verification request.
      *
      * <p>
-     * This method internally creates a {@link BackchannelAuthenticationRequestHandler}
-     * instance and calls its {@link BackchannelAuthenticationRequestHandler#handle(MultivaluedMap, String, String[])}
+     * This method internally creates a {@link DeviceVerificationRequestHandler}
+     * instance and calls its {@link DeviceVerificationRequestHandler#handle()}
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
      *
      * <p>
-     * When {@code BackchannelAuthenticationRequestHandler.handle()} method raises a {@link
+     * When {@code DeviceVerificationRequestHandler.handle()} method raises a {@link
      * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
      * onError()} method with the exception. The default implementation of {@code onError()}
      * does nothing. You can override the method as necessary. After calling
@@ -58,33 +55,22 @@ public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
      *         An implementation of {@link AuthleteApi}.
      *
      * @param spi
-     *         An implementation of {@link BackchannelAuthenticationRequestHandlerSpi}.
-     *
-     * @param parameters
-     *         Request parameters of the backchannel authentication request.
-     *
-     * @param authorization
-     *         The value of {@code Authorization} header of the backchannel authentication
-     *         request.
-     *
-     * @param clientCertificatePath
-     *         The certificate path used in mutual TLS authentication, in PEM format. The
-     *         client's own certificate is the first in this array. Can be {@code null}.
+     *         An implementation of {@link DeviceVerificationRequestHandlerSpi}.
      *
      * @return
-     *         A response that should be returned to the client application.
+     *         A response that should be returned to the end-user.
+     *
+     * @since 2.8
      */
-    public Response handle(
-            AuthleteApi api, BackchannelAuthenticationRequestHandlerSpi spi,
-            MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath)
+    public Response handle(AuthleteApi api, DeviceVerificationRequestHandlerSpi spi)
     {
         try
         {
             // Create a handler.
-            BackchannelAuthenticationRequestHandler handler = new BackchannelAuthenticationRequestHandler(api, spi);
+            DeviceVerificationRequestHandler handler = new DeviceVerificationRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization, clientCertificatePath);
+            return handler.handle();
         }
         catch (WebApplicationException e)
         {

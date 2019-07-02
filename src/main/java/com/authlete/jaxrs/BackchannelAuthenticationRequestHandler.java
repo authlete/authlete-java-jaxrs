@@ -36,9 +36,9 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
  * endpoint of CIBA (Client Initiated Backchannel Authentication).
  *
  * <p>
- * In an implementation of backchannel authentication endpoint, call {@link #handle(MultivaluedMap, String)
- * handle()} method and use the response as the response from the endpoint to the client
- * application. {@code handle()} method calls Authlete's {@code /api/backchannel/authentication}
+ * In an implementation of backchannel authentication endpoint, call {@link #handle(MultivaluedMap, String, String[])
+ * handle()} method and use the response as the response from the endpoint to the
+ * client application. {@code handle()} method calls Authlete's {@code /api/backchannel/authentication}
  * API, receives a response from the API, and dispatches processing according to the
  * {@code action} parameter in the response.
  * </p>
