@@ -32,14 +32,14 @@ import com.authlete.jaxrs.spi.DeviceCompleteRequestHandlerSpi;
 
 
 /**
- * Handler for the result of end-user authentication and authorization in OAuth
- * 2.0 Device Authorization Grant (Device Flow).
+ * Handler for processing the result of end-user authentication and authorization
+ * in OAuth 2.0 Device Authorization Grant (Device Flow).
  *
  * <p>
  * {@link #handle(String, String[]) handle()} method should be called after the
  * authorization server receives the result of end-user authentication and authorization,
  * or even in the case where the server gave up getting the result for some reasons.
- * The {@code handle()} method calls Authlete's {@code /api/device/authorization}
+ * The {@code handle()} method calls Authlete's {@code /api/device/complete}
  * API, receives a response from the API, and dispatches processing according to
  * the {@code action} parameter in the response.
  * </p>
@@ -152,6 +152,7 @@ public class DeviceCompleteRequestHandler extends BaseHandler
 
     private DeviceCompleteResponse complete(String userCode, String[] claimNames)
     {
+        // Get the result of end-user authentication and authorization.
         Result result = mSpi.getResult();
 
         if (result != Result.AUTHORIZED)
@@ -162,7 +163,7 @@ public class DeviceCompleteRequestHandler extends BaseHandler
             // Get the URI of a document which describes the error in detail.
             URI errorUri = mSpi.getErrorUri();
 
-            // The end-user authorization has not been successfully done.
+            // The end-user has not successfully authorized the client.
             // Then, complete the process with failure.
             return fail(userCode, result, errorDescription, errorUri);
         }

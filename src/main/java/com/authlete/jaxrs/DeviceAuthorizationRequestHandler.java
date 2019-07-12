@@ -25,7 +25,6 @@ import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceAuthorizationResponse.Action;
 import com.authlete.common.web.BasicCredentials;
-import com.authlete.jaxrs.spi.DeviceAuthorizationRequestHandlerSpi;
 
 
 /**
@@ -53,26 +52,15 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
 
 
     /**
-     * Implementation of {@link DeviceAuthorizationRequestHandlerSpi} interface.
-     */
-    private final DeviceAuthorizationRequestHandlerSpi mSpi;
-
-
-    /**
      * Constructor with an implementation of {@link AuthleteApi} interface
      * and an implementation of {@link DeviceAuthorizationRequestHandlerSpi} interface.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
-     *
-     * @param spi
-     *         Implementation of {@link DeviceAuthorizationRequestHandlerSpi} interface.
      */
-    public DeviceAuthorizationRequestHandler(AuthleteApi api, DeviceAuthorizationRequestHandlerSpi spi)
+    public DeviceAuthorizationRequestHandler(AuthleteApi api)
     {
         super(api);
-
-        mSpi = spi;
     }
 
 
@@ -101,8 +89,6 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      *
      * @throws WebApplicationException
      *         An error occurred.
-     *
-     * @since 2.8
      */
     public Response handle(
             MultivaluedMap<String, String> parameters, String authorization,

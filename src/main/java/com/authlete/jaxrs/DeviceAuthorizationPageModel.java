@@ -40,13 +40,33 @@ public class DeviceAuthorizationPageModel implements Serializable
 
 
     /**
-     * The name of the client application.
+     * The ID of the client application to which the user code has been issued.
+     */
+    private long clientId;
+
+
+    /**
+     * The client ID alias of the client application to which the user code has
+     * been issued.
+     */
+    private String clientIdAlias;
+
+
+    /**
+     * The flag which indicates whether the client ID alias was used in the device
+     * authorization request for the user code.
+     */
+    private boolean clientIdAliasUsed;
+
+
+    /**
+     * The name of the client application to which the user code has been issued.
      */
     private String clientName;
 
 
     /**
-     * Scopes requested by the authorization request.
+     * Scopes requested by the device authorization request for the user code.
      */
     private Scope[] scopes;
 
@@ -70,8 +90,133 @@ public class DeviceAuthorizationPageModel implements Serializable
      */
     public DeviceAuthorizationPageModel(DeviceVerificationResponse info)
     {
-        clientName = info.getClientName();
-        scopes     = info.getScopes();
+        clientId          = info.getClientId();
+        clientIdAlias     = info.getClientIdAlias();
+        clientIdAliasUsed = info.isClientIdAliasUsed();
+        clientName        = info.getClientName();
+        scopes            = info.getScopes();
+    }
+
+
+    /**
+     * Get the client ID of the client application to which the user code has
+     * been issued.
+     *
+     * @return
+     *         The client ID of the client application.
+     */
+    public long getClientId()
+    {
+        return clientId;
+    }
+
+
+    /**
+     * Set the client ID of the client application to which the user code has
+     * been issued.
+     *
+     * @param clientId
+     *         The client ID of the client application.
+     *
+     * @return
+     *         {@code this} object.
+     */
+    public DeviceAuthorizationPageModel setClientId(long clientId)
+    {
+        this.clientId = clientId;
+
+        return this;
+    }
+
+
+    /**
+     * Get the client ID alias of the client application to which the user code
+     * has been issued.
+     *
+     * @return
+     *         The client ID alias of the client application.
+     */
+    public String getClientIdAlias()
+    {
+        return clientIdAlias;
+    }
+
+
+    /**
+     * Set the client ID alias of the client application to which the user code
+     * has been issued.
+     *
+     * @param alias
+     *         The client ID alias of the client application.
+     *
+     * @return
+     *         {@code this} object.
+     */
+    public DeviceAuthorizationPageModel setClientIdAlias(String alias)
+    {
+        this.clientIdAlias = alias;
+
+        return this;
+    }
+
+
+    /**
+     * Get the flag which indicates whether the client ID alias was used in
+     * the device authorization request for the user code.
+     *
+     * @return
+     *         {@code true} if the client ID alias was used in the request.
+     */
+    public boolean isClientIdAliasUsed()
+    {
+        return clientIdAliasUsed;
+    }
+
+
+    /**
+     * Set the flag which indicates whether the client ID alias was used in
+     * the device authorization request for the user code.
+     *
+     * @param used
+     *         {@code true} to indicate that the client ID alias was used in
+     *         the request.
+     *
+     * @return
+     *         {@code this} object.
+     */
+    public DeviceAuthorizationPageModel setClientIdAliasUsed(boolean used)
+    {
+        this.clientIdAliasUsed = used;
+
+        return this;
+    }
+
+
+    /**
+     * Get the client identifier used in the device authorization request for
+     * the user code.
+     *
+     * <p>
+     * When {@link #isClientIdAliasUsed()} returns {@code true}, this method
+     * returns the same value as {@link #getClientIdAlias()} does. Otherwise,
+     * this method returns the string representation of the value returned
+     * from {@link #getClientId()}.
+     * </p>
+     *
+     * @return
+     *         The client identifier used in the device authorization request
+     *         for the user code.
+     */
+    public String getClientIdentifier()
+    {
+        if (clientIdAliasUsed)
+        {
+            return clientIdAlias;
+        }
+        else
+        {
+            return String.valueOf(clientId);
+        }
     }
 
 
@@ -105,7 +250,8 @@ public class DeviceAuthorizationPageModel implements Serializable
 
 
     /**
-     * Get the list of scopes requested by the authorization request.
+     * Get the list of scopes requested by the device authorization request for
+     * the user code.
      *
      * @return
      *         The list of requested scopes.
@@ -117,7 +263,8 @@ public class DeviceAuthorizationPageModel implements Serializable
 
 
     /**
-     * Set the list of scopes requested by the authorization request.
+     * Set the list of scopes requested by the device authorization request for
+     * the user code.
      *
      * @param scopes
      *         The list of requested scopes.

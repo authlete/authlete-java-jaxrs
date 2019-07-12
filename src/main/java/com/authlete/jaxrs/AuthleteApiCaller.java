@@ -20,14 +20,12 @@ package com.authlete.jaxrs;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.dto.AuthorizationFailRequest;

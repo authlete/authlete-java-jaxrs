@@ -34,6 +34,8 @@ import com.authlete.common.dto.Property;
  * </p>
  *
  * @author Hideki Ikeda
+ *
+ * @since 2.18
  */
 public interface DeviceCompleteRequestHandlerSpi
 {

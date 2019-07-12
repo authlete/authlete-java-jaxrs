@@ -32,6 +32,8 @@ import com.authlete.common.dto.DeviceVerificationResponse;
  * </p>
  *
  * @author Hideki Ikeda
+ *
+ * @since 2.18
  */
 public interface DeviceVerificationRequestHandlerSpi
 {

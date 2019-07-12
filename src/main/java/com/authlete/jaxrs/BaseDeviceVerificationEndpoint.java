@@ -59,8 +59,6 @@ public class BaseDeviceVerificationEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the end-user.
-     *
-     * @since 2.8
      */
     public Response handle(AuthleteApi api, DeviceVerificationRequestHandlerSpi spi)
     {

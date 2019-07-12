@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
-import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.types.User;
 
 
@@ -31,6 +30,8 @@ import com.authlete.common.types.User;
  * </p>
  *
  * @author Hideki Ikeda
+ *
+ * @since 2.18
  */
 public class DeviceVerificationPageModel implements Serializable
 {

@@ -21,7 +21,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
-import com.authlete.jaxrs.spi.DeviceAuthorizationRequestHandlerSpi;
 
 
 /**
@@ -75,14 +74,13 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
      *         A response that should be returned to the client application.
      */
     public Response handle(
-            AuthleteApi api, DeviceAuthorizationRequestHandlerSpi spi,
-            MultivaluedMap<String, String> parameters, String authorization,
+            AuthleteApi api, MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath)
     {
         try
         {
             // Create a handler.
-            DeviceAuthorizationRequestHandler handler = new DeviceAuthorizationRequestHandler(api, spi);
+            DeviceAuthorizationRequestHandler handler = new DeviceAuthorizationRequestHandler(api);
 
             // Delegate the task to the handler.
             return handler.handle(parameters, authorization, clientCertificatePath);

@@ -27,8 +27,8 @@ import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
 
 /**
  * Handler for getting information associated with a user code that the end-user
- * inputed at the verification endpoint of the authorization server in OAuth 2.0
- * Device Authorization Grant (Device Flow).
+ * inputed at the verification endpoint in OAuth 2.0 Device Authorization Grant
+ * (Device Flow).
  *
  * <p>
  * {@link #handle(String, String[]) handle()} method should be called after the
@@ -70,8 +70,8 @@ public class DeviceVerificationRequestHandler extends BaseHandler
 
     /**
      * Handle getting information associated with a user code that the end-user
-     * inputed at the verification endpoint of the authorization server in OAuth 2.0
-     * Device Authorization Grant (Device Flow).
+     * inputed at the verification endpoint in OAuth 2.0 Device Authorization Grant
+     * (Device Flow).
      *
      * @return
      *         A response that should be returned to the end-user.
@@ -111,18 +111,22 @@ public class DeviceVerificationRequestHandler extends BaseHandler
         switch (action)
         {
             case VALID:
+                // The user code is valid.
                 // Ask the user to authorize the client.
                 return mSpi.onValid(response);
 
             case EXPIRED:
+                // The user code has expired.
                 // Urge the user to re-initiate device flow.
                 return mSpi.onExpired();
 
             case NOT_EXIST:
+                // The user code does not exist.
                 // Urge the user to re-input a valid user code.
                 return mSpi.onNotExist();
 
             case SERVER_ERROR:
+                // An error occurred on Authlete.
                 // Urge the user to re-initiate device flow.
                 return mSpi.onServerError();
 

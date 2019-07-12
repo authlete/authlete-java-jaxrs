@@ -25,6 +25,8 @@ import com.authlete.common.dto.DeviceVerificationResponse;
  * Empty implementation of {@link DeviceVerificationRequestHandlerSpi} interface.
  *
  * @author Hideki Ikeda
+ *
+ * @since 2.18
  */
 public class DeviceVerificationRequestHandlerSpiAdapter implements DeviceVerificationRequestHandlerSpi
 {

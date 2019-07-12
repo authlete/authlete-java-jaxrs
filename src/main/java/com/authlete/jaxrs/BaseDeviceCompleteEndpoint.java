@@ -24,7 +24,8 @@ import com.authlete.jaxrs.spi.DeviceCompleteRequestHandlerSpi;
 
 
 /**
- * A base class for device complete endpoints.
+ * A base class for device complete endpoints of OAuth 2.0 Device Authorization
+ * Grant (Device Flow).
  *
  * @since 2.18
  *
@@ -66,8 +67,6 @@ public class BaseDeviceCompleteEndpoint extends BaseEndpoint
      *
      * @return
      *         A response that should be returned to the end-user.
-     *
-     * @since 2.8
      */
     public Response handle(
             AuthleteApi api, DeviceCompleteRequestHandlerSpi spi, String userCode,
