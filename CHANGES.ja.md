@@ -1,6 +1,33 @@
 変更点
 ======
 
+2.18 (2019 年 07 月 12 日)
+-----------------
+
+- `AuthleteApiCaller` クラス
+    * ID トークン生成のために、いくつかのパラメーターを `callDeviceComplete(String userCode, String subject, DeviceCompleteRequest.Result result, Property[] properties, String[] scopes, String errorDescription, URI errorUri)` メソッドの引数に追加。
+
+- `BaseEndpoint` class
+    * `takeAttribute(HttpSession session, String key)` メソッドを追加。
+
+- 新しいクラス
+    * `BaseDeviceAuthorizationEndpoint` クラス
+    * `BaseDeviceCompleteEndpoint` クラス
+    * `BaseDeviceVerificationEndpoint` クラス
+    * `DeviceAuthorizationPageModel` クラス
+    * `DeviceAuthorizationRequestHandler` クラス
+    * `DeviceCompleteRequestHandler` クラス
+    * `DeviceVerificationPageModel` クラス
+    * `DeviceVerificationRequestHandler` クラス
+    * `DeviceCompleteRequestHandlerSpi` クラス
+    * `DeviceCompleteRequestHandlerSpiAdapter` クラス
+    * `DeviceVerificationRequestHandlerSpi` クラス
+    * `DeviceVerificationRequestHandlerSpiAdapter` クラス
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.41 から 2.49 へ更新。
+
+
 2.17 (2019 年 05 月 30 日)
 --------------------------
 

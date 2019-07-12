@@ -1,6 +1,33 @@
 CHANGES
 =======
 
+2.18 (2019-07-12)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Added some parameters to the arguments of `callDeviceComplete(String userCode, String subject, DeviceCompleteRequest.Result result, Property[] properties, String[] scopes, String errorDescription, URI errorUri)` method for ID token generation.
+
+- `BaseEndpoint` class
+    * Added `takeAttribute(HttpSession session, String key)` method.
+
+- New classes
+    * `BaseDeviceAuthorizationEndpoint` class
+    * `BaseDeviceCompleteEndpoint` class
+    * `BaseDeviceVerificationEndpoint` class
+    * `DeviceAuthorizationPageModel` class
+    * `DeviceAuthorizationRequestHandler` class
+    * `DeviceCompleteRequestHandler` class
+    * `DeviceVerificationPageModel` class
+    * `DeviceVerificationRequestHandler` class
+    * `DeviceCompleteRequestHandlerSpi` class
+    * `DeviceCompleteRequestHandlerSpiAdapter` class
+    * `DeviceVerificationRequestHandlerSpi` class
+    * `DeviceVerificationRequestHandlerSpiAdapter` class
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.41 to 2.49.
+
+
 2.17 (2019-05-30)
 -----------------
 
