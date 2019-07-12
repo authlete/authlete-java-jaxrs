@@ -23,9 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Extracts a client's MTLS certificate from an incoming HTTP Request.
  *
- * @author jricher
- *
  * @since 2.8
+ *
+ * @author jricher
  */
 public interface ClientCertificateExtractor
 {

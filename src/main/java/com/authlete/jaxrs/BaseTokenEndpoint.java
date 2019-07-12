@@ -74,9 +74,9 @@ public class BaseTokenEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link TokenRequestHandler} instance and
-     * calls its {@link TokenRequestHandler#handle(MultivaluedMap, String)} method.
-     * Then, this method uses the value returned from the {@code handle()} method
-     * as a response from this method.
+     * calls its {@link TokenRequestHandler#handle(MultivaluedMap, String, String[])}
+     * method. Then, this method uses the value returned from the {@code handle()}
+     * method as a response from this method.
      * </p>
      *
      * <p>

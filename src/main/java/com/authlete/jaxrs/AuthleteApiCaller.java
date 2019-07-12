@@ -1162,19 +1162,26 @@ class AuthleteApiCaller
      */
     public DeviceCompleteResponse callDeviceComplete(
             String userCode, String subject, DeviceCompleteRequest.Result result,
-            Property[] properties, String[] scopes,
-            String errorDescription, URI errorUri)
+            long authTime, String acr, Map<String, Object> claims, Property[] properties,
+            String[] scopes, String errorDescription, URI errorUri)
     {
         // Create a request for /api/device/complete API.
         DeviceCompleteRequest request = new DeviceCompleteRequest()
             .setUserCode(userCode)
             .setSubject(subject)
             .setResult(result)
+            .setAuthTime(authTime)
+            .setAcr(acr)
             .setProperties(properties)
             .setScopes(scopes)
             .setErrorDescription(errorDescription)
             .setErrorUri(errorUri)
             ;
+
+        if (claims != null && claims.size() != 0)
+        {
+            request.setClaims(claims);
+        }
 
         try
         {

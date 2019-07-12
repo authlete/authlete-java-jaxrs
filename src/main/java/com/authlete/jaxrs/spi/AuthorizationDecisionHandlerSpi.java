@@ -16,7 +16,9 @@
  */
 package com.authlete.jaxrs.spi;
 
+
 import com.authlete.common.dto.Property;
+
 
 /**
  * Service Provider Interface to work with {@link

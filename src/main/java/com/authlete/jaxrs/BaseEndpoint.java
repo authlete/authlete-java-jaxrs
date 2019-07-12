@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
 
 
@@ -61,10 +62,10 @@ public class BaseEndpoint
      * @see ClientCertificateExtractor
      *
      * @param request
-     *          The incoming HTTP request to search for the client's certificate.
+     *         The incoming HTTP request to search for the client's certificate.
      *
      * @return
-     *          The client's mutual TLS certificate.
+     *         The client's mutual TLS certificate.
      *
      * @since 2.8
      */
@@ -89,10 +90,10 @@ public class BaseEndpoint
      * first entry in the array, if any, null otherwise.
      *
      * @param request
-     *          The incoming HTTP request to search for the client's certificate.
+     *         The incoming HTTP request to search for the client's certificate.
      *
      * @return
-     *          The client's mutual TLS certificate.
+     *         The client's mutual TLS certificate.
      *
      * @since 2.8
      */
@@ -108,5 +109,33 @@ public class BaseEndpoint
         {
             return null;
         }
+    }
+
+
+    /**
+     * Get the value of an attribute from the given session and
+     * remove the attribute from the session after the retrieval.
+     *
+     * @param session
+     *         The session from which the value of the attribute is extracted.
+     *
+     * @param key
+     *         The key associated with the target attribute.
+     *
+     * @return
+     *         The value of the attribute associated with the given key.
+     *
+     * @since 2.18
+     */
+    protected Object takeAttribute(HttpSession session, String key)
+    {
+        // Retrieve the value from the session.
+        Object value = session.getAttribute(key);
+
+        // Remove the attribute from the session.
+        session.removeAttribute(key);
+
+        // Return the value of the attribute.
+        return value;
     }
 }

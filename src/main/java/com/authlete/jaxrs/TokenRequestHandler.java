@@ -36,11 +36,12 @@ import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
  * (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
  *
  * <p>
- * In an implementation of token endpoint, call {@link #handle(MultivaluedMap, String)
- * handle()} method and use the response as the response from the endpoint to the client
- * application. {@code handle()} method calls Authlete's {@code /api/auth/token} API,
- * receives a response from the API, and dispatches processing according to the
- * {@code action} parameter in the response.
+ * In an implementation of token endpoint, call {@link #handle(MultivaluedMap, String)}
+ * or {@link #handle(MultivaluedMap, String, String[])} method and use the response
+ * as the response from the endpoint to the client application. {@code handle()}
+ * method calls Authlete's {@code /api/auth/token} API, receives a response from
+ * the API, and dispatches processing according to the {@code action} parameter
+ * in the response.
  * </p>
  *
  * @author Takahiko Kawasaki
