@@ -43,9 +43,9 @@ import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
  * the {@code action} parameter in the response.
  * </p>
  *
- * @author Hideki Ikeda
- *
  * @since 2.13
+ *
+ * @author Hideki Ikeda
  */
 public class BackchannelAuthenticationRequestHandler extends BaseHandler
 {

@@ -26,9 +26,9 @@ import com.authlete.common.dto.Property;
 /**
  * Empty implementation of {@link DeviceCompleteRequestHandlerSpi} interface.
  *
- * @author Hideki Ikeda
- *
  * @since 2.18
+ *
+ * @author Hideki Ikeda
  */
 public class DeviceCompleteRequestHandlerSpiAdapter implements DeviceCompleteRequestHandlerSpi
 {

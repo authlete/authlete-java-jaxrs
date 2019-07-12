@@ -30,9 +30,9 @@ import com.authlete.common.dto.Scope;
  * Feel free to extend this class as necessary.
  * </p>
  *
- * @author Hideki Ikeda
- *
  * @since 2.18
+ *
+ * @author Hideki Ikeda
  */
 public class DeviceAuthorizationPageModel implements Serializable
 {

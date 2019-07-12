@@ -38,9 +38,9 @@ import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
  * the {@code action} parameter in the response.
  * </p>
  *
- * @author Hideki Ikeda
- *
  * @since 2.18
+ *
+ * @author Hideki Ikeda
  */
 public class DeviceVerificationRequestHandler extends BaseHandler
 {

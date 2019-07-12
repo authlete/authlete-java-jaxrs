@@ -29,9 +29,9 @@ import com.authlete.common.types.User;
  * Feel free to extend this class as necessary.
  * </p>
  *
- * @author Hideki Ikeda
- *
  * @since 2.18
+ *
+ * @author Hideki Ikeda
  */
 public class DeviceVerificationPageModel implements Serializable
 {
