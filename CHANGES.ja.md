@@ -1,8 +1,18 @@
 変更点
 ======
 
+2.19 (2019 年 08 月 24 日)
+--------------------------
+
+- `AuthleteApiImpl` クラス
+    * `registerRequestObject(RequestObjectRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.49 から 2.50 へ更新。
+
+
 2.18 (2019 年 07 月 12 日)
------------------
+--------------------------
 
 - `AuthleteApiCaller` クラス
     * ID トークン生成のために、いくつかのパラメーターを `callDeviceComplete(String userCode, String subject, DeviceCompleteRequest.Result result, Property[] properties, String[] scopes, String errorDescription, URI errorUri)` メソッドの引数に追加。

@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+2.19 (2019-08-24)
+-----------------
+
+- `AuthleteApiImpl` class
+    * Implemented `registerRequestObject(RequestObjectRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.49 to 2.50.
+
+
 2.18 (2019-07-12)
 -----------------
 
