@@ -71,8 +71,8 @@ import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.JoseVerifyRequest;
 import com.authlete.common.dto.JoseVerifyResponse;
-import com.authlete.common.dto.RequestObjectRequest;
-import com.authlete.common.dto.RequestObjectResponse;
+import com.authlete.common.dto.PushedAuthReqRequest;
+import com.authlete.common.dto.PushedAuthReqResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.Service;
@@ -140,8 +140,8 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String CLIENT_REGISTRATION_GET_API_PATH              = "/api/client/registration/get";
     private static final String CLIENT_REGISTRATION_UPDATE_API_PATH           = "/api/client/registration/update";
     private static final String CLIENT_REGISTRATION_DELETE_API_PATH           = "/api/client/registration/delete";
-    private static final String CLIENT_DELETE_API_PATH                        = "/api/client/delete/%d";
-    private static final String CLIENT_GET_API_PATH                           = "/api/client/get/%d";
+    private static final String CLIENT_DELETE_API_PATH                        = "/api/client/delete/%s";
+    private static final String CLIENT_GET_API_PATH                           = "/api/client/get/%s";
     private static final String CLIENT_GET_LIST_API_PATH                      = "/api/client/get/list";
     private static final String CLIENT_SECRET_REFRESH_API_PATH                = "/api/client/secret/refresh/%s";
     private static final String CLIENT_SECRET_UPDATE_API_PATH                 = "/api/client/secret/update/%s";
@@ -162,7 +162,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String DEVICE_AUTHORIZATION_API_PATH                 = "/api/device/authorization";
     private static final String DEVICE_COMPLETE_API_PATH                      = "/api/device/complete";
     private static final String DEVICE_VERIFICATION_API_PATH                  = "/api/device/verification";
-    private static final String REQUEST_OBJECT_API_PATH                       = "/api/requestobject";
+    private static final String PUSHED_AUTH_REQ_API_PATH                      = "/api/pushed_auth_req";
 
 
     private final String mBaseUrl;
@@ -1176,7 +1176,17 @@ public class AuthleteApiImpl implements AuthleteApi
      * Call <code>/api/client/delete/<i>{clientId}</i></code> API.
      */
     @Override
-    public void deleteClient(final long clientId) throws AuthleteApiException
+    public void deleteClient(long clientId) throws AuthleteApiException
+    {
+        deleteClient(String.valueOf(clientId));
+    }
+
+
+    /**
+     * Call <code>/api/client/delete/<i>{clientId}</i></code> API.
+     */
+    @Override
+    public void deleteClient(String clientId) throws AuthleteApiException
     {
         executeApiCall(
                 new ServiceDeleteApiCaller(
@@ -1188,7 +1198,17 @@ public class AuthleteApiImpl implements AuthleteApi
      * Call <code>/api/client/get/<i>{clientId}</i></code> API.
      */
     @Override
-    public Client getClient(final long clientId) throws AuthleteApiException
+    public Client getClient(long clientId) throws AuthleteApiException
+    {
+        return getClient(String.valueOf(clientId));
+    }
+
+
+    /**
+     * Call <code>/api/client/get/<i>{clientId}</i></code> API.
+     */
+    @Override
+    public Client getClient(String clientId) throws AuthleteApiException
     {
         return executeApiCall(
                 new ServiceGetApiCaller<Client>(
@@ -1569,10 +1589,10 @@ public class AuthleteApiImpl implements AuthleteApi
 
 
     @Override
-    public RequestObjectResponse registerRequestObject(RequestObjectRequest request) throws AuthleteApiException
+    public PushedAuthReqResponse pushAuthorizationRequest(PushedAuthReqRequest request) throws AuthleteApiException
     {
         return executeApiCall(
-                new ServicePostApiCaller<RequestObjectResponse>(
-                        RequestObjectResponse.class, request, REQUEST_OBJECT_API_PATH));
+                new ServicePostApiCaller<PushedAuthReqResponse>(
+                        PushedAuthReqResponse.class, request, PUSHED_AUTH_REQ_API_PATH));
     }
 }

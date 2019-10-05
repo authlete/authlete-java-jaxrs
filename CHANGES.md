@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+- `AuthleteApiImpl` class
+    * Implemented `deleteClient(String)` method.
+    * Implemented `getClient(String)` method.
+    * Implemented `pushAuthorizationRequest(PushedAuthReqRequest)` method.
+    * Removed `registerRequestObject(RequestObjectRequest) method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.50 to 2.51.
+
+
 2.19 (2019-08-24)
 -----------------
 

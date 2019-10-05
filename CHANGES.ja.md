@@ -1,6 +1,16 @@
 変更点
 ======
 
+- `AuthleteApiImpl` クラス
+    * `deleteClient(String)` メソッドを実装。
+    * `getClient(String)` メソッドを実装。
+    * `pushAuthorizationRequest(PushedAuthReqRequest)` メソッドを実装。
+    * `registerRequestObject(RequestObjectRequest)` メソッドを削除。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.50 から 2.51 へ更新。
+
+
 2.19 (2019 年 08 月 24 日)
 --------------------------
 
