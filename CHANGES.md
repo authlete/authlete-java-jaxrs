@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.20 (2019-10-05)
+-----------------
+
 - `AuthleteApiImpl` class
     * Implemented `deleteClient(String)` method.
     * Implemented `getClient(String)` method.

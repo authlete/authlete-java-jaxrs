@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.20 (2019 年 10 月 05 日)
+--------------------------
+
 - `AuthleteApiImpl` クラス
     * `deleteClient(String)` メソッドを実装。
     * `getClient(String)` メソッドを実装。
