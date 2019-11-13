@@ -249,4 +249,14 @@ class ResponseUtil
     {
         return builder(status).header("WWW-Authenticate", challenge).build();
     }
+
+
+    /**
+     * Create a response of {@code 413 Request Entity Too Large} with
+     * the given entity.
+     */
+    public static Response tooLarge(String entity)
+    {
+        return builder(Status.REQUEST_ENTITY_TOO_LARGE, entity, MEDIA_TYPE_JSON).build();
+    }
 }

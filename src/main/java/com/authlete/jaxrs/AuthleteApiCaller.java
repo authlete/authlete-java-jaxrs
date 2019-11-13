@@ -54,6 +54,8 @@ import com.authlete.common.dto.DeviceVerificationResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
+import com.authlete.common.dto.PushedAuthReqRequest;
+import com.authlete.common.dto.PushedAuthReqResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.StandardIntrospectionRequest;
@@ -1215,6 +1217,41 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/device/verification", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/pushed_auth_req} API.
+     */
+    public PushedAuthReqResponse callPushedAuthReq(MultivaluedMap<String, String> parameters, String clientId, String clientSecret, String clientCertificate, String[] clientCertificatePath)
+    {
+        String params = URLCoder.formUrlEncode(parameters);
+
+        return callPushedAuthReq(params, clientId, clientSecret, clientCertificate, clientCertificatePath);
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/pushed_auth_req} API.
+     */
+    public PushedAuthReqResponse callPushedAuthReq(String parameters, String clientId, String clientSecret, String clientCertificate, String[] clientCertificatePath)
+    {
+        PushedAuthReqRequest request = new PushedAuthReqRequest()
+                .setParameters(parameters)
+                .setClientId(clientId)
+                .setClientSecret(clientSecret)
+                .setClientCertificate(clientCertificate)
+                .setClientCertificatePath(clientCertificatePath);
+
+        try
+        {
+            return mApi.pushAuthorizationRequest(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // the API call failed
+            throw apiFailure("/api/pushed_auth_req", e);
         }
     }
 }
