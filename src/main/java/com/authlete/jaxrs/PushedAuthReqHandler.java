@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2019 Authlete, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the
+ * License.
+ */
 package com.authlete.jaxrs;
 
 
@@ -13,22 +29,21 @@ import com.authlete.common.web.BasicCredentials;
 
 /**
  * Handler for pushed authorization request endpoint requests.
- * 
+ *
  * <p>
  * In an implementation of the pushed authorization request endpoint, call
  * {@link #handle()} method and use the response as the response from the
  * endpoint to the client application. {@code handle()} method calls Authlete's
- * {@code /api/auth/pushed_auth_req} API, receives a response from the API, and
+ * {@code /api/pushed_auth_req} API, receives a response from the API, and
  * dispatches processing according to the {@code action} parameter in the response.
  * </p>
- * 
+ *
  * @see <a href="https://tools.ietf.org/html/draft-lodderstedt-oauth-par"
  *      >OAuth 2.0 Pushed Authorization Requests</a>
- * 
- * @since 2.21
- * 
- * @author Justin Richer
  *
+ * @since 2.21
+ *
+ * @author Justin Richer
  */
 public class PushedAuthReqHandler extends BaseHandler
 {
@@ -43,23 +58,24 @@ public class PushedAuthReqHandler extends BaseHandler
         super(api);
     }
 
+
     /**
      * Handle a pushed authorization request.
-     * 
+     *
      * @param parameters
-     *            Request parameters of a token request.
+     *            Request parameters of a pushed authorization request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header in the token request.
-     *            A client application may embed its pair of client ID and client
-     *            secret in a token request using <a href=
-     *            "https://tools.ietf.org/html/rfc2617#section-2">Basic
-     *            Authentication</a>.
+     *            The value of {@code Authorization} header in the pushed
+     *            authorization request. A client application may embed its
+     *            pair of client ID and client secret in a pushed authorization
+     *            request using <a href="https://tools.ietf.org/html/rfc2617#section-2"
+     *            >Basic Authentication</a>.
      *
      * @param clientCertificatePath
-     *            The path of the client's certificate, each in PEM format. The first
-     *            item in the array is the client's certificate itself. May be {@code null} if
-     *            the client did not send a certificate or path.
+     *            The path of the client's certificate, each in PEM format.
+     *            The first item in the array is the client's certificate itself.
+     *            May be {@code null} if the client did not send a certificate or path.
      *
      * @return
      *         A response that should be returned from the endpoint to the
@@ -160,6 +176,5 @@ public class PushedAuthReqHandler extends BaseHandler
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/pushed_auth_req", action);
         }
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@ import javax.ws.rs.core.Response.Status;
 
 /**
  * Utility class to generate a response from an endpoint.
- *
- * @author Takahiko Kawasaki
  */
 class ResponseUtil
 {
@@ -254,6 +252,8 @@ class ResponseUtil
     /**
      * Create a response of {@code 413 Request Entity Too Large} with
      * the given entity.
+     *
+     * @since 2.21
      */
     public static Response tooLarge(String entity)
     {
