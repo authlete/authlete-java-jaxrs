@@ -1,6 +1,20 @@
 CHANGES
 =======
 
+2.21 (2019-11-13)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Added `callPushedAuthReq` methods.
+
+- `ResponseUtil` class
+    * Added `toLarge(String)` method.
+
+- New classes
+    * `BasePushedAuthReqEndpoint`
+    * `PushedAuthReqHandler`
+
+
 2.20 (2019-10-05)
 -----------------
 

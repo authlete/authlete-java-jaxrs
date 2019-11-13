@@ -1,6 +1,20 @@
 変更点
 ======
 
+2.21 (2019 年 11 月 13 日)
+--------------------------
+
+- `AuthleteApiCaller` クラス
+    * `callPushedAuthReq` メソッド群を追加。
+
+- `ResponseUtil` クラス
+    * `toLarge(String)` メソッドを追加。
+
+- 新しいクラス
+    * `BasePushedAuthReqEndpoint`
+    * `PushedAuthReqHandler`
+
+
 2.20 (2019 年 10 月 05 日)
 --------------------------
 
