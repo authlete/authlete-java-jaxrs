@@ -373,4 +373,20 @@ public interface AuthorizationRequestHandlerSpi
      * @since 1.4
      */
     String[] getScopes();
+
+
+    /**
+     * Get the pairwise user subject, if applicable. This method should check the
+     * registration of the current Client to see if it has a PAIRWISE subject
+     * identifier type. If so, it returns the calculated string of that subject.
+     * If not, it returns {@code null} and the value of {@link #getUserSubject()}
+     * is used by the API instead.
+     * 
+     * @return
+     *         The pairwise subject identifer based on the user and client,
+     *         or {@code null} if no such subject exists.
+     * 
+     * @since 2.XX
+     */
+    String getPairwiseUserSubject();
 }

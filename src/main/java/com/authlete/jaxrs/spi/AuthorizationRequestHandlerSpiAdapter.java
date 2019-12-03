@@ -85,4 +85,11 @@ public class AuthorizationRequestHandlerSpiAdapter implements AuthorizationReque
     {
         return null;
     }
+
+
+    @Override
+    public String getPairwiseUserSubject()
+    {
+        return null;
+    }
 }

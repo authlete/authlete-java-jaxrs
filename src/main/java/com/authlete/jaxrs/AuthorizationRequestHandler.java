@@ -185,6 +185,9 @@ public class AuthorizationRequestHandler extends BaseHandler
         // the service to the current user.
         String subject = mSpi.getUserSubject();
 
+        // get a potentially pairwise subject based on the user and the client
+        String sub = mSpi.getPairwiseUserSubject();
+
         // Check 3. Subject
         noInteractionCheckSubject(response, subject);
 
@@ -206,7 +209,7 @@ public class AuthorizationRequestHandler extends BaseHandler
         String[] scopes = mSpi.getScopes();
 
         // Issue
-        return noInteractionIssue(response, authTime, subject, acr, properties, scopes);
+        return noInteractionIssue(response, authTime, subject, acr, properties, scopes, sub);
     }
 
 
@@ -317,7 +320,7 @@ public class AuthorizationRequestHandler extends BaseHandler
 
     private Response noInteractionIssue(
             AuthorizationResponse response, long authTime, String subject,
-            String acr, Property[] properties, String[] scopes)
+            String acr, Property[] properties, String[] scopes, String sub)
     {
         // When prompt=none is contained in an authorization request,
         // response.getClaims() returns null. This means that user
@@ -332,6 +335,6 @@ public class AuthorizationRequestHandler extends BaseHandler
 
         return getApiCaller().authorizationIssue(
             response.getTicket(), subject, authTime, acr,
-            (Map<String, Object>)null, properties, scopes);
+                (Map<String, Object>) null, properties, scopes, sub);
     }
 }
