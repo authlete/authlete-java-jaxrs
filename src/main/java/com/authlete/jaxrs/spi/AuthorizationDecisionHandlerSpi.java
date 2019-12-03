@@ -272,4 +272,22 @@ public interface AuthorizationDecisionHandlerSpi
      * @since 1.4
      */
     String[] getScopes();
+
+
+    /**
+     * Get the value of the "sub" claim to be used in the id_token.
+     * 
+     * If doing a pairwise subject derivation, this method should check the
+     * registration of the current Client to see if it has a PAIRWISE subject
+     * identifier type. If so, it returns the calculated string of that subject.
+     * If not, it returns {@code null} and the value of {@link #getUserSubject()}
+     * is used by the API instead.
+     * 
+     * @return
+     *         The value of the "sub" claim to be used in the id_token,
+     *         or {@code null} if no such subject exists.
+     * 
+     * @since 2.XX
+     */
+    String getSub();
 }

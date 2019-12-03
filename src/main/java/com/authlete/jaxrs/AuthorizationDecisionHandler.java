@@ -132,6 +132,9 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // The end-user is not authenticated.
             return fail(ticket, Reason.NOT_AUTHENTICATED);
         }
+        
+        // the potentially pairwise subject of the end user
+        String sub = mSpi.getSub();
 
         // The time when the end-user was authenticated.
         long authTime = mSpi.getUserAuthenticatedAt();
@@ -154,7 +157,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         String[] scopes = mSpi.getScopes();
 
         // Authorize the authorization request.
-        return authorize(ticket, subject, authTime, acr, claims, properties, scopes);
+        return authorize(ticket, subject, authTime, acr, claims, properties, scopes, sub);
     }
 
 
@@ -437,7 +440,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
      */
     private Response authorize(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes)
+            Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
     {
         try
         {
@@ -446,7 +449,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // request had response_type=none, no tokens will be contained in
             // the generated response, though.
             return getApiCaller().authorizationIssue(
-                    ticket, subject, authTime, acr, claims, properties, scopes);
+                    ticket, subject, authTime, acr, claims, properties, scopes, sub);
         }
         catch (WebApplicationException e)
         {
