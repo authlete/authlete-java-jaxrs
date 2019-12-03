@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+2.22 (2019-12-04)
+-----------------
+
+- `AuthorizationDecisionHandlerSpi` interface
+    * Added `getSub()` method.
+
+- `AuthorizationRequestHandlerSpi` interface
+    * Added `getSub()` method.
+
+
 2.21 (2019-11-13)
 -----------------
 

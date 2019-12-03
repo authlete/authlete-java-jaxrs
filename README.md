@@ -44,7 +44,7 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.21</version>
+    <version>2.22</version>
 </dependency>
 ```
 

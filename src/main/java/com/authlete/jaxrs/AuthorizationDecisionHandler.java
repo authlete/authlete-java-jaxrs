@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // The end-user is not authenticated.
             return fail(ticket, Reason.NOT_AUTHENTICATED);
         }
-        
+
         // the potentially pairwise subject of the end user
         String sub = mSpi.getSub();
 

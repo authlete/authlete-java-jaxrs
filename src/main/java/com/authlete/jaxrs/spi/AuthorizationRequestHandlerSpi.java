@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -377,18 +377,20 @@ public interface AuthorizationRequestHandlerSpi
 
     /**
      * Get the value of the "sub" claim to be used in the id_token.
-     * 
+     *
+     * <p>
      * If doing a pairwise subject derivation, this method should check the
      * registration of the current Client to see if it has a PAIRWISE subject
      * identifier type. If so, it returns the calculated string of that subject.
      * If not, it returns {@code null} and the value of {@link #getUserSubject()}
      * is used by the API instead.
-     * 
+     * </p>
+     *
      * @return
      *         The value of the "sub" claim to be used in the id_token,
      *         or {@code null} if no such subject exists.
-     * 
-     * @since 2.XX
+     *
+     * @since 2.22
      */
     String getSub();
 }

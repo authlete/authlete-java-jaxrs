@@ -1,6 +1,16 @@
 変更点
 ======
 
+2.22 (2019 年 12 月 04 日)
+--------------------------
+
+- `AuthorizationDecisionHandlerSpi` インターフェース
+    * `getSub()` メソッドを追加。
+
+- `AuthorizationRequestHandlerSpi` インターフェース
+    * `getSub()` メソッドを追加。
+
+
 2.21 (2019 年 11 月 13 日)
 --------------------------
 
