@@ -186,7 +186,7 @@ public class AuthorizationRequestHandler extends BaseHandler
         String subject = mSpi.getUserSubject();
 
         // get a potentially pairwise subject based on the user and the client
-        String sub = mSpi.getPairwiseUserSubject();
+        String sub = mSpi.getSub();
 
         // Check 3. Subject
         noInteractionCheckSubject(response, subject);

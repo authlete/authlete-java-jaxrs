@@ -77,7 +77,7 @@ public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDeci
 
 
     @Override
-    public String getPairwiseUserSubject()
+    public String getSub()
     {
         return null;
     }

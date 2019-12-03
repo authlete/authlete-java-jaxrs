@@ -134,7 +134,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         }
         
         // the potentially pairwise subject of the end user
-        String sub = mSpi.getPairwiseUserSubject();
+        String sub = mSpi.getSub();
 
         // The time when the end-user was authenticated.
         long authTime = mSpi.getUserAuthenticatedAt();
