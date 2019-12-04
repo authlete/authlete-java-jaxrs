@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.23 (2019-12-05)
+-----------------
+
+- `AuthorizationPageModel` class
+    * Added `getAuthorizationDetails()` method.
+    * Added `setAuthorizationDetails(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-comon` from 2.51 to 2.61.
+
+
 2.22 (2019-12-04)
 -----------------
 

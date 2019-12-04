@@ -1,6 +1,17 @@
 変更点
 ======
 
+2.23 (2019 年 12 月 05 日)
+--------------------------
+
+- `AuthorizationPageModel` クラス
+    * `getAuthorizationDetails()` メソッドを追加。
+    * `setAuthorizationDetails(String)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.51 から 2.61 へ更新。
+
+
 2.22 (2019 年 12 月 04 日)
 --------------------------
 
