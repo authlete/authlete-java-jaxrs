@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Authlete, Inc.
+ * Copyright (C) 2016-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,15 @@ package com.authlete.jaxrs;
 import java.io.Serializable;
 import java.net.URI;
 import com.authlete.common.dto.AuthorizationResponse;
+import com.authlete.common.dto.AuthzDetails;
+import com.authlete.common.dto.AuthzDetailsElement;
+import com.authlete.common.dto.AuthzDetailsElementSerializer;
+import com.authlete.common.dto.AuthzDetailsSerializer;
 import com.authlete.common.dto.Client;
 import com.authlete.common.dto.Scope;
 import com.authlete.common.types.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 /**
@@ -108,6 +114,15 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * The content of the {@code authorization_details} request parameter
+     * in JSON format. See "OAuth 2.0 Rich Authorization Requests".
+     *
+     * @since 2.23
+     */
+    private String authorizationDetails;
+
+
+    /**
      * The default constructor with default values.
      */
     public AuthorizationPageModel()
@@ -134,16 +149,17 @@ public class AuthorizationPageModel implements Serializable
     {
         Client client = info.getClient();
 
-        serviceName     = info.getService().getServiceName();
-        clientName      = client.getClientName();
-        description     = client.getDescription();
-        logoUri         = toString(client.getLogoUri());
-        clientUri       = toString(client.getClientUri());
-        policyUri       = toString(client.getPolicyUri());
-        tosUri          = toString(client.getTosUri());
-        scopes          = info.getScopes();
-        loginId         = computeLoginId(info);
-        loginIdReadOnly = computeLoginIdReadOnly(info);
+        serviceName          = info.getService().getServiceName();
+        clientName           = client.getClientName();
+        description          = client.getDescription();
+        logoUri              = toString(client.getLogoUri());
+        clientUri            = toString(client.getClientUri());
+        policyUri            = toString(client.getPolicyUri());
+        tosUri               = toString(client.getTosUri());
+        scopes               = info.getScopes();
+        loginId              = computeLoginId(info);
+        loginIdReadOnly      = computeLoginIdReadOnly(info);
+        authorizationDetails = toString(info.getAuthorizationDetails());
 
         // current logged in user, could be null
         this.user       = user;
@@ -474,6 +490,36 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * Get the content of the {@code authorization_details} request parameter
+     * in JSON format. See "OAuth 2.0 Rich Authorization Requests" for details.
+     *
+     * @return
+     *         Authorization details in JSON format.
+     *
+     * @since 2.23
+     */
+    public String getAuthorizationDetails()
+    {
+        return authorizationDetails;
+    }
+
+
+    /**
+     * Set the content of the {@code authorization_details} request parameter
+     * in JSON format. See "OAuth 2.0 Rich Authorization Requests" for details.
+     *
+     * @param details
+     *         Authorization details in JSON format.
+     *
+     * @since 2.23
+     */
+    public void setAuthorizationDetails(String details)
+    {
+        this.authorizationDetails = details;
+    }
+
+
+    /**
      * Get the string representation of the given URI.
      *
      * @param uri
@@ -518,5 +564,46 @@ public class AuthorizationPageModel implements Serializable
         {
             return null;
         }
+    }
+
+
+    private static String toString(AuthzDetails details)
+    {
+        if (details == null)
+        {
+            return null;
+        }
+
+        AuthzDetailsElement[] elements = details.getElements();
+
+        if (elements == null || elements.length == 0)
+        {
+            return null;
+        }
+
+        return toJson(details);
+    }
+
+
+    private static String toJson(Object object)
+    {
+        return createGson().toJson(object);
+    }
+
+
+    private static Gson createGson()
+    {
+        return createGsonBuilder().setPrettyPrinting().create();
+    }
+
+
+    private static GsonBuilder createGsonBuilder()
+    {
+        return new GsonBuilder()
+            .registerTypeAdapter(
+                AuthzDetails.class, new AuthzDetailsSerializer())
+            .registerTypeAdapter(
+                AuthzDetailsElement.class, new AuthzDetailsElementSerializer())
+            ;
     }
 }
