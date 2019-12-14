@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.24 (2019-12-15)
+-----------------
+
 - `JaxRsUtils` class
     * Added `parseFormUrlencoded(String)` method.
 
