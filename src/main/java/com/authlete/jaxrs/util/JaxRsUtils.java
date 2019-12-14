@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Authlete, Inc.
+ * Copyright (C) 2017-2019 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.authlete.jaxrs.util;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -79,5 +81,65 @@ public class JaxRsUtils
         }
 
         return target;
+    }
+
+
+    /**
+     * Convert a string in the {@code application/x-www-form-urlencoded} format
+     * into an instance of {@link MultivaluedMap}{@code <String, String>}.
+     *
+     * @param input
+     *         A string in the format of {@code application/x-www-form-urlencoded}.
+     *
+     * @return
+     *         An instance of {@link MultivaluedMap}{@code <String, String>} that
+     *         represents the result of parsing the input string.
+     */
+    public static MultivaluedMap<String, String> parseFormUrlencoded(String input)
+    {
+        MultivaluedMap<String, String> parameters = new MultivaluedHashMap<String, String>();
+
+        if (input == null || input.length() == 0)
+        {
+            return parameters;
+        }
+
+        // If the first letter is '?'. This happens when the service implementation
+        // uses System.Uri.Query.
+        if (input.charAt(0) == '?')
+        {
+            // Remove the first letter.
+            input = input.substring(1);
+        }
+
+        for (String parameter : input.split("&"))
+        {
+            String[] pair = parameter.split("=", 2);
+
+            if (pair == null || pair.length == 0 || pair[0].length() == 0)
+            {
+                continue;
+            }
+
+            String key   = urlDecode(pair[0]);
+            String value = (pair.length == 2) ? urlDecode(pair[1]) : "";
+
+            parameters.add(key, value);
+        }
+
+        return parameters;
+    }
+
+
+    private static String urlDecode(String input)
+    {
+        try
+        {
+            return URLDecoder.decode(input, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            return input;
+        }
     }
 }
