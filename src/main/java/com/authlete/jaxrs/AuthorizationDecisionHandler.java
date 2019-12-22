@@ -17,8 +17,9 @@
 package com.authlete.jaxrs;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +27,11 @@ import java.util.TreeSet;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.assurance.VerifiedClaims;
+import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
+import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstraint;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
+import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.Property;
 import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 
@@ -46,6 +51,172 @@ import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
  */
 public class AuthorizationDecisionHandler extends BaseHandler
 {
+    /**
+     * Parameters for this handler.
+     *
+     * @since 2.25
+     */
+    public static class Params implements Serializable
+    {
+        private static final long serialVersionUID = 1L;
+
+
+        private String ticket;
+        private String[] claimNames;
+        private String[] claimLocales;
+        private String idTokenClaims;
+
+
+        /**
+         * Get the ticket that was issued by Authlete's
+         * {@code /api/auth/authorization} API.
+         *
+         * @return
+         *         The ticket that was issued by Authlete's
+         *         {@code /api/auth/authorization} API.
+         */
+        public String getTicket()
+        {
+            return ticket;
+        }
+
+
+        /**
+         * Set the ticket that was issued by Authlete's
+         * {@code /api/auth/authorization} API.
+         *
+         * @param ticket
+         *         The ticket that was issued by Authlete's
+         *         {@code /api/auth/authorization} API.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setTicket(String ticket)
+        {
+            this.ticket = ticket;
+
+            return this;
+        }
+
+
+        /**
+         * Get the names of requested claims.
+         *
+         * @return
+         *         The names of requested claims.
+         */
+        public String[] getClaimNames()
+        {
+            return claimNames;
+        }
+
+
+        /**
+         * Set the names of requested claims. The value given to this method
+         * should be the value of the {@code claims} parameter in a response
+         * from Authlete's {@code /api/auth/authorization} API.
+         *
+         * @param names
+         *         The names of requested claims.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setClaimNames(String[] names)
+        {
+            this.claimNames = names;
+
+            return this;
+        }
+
+
+        /**
+         * Get the requested claim locales.
+         *
+         * @return
+         *         Requested claim locales.
+         */
+        public String[] getClaimLocales()
+        {
+            return this.claimLocales;
+        }
+
+
+        /**
+         * Set the requested claim locales. The value given to this method
+         * should be the value of the {@code claimsLocales} parameter in a
+         * response from Authlete's {@code /api/auth/authorization} API.
+         *
+         * @param locales
+         *         Requested claim locales.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setClaimLocales(String[] locales)
+        {
+            this.claimLocales = locales;
+
+            return this;
+        }
+
+
+        /**
+         * Get the value of the {@code id_token} property in the {@code claims}
+         * request parameter.
+         *
+         * @return
+         *         Claims requested for an ID token.
+         */
+        public String getIdTokenClaims()
+        {
+            return idTokenClaims;
+        }
+
+
+        /**
+         * Set the value of the {@code id_token} property in the {@code claims}
+         * request parameter. The value given to this method should be the
+         * value of the {@code idTokenClaims} parameter in a response from
+         * Authlete's {@code /api/auth/authorization} API.
+         *
+         * @param claims
+         *         Claims requested for an ID token.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setIdTokenClaims(String claims)
+        {
+            this.idTokenClaims = claims;
+
+            return this;
+        }
+
+
+        /**
+         * Create a {@link Params} instance from an instance of
+         * {@link AuthorizationResponse}.
+         *
+         * @param response
+         *         An response from Authlete's {@code /api/auth/authorization} API.
+         *
+         * @return
+         *         A new {@code Params} instance built from the response.
+         */
+        public static Params from(AuthorizationResponse response)
+        {
+            return new Params()
+                    .setTicket(response.getTicket())
+                    .setClaimNames(response.getClaims())
+                    .setClaimLocales(response.getClaimsLocales())
+                    .setIdTokenClaims(response.getIdTokenClaims())
+                    ;
+        }
+    }
+
+
     /**
      * Implementation of {@link AuthorizationDecisionHandlerSpi} interface.
      */
@@ -94,10 +265,37 @@ public class AuthorizationDecisionHandler extends BaseHandler
      */
     public Response handle(String ticket, String[] claimNames, String[] claimLocales) throws WebApplicationException
     {
+        Params params = new Params()
+                .setTicket(ticket)
+                .setClaimNames(claimNames)
+                .setClaimLocales(claimLocales)
+                ;
+
+        return handle(params);
+    }
+
+
+    /**
+     * Handle an end-user's decision on an authorization request.
+     *
+     * @param params
+     *         Parameters necessary to handle the decision.
+     *
+     * @return
+     *         A response to the client application. Basically, the response
+     *         will trigger redirection to the client's redirection endpoint.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.25
+     */
+    public Response handle(Params params) throws WebApplicationException
+    {
         try
         {
             // Process the end-user's decision.
-            return process(ticket, claimNames, claimLocales);
+            return process(params);
         }
         catch (WebApplicationException e)
         {
@@ -114,13 +312,13 @@ public class AuthorizationDecisionHandler extends BaseHandler
     /**
      * Process the end-user's decision.
      */
-    private Response process(String ticket, String[] claimNames, String[] claimLocales)
+    private Response process(Params params)
     {
         // If the end-user did not grant authorization to the client application.
         if (mSpi.isClientAuthorized() == false)
         {
             // The end-user denied the authorization request.
-            return fail(ticket, Reason.DENIED);
+            return fail(params.getTicket(), Reason.DENIED);
         }
 
         // The subject (= unique identifier) of the end-user.
@@ -130,7 +328,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         if (subject == null || subject.length() == 0)
         {
             // The end-user is not authenticated.
-            return fail(ticket, Reason.NOT_AUTHENTICATED);
+            return fail(params.getTicket(), Reason.NOT_AUTHENTICATED);
         }
 
         // the potentially pairwise subject of the end user
@@ -144,7 +342,12 @@ public class AuthorizationDecisionHandler extends BaseHandler
         String acr = mSpi.getAcr();
 
         // Collect claim values.
-        Map<String, Object> claims = collectClaims(subject, claimNames, claimLocales);
+        Map<String, Object> claims = collectClaims(
+                subject, params.getClaimNames(), params.getClaimLocales());
+
+        // Collect verified claims.
+        // See "OpenID Connect for Identity Assurance 1.0" for details.
+        claims = collectVerifiedClaims(claims, subject, params.getIdTokenClaims());
 
         // Extra properties to associate with an access token and/or
         // an authorization code.
@@ -157,7 +360,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         String[] scopes = mSpi.getScopes();
 
         // Authorize the authorization request.
-        return authorize(ticket, subject, authTime, acr, claims, properties, scopes, sub);
+        return authorize(params.getTicket(), subject, authTime, acr, claims, properties, scopes, sub);
     }
 
 
@@ -176,7 +379,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         claimLocales = normalizeClaimLocales(claimLocales);
 
         // Claim values.
-        Map<String, Object> claims = new HashMap<String, Object>();
+        Map<String, Object> claims = new LinkedHashMap<String, Object>();
 
         // For each requested claim.
         for (String claimName : claimNames)
@@ -316,6 +519,50 @@ public class AuthorizationDecisionHandler extends BaseHandler
 
         // The last resort. Try to get the claim value without any language tag.
         return mSpi.getUserClaim(name, null);
+    }
+
+
+    private Map<String, Object> collectVerifiedClaims(
+            Map<String, Object> claims, String subject, String idTokenClaims)
+    {
+        // If the "claims" parameter does not contain an "id_token" property.
+        if (idTokenClaims == null || idTokenClaims.length() == 0)
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // The "id_token" property may contain a "verified_claims" property.
+        // Extract the "verified_claims".
+        VerifiedClaimsConstraint constraint =
+                VerifiedClaimsContainerConstraint
+                    .fromJson(idTokenClaims).getVerifiedClaims();
+
+        // If "verified_claims" is not included or its value is null.
+        if (!constraint.exists() || constraint.isNull())
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // Collect verified claims.
+        VerifiedClaims verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
+
+        // If no verified claims are provided.
+        if (verifiedClaims == null)
+        {
+            return claims;
+        }
+
+        if (claims == null)
+        {
+            claims = new LinkedHashMap<String, Object>();
+        }
+
+        // Embed the verified claims as "verified_claims".
+        claims.put("verified_claims", verifiedClaims);
+
+        return claims;
     }
 
 

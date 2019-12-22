@@ -17,12 +17,15 @@
 package com.authlete.jaxrs;
 
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.assurance.VerifiedClaims;
+import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
+import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstraint;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.dto.UserInfoResponse.Action;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
@@ -173,8 +176,14 @@ public class UserInfoRequestHandler extends BaseHandler
      */
     private Response getUserInfo(UserInfoResponse response)
     {
+        String subject = response.getSubject();
+
         // Collect claim values of the user.
-        Map<String, Object> claims = collectClaims(response.getSubject(), response.getClaims());
+        Map<String, Object> claims = collectClaims(subject, response.getClaims());
+
+        // Collect verified claims.
+        // See "OpenID Connect for Identity Assurance 1.0" for details.
+        claims = collectVerifiedClaims(claims, subject, response.getUserInfoClaims());
 
         try
         {
@@ -202,7 +211,7 @@ public class UserInfoRequestHandler extends BaseHandler
         mSpi.prepareUserClaims(subject, claimNames);
 
         // Claim values.
-        Map<String, Object> claims = new HashMap<String, Object>();
+        Map<String, Object> claims = new LinkedHashMap<String, Object>();
 
         // For each requested claim.
         for (String claimName : claimNames)
@@ -250,6 +259,51 @@ public class UserInfoRequestHandler extends BaseHandler
         }
 
         // Obtained claim values.
+        return claims;
+    }
+
+
+    private Map<String, Object> collectVerifiedClaims(
+            Map<String, Object> claims, String subject, String userInfoClaims)
+    {
+        // If the "claims" parameter in the authorization request has not
+        // contained a "userinfo" property.
+        if (userInfoClaims == null || userInfoClaims.length() == 0)
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // The "userinfo" property may contain a "verified_claims" property.
+        // Extract the "verified_claims".
+        VerifiedClaimsConstraint constraint =
+                VerifiedClaimsContainerConstraint
+                    .fromJson(userInfoClaims).getVerifiedClaims();
+
+        // If "verified_claims" is not included or its value is null.
+        if (!constraint.exists() || constraint.isNull())
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // Collect verified claims.
+        VerifiedClaims verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
+
+        // If no verified claims are provided.
+        if (verifiedClaims == null)
+        {
+            return claims;
+        }
+
+        if (claims == null)
+        {
+            claims = new LinkedHashMap<String, Object>();
+        }
+
+        // Embed the verified claims as "verified_claims".
+        claims.put("verified_claims", verifiedClaims);
+
         return claims;
     }
 }

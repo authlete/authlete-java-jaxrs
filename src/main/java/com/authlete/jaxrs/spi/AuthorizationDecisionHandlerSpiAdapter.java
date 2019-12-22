@@ -17,6 +17,8 @@
 package com.authlete.jaxrs.spi;
 
 
+import com.authlete.common.assurance.VerifiedClaims;
+import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
 import com.authlete.common.dto.Property;
 
 
@@ -78,6 +80,13 @@ public class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDeci
 
     @Override
     public String getSub()
+    {
+        return null;
+    }
+
+
+    @Override
+    public VerifiedClaims getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)
     {
         return null;
     }

@@ -19,12 +19,20 @@ package com.authlete.jaxrs;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import com.authlete.common.assurance.constraint.ClaimsConstraint;
+import com.authlete.common.assurance.constraint.VerifiedClaimConstraint;
+import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
+import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstraint;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.AuthzDetails;
 import com.authlete.common.dto.AuthzDetailsElement;
 import com.authlete.common.dto.AuthzDetailsElementSerializer;
 import com.authlete.common.dto.AuthzDetailsSerializer;
 import com.authlete.common.dto.Client;
+import com.authlete.common.dto.Pair;
 import com.authlete.common.dto.Scope;
 import com.authlete.common.types.User;
 import com.google.gson.Gson;
@@ -42,7 +50,7 @@ import com.google.gson.GsonBuilder;
  */
 public class AuthorizationPageModel implements Serializable
 {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
 
     /**
@@ -123,6 +131,30 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * The value of the {@code purpose} request parameter.
+     *
+     * @since 2.25
+     */
+    private String purpose;
+
+
+    /**
+     * Purposes for verified claims for the ID token.
+     *
+     * @since 2.25
+     */
+    private Pair[] purposesForIdToken;
+
+
+    /**
+     * Purposes for verified claims for the userinfo.
+     *
+     * @since 2.25
+     */
+    private Pair[] purposesForUserInfo;
+
+
+    /**
      * The default constructor with default values.
      */
     public AuthorizationPageModel()
@@ -160,9 +192,12 @@ public class AuthorizationPageModel implements Serializable
         loginId              = computeLoginId(info);
         loginIdReadOnly      = computeLoginIdReadOnly(info);
         authorizationDetails = toString(info.getAuthorizationDetails());
+        purpose              = info.getPurpose();
+        purposesForIdToken   = convertVerifiedClaimsToPairArray(info.getIdTokenClaims());
+        purposesForUserInfo  = convertVerifiedClaimsToPairArray(info.getUserInfoClaims());
 
         // current logged in user, could be null
-        this.user       = user;
+        this.user = user;
     }
 
 
@@ -520,6 +555,208 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * Get the value of the {@code purpose} request parameter. See <a href=
+     * "https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html#rfc.section.8"
+     * >OpenID Connect for Identity Assurance 1.0, Transaction-specific Purpose</a>
+     * for details.
+     *
+     * @return
+     *         The value of the {@code purpose} request parameter.
+     *
+     * @since 2.25
+     */
+    public String getPurpose()
+    {
+        return purpose;
+    }
+
+
+    /**
+     * Set the value of the {@code purpose} request parameter. See <a href=
+     * "https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html#rfc.section.8"
+     * >OpenID Connect for Identity Assurance 1.0, Transaction-specific Purpose</a>
+     * for details.
+     *
+     * @param purpose
+     *         The value of the {@code purpose} request parameter.
+     *
+     * @since 2.25
+     */
+    public void setPurpose(String purpose)
+    {
+        this.purpose = purpose;
+    }
+
+
+    /**
+     * Get the purposes of verified claims requested for an ID token.
+     *
+     * <p>
+     * For example, when an authorization request contains a {@code claims}
+     * request parameter whose content is as follow:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "id_token":{
+     *     "verified_claims":{
+     *       "claims":{
+     *         "given_name":{
+     *           "essential":true,
+     *           "purpose":"To make communication look more personal"
+     *         },
+     *         "family_name":{
+     *           "essential":true
+     *         },
+     *         "birthdate":{
+     *           "purpose":"To send you best wishes on your birthday"
+     *         }
+     *       }
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * , this method returns an array which contains the following elements.
+     *
+     * <blockquote>
+     * <table border="1" cellpadding="5" style="border-collapse: collapse;">
+     *   <thead>
+     *     <tr bgcolor="orange">
+     *       <th>Index</th>
+     *       <th><code>getKey()</th>
+     *       <th><code>getValue()</th>
+     *     </tr>
+     *   </thead>
+     *   <tbody>
+     *     <tr>
+     *       <td align="center">0</td>
+     *       <td><code>given_name</code></td>
+     *       <td><code>To make communication look more personal</code></td>
+     *     </tr>
+     *     <tr>
+     *       <td align="center">1</td>
+     *       <td><code>birthdate</code></td>
+     *       <td><code>To send you best wishes on your birthday</code></td>
+     *     </tr>
+     *   </tbody>
+     * </table>
+     * </blockquote>
+     *
+     * <p>
+     * Note that the order of the elements is not assured.
+     * </p>
+     *
+     * @return
+     *         Pairs of claim name and its purpose.
+     *
+     * @since 2.25
+     */
+    public Pair[] getPurposesForIdToken()
+    {
+        return purposesForIdToken;
+    }
+
+
+    /**
+     * Set the purposes of verified claims requested for an ID token.
+     *
+     * @param purposes
+     *         Pairs of claim name and its purpose.
+     *
+     * @since 2.25
+     */
+    public void setPurposesForIdToken(Pair[] purposes)
+    {
+        this.purposesForIdToken = purposes;
+    }
+
+
+    /**
+     * Get the purposes of verified claims requested for userinfo.
+     *
+     * <p>
+     * For example, when an authorization request contains a {@code claims}
+     * request parameter whose content is as follow:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "userinfo":{
+     *     "verified_claims":{
+     *       "claims":{
+     *         "given_name":{
+     *           "essential":true,
+     *           "purpose":"To make communication look more personal"
+     *         },
+     *         "family_name":{
+     *           "essential":true
+     *         },
+     *         "birthdate":{
+     *           "purpose":"To send you best wishes on your birthday"
+     *         }
+     *       }
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * , this method returns an array which contains the following elements.
+     *
+     * <blockquote>
+     * <table border="1" cellpadding="5" style="border-collapse: collapse;">
+     *   <thead>
+     *     <tr bgcolor="orange">
+     *       <th>Index</th>
+     *       <th><code>getKey()</th>
+     *       <th><code>getValue()</th>
+     *     </tr>
+     *   </thead>
+     *   <tbody>
+     *     <tr>
+     *       <td align="center">0</td>
+     *       <td><code>given_name</code></td>
+     *       <td><code>To make communication look more personal</code></td>
+     *     </tr>
+     *     <tr>
+     *       <td align="center">1</td>
+     *       <td><code>birthdate</code></td>
+     *       <td><code>To send you best wishes on your birthday</code></td>
+     *     </tr>
+     *   </tbody>
+     * </table>
+     * </blockquote>
+     *
+     * <p>
+     * Note that the order of the elements is not assured.
+     * </p>
+     *
+     * @return
+     *         Pairs of claim name and its purpose.
+     *
+     * @since 2.25
+     */
+    public Pair[] getPurposesForUserInfo()
+    {
+        return purposesForUserInfo;
+    }
+
+
+    /**
+     * Set the purposes of verified claims requested for userinfo.
+     *
+     * @param purposes
+     *         Pairs of claim name and its purpose.
+     *
+     * @since 2.25
+     */
+    public void setPurposesForUserInfo(Pair[] purposes)
+    {
+        this.purposesForUserInfo = purposes;
+    }
+
+
+    /**
      * Get the string representation of the given URI.
      *
      * @param uri
@@ -605,5 +842,63 @@ public class AuthorizationPageModel implements Serializable
             .registerTypeAdapter(
                 AuthzDetailsElement.class, new AuthzDetailsElementSerializer())
             ;
+    }
+
+
+    private static Pair[] convertVerifiedClaimsToPairArray(String claims)
+    {
+        if (claims == null)
+        {
+            return null;
+        }
+
+        // Parse the "verified_claims" that the JSON may contain.
+        VerifiedClaimsConstraint verifiedClaimsConstraint =
+            VerifiedClaimsContainerConstraint
+                .fromJson(claims).getVerifiedClaims();
+
+        // If "verified_claims" is not included or its value is null.
+        if (!verifiedClaimsConstraint.exists() || verifiedClaimsConstraint.isNull())
+        {
+            return null;
+        }
+
+        // "claims" in the "verified_claims".
+        ClaimsConstraint claimsConstraint = verifiedClaimsConstraint.getClaims();
+
+        // If "claims" is not included or its value is null.
+        if (!claimsConstraint.exists() || claimsConstraint.isNull())
+        {
+            return null;
+        }
+
+        List<Pair> list = new ArrayList<Pair>();
+
+        // For each requested verified claim.
+        for (Map.Entry<String, VerifiedClaimConstraint> entry : claimsConstraint.entrySet())
+        {
+            addPurposePair(list, entry);
+        }
+
+        if (list.size() == 0)
+        {
+            return null;
+        }
+
+        return list.toArray(new Pair[list.size()]);
+    }
+
+
+    private static void addPurposePair(List<Pair> list, Map.Entry<String, VerifiedClaimConstraint> entry)
+    {
+        String purpose = entry.getValue().getPurpose();
+
+        if (purpose == null || purpose.length() == 0)
+        {
+            return;
+        }
+
+        // Add a pair of claim name and its purpose.
+        list.add(new Pair(entry.getKey(), purpose));
     }
 }
