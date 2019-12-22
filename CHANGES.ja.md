@@ -1,6 +1,30 @@
 変更点
 ======
 
+2.25 (2019 年 12 月 23 日)
+--------------------------
+
+- `AuthorizationDecisionHandlerSpi` インターフェース
+    * `getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)` メソッドを追加。
+
+- `AuthorizationPageModel` クラス
+    * `getPurpose()` メソッドを追加。
+    * `setPurpose(String)` メソッドを追加。
+    * `getPurposesForIdToken()` メソッドを追加。
+    * `setPurposesForIdToken(Pair[])` メソッドを追加。
+    * `getPurposesForUserInfo()` メソッドを追加。
+    * `setPurposesForUserInfo(Pair[])` メソッドを追加。
+
+- `UserInfoRequestHandlerSpi` インターフェース
+    * `getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.61 から 2.64 へ更新。
+
+- 新しいクラス
+    * `AuthorizationDecisionHandler.Params`
+
+
 2.24 (2019 年 12 月 15 日)
 --------------------------
 

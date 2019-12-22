@@ -1,6 +1,30 @@
 CHANGES
 =======
 
+2.25 (2019-12-23)
+-----------------
+
+- `AuthorizationDecisionHandlerSpi` interface
+    * Added `getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)` method.
+
+- `AuthorizationPageModel` class
+    * Added `getPurpose()` method.
+    * Added `setPurpose(String)` method.
+    * Added `getPurposesForIdToken()` method.
+    * Added `setPurposesForIdToken(Pair[])` method.
+    * Added `getPurposesForUserInfo()` method.
+    * Added `setPurposesForUserInfo(Pair[])` method.
+
+- `UserInfoRequestHandlerSpi` interface
+    * Added `getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.61 to 2.64.
+
+- New classes
+    * `AuthorizationDecisionHandler.Params`
+
+
 2.24 (2019-12-15)
 -----------------
 
