@@ -1,6 +1,32 @@
 CHANGES
 =======
 
+2.26 (2019-12-23)
+-----------------
+
+- `AuthorizationPageModel` class
+    * Added `getVerifiedClaimsForIdToken()` method.
+    * Added `setVerifiedClaimsForIdToken(Pair[])` method.
+    * Added `getVerifiedClaimsForUserInfo()` method.
+    * Added `setVerifiedClaimsForUserInfo(Pair[])` method.
+    * Added `isAllVerifiedClaimsForIdTokenRequested()` method.
+    * Added `setAllVerifiedClaimsForIdTokenRequested(boolean)` method.
+    * Added `isAllVerifiedClaimsForUserInfoRequested()` method.
+    * Added `setAllVerifiedClaimsForUserInfoRequested(boolean)` method.
+    * Added `isIdentityAssuranceRequired()` method.
+    * Added `setIdentityAssuranceRequired(boolean)` method.
+    * Removed `getPurposesForIdToken()` method.
+    * Removed `setPurposesForIdToken(Pair[])` method.
+    * Removed `getPurposesForUserInfo()` method.
+    * Removed `setPurposesForUserInfo(Pair[])` method.
+
+- `BaseAuthorizationDecisionEndpoint` class
+    * Added `handle(AuthleteApi, AuthorizationDecisionHandlerSpi, Params)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.64 to 2.65.
+
+
 2.25 (2019-12-23)
 -----------------
 

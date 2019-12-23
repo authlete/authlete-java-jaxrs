@@ -1,6 +1,32 @@
 変更点
 ======
 
+2.26 (2019 年 12 月 23 日)
+--------------------------
+
+- `AuthorizationPageModel` クラス
+    * `getVerifiedClaimsForIdToken()` メソッドを追加。
+    * `setVerifiedClaimsForIdToken(Pair[])` メソッドを追加。
+    * `getVerifiedClaimsForUserInfo()` メソッドを追加。
+    * `setVerifiedClaimsForUserInfo(Pair[])` メソッドを追加。
+    * `isAllVerifiedClaimsForIdTokenRequested()` メソッドを追加。
+    * `setAllVerifiedClaimsForIdTokenRequested(boolean)` メソッドを追加。
+    * `isAllVerifiedClaimsForUserInfoRequested()` メソッドを追加。
+    * `setAllVerifiedClaimsForUserInfoRequested(boolean)` メソッドを追加。
+    * `isIdentityAssuranceRequired()` メソッドを追加。
+    * `setIdentityAssuranceRequired(boolean)` メソッドを追加。
+    * `getPurposesForIdToken()` メソッドを追加。
+    * `setPurposesForIdToken(Pair[])` メソッドを追加。
+    * `getPurposesForUserInfo()` メソッドを追加。
+    * `setPurposesForUserInfo(Pair[])` メソッドを追加。
+
+- `BaseAuthorizationDecisionEndpoint` クラス
+    * `handle(AuthleteApi, AuthorizationDecisionHandlerSpi, Params)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.64 から 2.65 へ更新。
+
+
 2.25 (2019 年 12 月 23 日)
 --------------------------
 
