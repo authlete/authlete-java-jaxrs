@@ -139,19 +139,46 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
-     * Purposes for verified claims for the ID token.
+     * Verified claims requested for the ID token.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    private Pair[] purposesForIdToken;
+    private Pair[] verifiedClaimsForIdToken;
 
 
     /**
-     * Purposes for verified claims for the userinfo.
+     * Flag indicating whether the authorization request requests
+     * all possible verified claims for the ID token.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    private Pair[] purposesForUserInfo;
+    private boolean allVerifiedClaimsForIdTokenRequested;
+
+
+    /**
+     * Verified claims requested for the userinfo.
+     *
+     * @since 2.26
+     */
+    private Pair[] verifiedClaimsForUserInfo;
+
+
+    /**
+     * Flag indicating whether the authorization request requests
+     * all possible verified claims for the userinfo.
+     *
+     * @since 2.26
+     */
+    private boolean allVerifiedClaimsForUserInfoRequested;
+
+
+    /**
+     * Flag indicating whether behaviors for Identity Assurance are
+     * required.
+     *
+     * @since 2.26
+     */
+    private boolean identityAssuranceRequired;
 
 
     /**
@@ -192,12 +219,10 @@ public class AuthorizationPageModel implements Serializable
         loginId              = computeLoginId(info);
         loginIdReadOnly      = computeLoginIdReadOnly(info);
         authorizationDetails = toString(info.getAuthorizationDetails());
-        purpose              = info.getPurpose();
-        purposesForIdToken   = convertVerifiedClaimsToPairArray(info.getIdTokenClaims());
-        purposesForUserInfo  = convertVerifiedClaimsToPairArray(info.getUserInfoClaims());
+        this.user            = user;
 
-        // current logged in user, could be null
-        this.user = user;
+        // For "OpenID Connect for Identity Assurance 1.0"
+        setupIdentityAssurance(info);
     }
 
 
@@ -589,7 +614,7 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
-     * Get the purposes of verified claims requested for an ID token.
+     * Get the verified claims requested for the ID token.
      *
      * <p>
      * For example, when an authorization request contains a {@code claims}
@@ -636,6 +661,11 @@ public class AuthorizationPageModel implements Serializable
      *     </tr>
      *     <tr>
      *       <td align="center">1</td>
+     *       <td><code>family_name</code></td>
+     *       <td><code></code></td>
+     *     </tr>
+     *     <tr>
+     *       <td align="center">2</td>
      *       <td><code>birthdate</code></td>
      *       <td><code>To send you best wishes on your birthday</code></td>
      *     </tr>
@@ -648,32 +678,64 @@ public class AuthorizationPageModel implements Serializable
      * </p>
      *
      * @return
-     *         Pairs of claim name and its purpose.
+     *         Requested verified claims.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    public Pair[] getPurposesForIdToken()
+    public Pair[] getVerifiedClaimsForIdToken()
     {
-        return purposesForIdToken;
+        return verifiedClaimsForIdToken;
     }
 
 
     /**
-     * Set the purposes of verified claims requested for an ID token.
+     * Set the verified claims requested for the ID token.
      *
-     * @param purposes
-     *         Pairs of claim name and its purpose.
+     * @param verifiedClaims
+     *         Requested verified claims.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    public void setPurposesForIdToken(Pair[] purposes)
+    public void setVerifiedClaimsForIdToken(Pair[] verifiedClaims)
     {
-        this.purposesForIdToken = purposes;
+        this.verifiedClaimsForIdToken = verifiedClaims;
     }
 
 
     /**
-     * Get the purposes of verified claims requested for userinfo.
+     * Get the flag indicating whether the authorization request requests
+     * all possible verified claims for the ID token.
+     *
+     * @return
+     *       {@code true} if the authorization request requests all possible
+     *       verified claims for the ID token.
+     *
+     * @since 2.26
+     */
+    public boolean isAllVerifiedClaimsForIdTokenRequested()
+    {
+        return allVerifiedClaimsForIdTokenRequested;
+    }
+
+
+    /**
+     * Set the flag indicating whether the authorization request requests
+     * all possible verified claims for the ID token.
+     *
+     * @param requested
+     *       {@code true} to indicate that the authorization request requests
+     *       all possible verified claims for the ID token.
+     *
+     * @since 2.26
+     */
+    public void setAllVerifiedClaimsForIdTokenRequested(boolean requested)
+    {
+        this.allVerifiedClaimsForIdTokenRequested = requested;
+    }
+
+
+    /**
+     * Get the verified claims requested for the userinfo.
      *
      * <p>
      * For example, when an authorization request contains a {@code claims}
@@ -720,6 +782,11 @@ public class AuthorizationPageModel implements Serializable
      *     </tr>
      *     <tr>
      *       <td align="center">1</td>
+     *       <td><code>family_name</code></td>
+     *       <td><code></code></td>
+     *     </tr>
+     *     <tr>
+     *       <td align="center">2</td>
      *       <td><code>birthdate</code></td>
      *       <td><code>To send you best wishes on your birthday</code></td>
      *     </tr>
@@ -734,25 +801,88 @@ public class AuthorizationPageModel implements Serializable
      * @return
      *         Pairs of claim name and its purpose.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    public Pair[] getPurposesForUserInfo()
+    public Pair[] getVerifiedClaimsForUserInfo()
     {
-        return purposesForUserInfo;
+        return verifiedClaimsForUserInfo;
     }
 
 
     /**
-     * Set the purposes of verified claims requested for userinfo.
+     * Set the verified claims requested for the userinfo.
      *
-     * @param purposes
-     *         Pairs of claim name and its purpose.
+     * @param verifiedClaims
+     *         Requested verified claims.
      *
-     * @since 2.25
+     * @since 2.26
      */
-    public void setPurposesForUserInfo(Pair[] purposes)
+    public void setVerifiedClaimsForUserInfo(Pair[] verifiedClaims)
     {
-        this.purposesForUserInfo = purposes;
+        this.verifiedClaimsForUserInfo = verifiedClaims;
+    }
+
+
+    /**
+     * Get the flag indicating whether the authorization request requests
+     * all possible verified claims for the userinfo.
+     *
+     * @return
+     *       {@code true} if the authorization request requests all possible
+     *       verified claims for the userinfo.
+     *
+     * @since 2.26
+     */
+    public boolean isAllVerifiedClaimsForUserInfoRequested()
+    {
+        return allVerifiedClaimsForUserInfoRequested;
+    }
+
+
+    /**
+     * Set the flag indicating whether the authorization request requests
+     * all possible verified claims for the userinfo.
+     *
+     * @param requested
+     *       {@code true} to indicate that the authorization request requests
+     *       all possible verified claims for the userinfo.
+     *
+     * @since 2.26
+     */
+    public void setAllVerifiedClaimsForUserInfoRequested(boolean requested)
+    {
+        this.allVerifiedClaimsForUserInfoRequested = requested;
+    }
+
+
+    /**
+     * Get the flag indicating whether behaviors for Identity Assurance are
+     * required.
+     *
+     * @return
+     *         {@code true} if behaviors for Identity Assurance are required.
+     *
+     * @since 2.26
+     */
+    public boolean isIdentityAssuranceRequired()
+    {
+        return identityAssuranceRequired;
+    }
+
+
+    /**
+     * Get the flag indicating whether behaviors for Identity Assurance are
+     * required.
+     *
+     * @param required
+     *         {@code true} to indicate that behaviors for Identity Assurance
+     *         are required.
+     *
+     * @since 2.26
+     */
+    public void setIdentityAssuranceRequired(boolean required)
+    {
+        this.identityAssuranceRequired = required;
     }
 
 
@@ -845,7 +975,68 @@ public class AuthorizationPageModel implements Serializable
     }
 
 
-    private static Pair[] convertVerifiedClaimsToPairArray(String claims)
+    private void setupIdentityAssurance(AuthorizationResponse info)
+    {
+        purpose = info.getPurpose();
+        setupVerifiedClaimsForIdToken(info);
+        setupVerifiedClaimsForUserInfo(info);
+        identityAssuranceRequired = computeIdentityAssuranceRequired();
+    }
+
+
+    private void setupVerifiedClaimsForIdToken(AuthorizationResponse info)
+    {
+        // "verified_claims" in "id_token" in the "claims" request parameter.
+        VerifiedClaimsConstraint verifiedClaimsConstraint =
+                extractVerifiedClaims(info.getIdTokenClaims());
+
+        if (verifiedClaimsConstraint == null)
+        {
+            return;
+        }
+
+        // Flag indicating whether the authorization request requests all
+        // possible verified claims for an ID token.
+        allVerifiedClaimsForIdTokenRequested =
+                verifiedClaimsConstraint.isAllClaimsRequested();
+
+        if (allVerifiedClaimsForIdTokenRequested == false)
+        {
+            // The authorization request explicitly lists verified claims.
+            // Extract the list.
+            verifiedClaimsForIdToken =
+                    extractRequestedClaims(verifiedClaimsConstraint);
+        }
+    }
+
+
+    private void setupVerifiedClaimsForUserInfo(AuthorizationResponse info)
+    {
+        // "verified_claims" in "userinfo" in the "claims" request parameter.
+        VerifiedClaimsConstraint verifiedClaimsConstraint =
+                extractVerifiedClaims(info.getUserInfoClaims());
+
+        if (verifiedClaimsConstraint == null)
+        {
+            return;
+        }
+
+        // Flag indicating whether the authorization request requests all
+        // possible verified claims for userinfo.
+        allVerifiedClaimsForUserInfoRequested =
+                verifiedClaimsConstraint.isAllClaimsRequested();
+
+        if (allVerifiedClaimsForUserInfoRequested == false)
+        {
+            // The authorization request explicitly lists verified claims.
+            // Extract the list.
+            verifiedClaimsForUserInfo =
+                    extractRequestedClaims(verifiedClaimsConstraint);
+        }
+    }
+
+
+    private static VerifiedClaimsConstraint extractVerifiedClaims(String claims)
     {
         if (claims == null)
         {
@@ -853,16 +1044,21 @@ public class AuthorizationPageModel implements Serializable
         }
 
         // Parse the "verified_claims" that the JSON may contain.
-        VerifiedClaimsConstraint verifiedClaimsConstraint =
-            VerifiedClaimsContainerConstraint
+        VerifiedClaimsConstraint constraint = VerifiedClaimsContainerConstraint
                 .fromJson(claims).getVerifiedClaims();
 
         // If "verified_claims" is not included or its value is null.
-        if (!verifiedClaimsConstraint.exists() || verifiedClaimsConstraint.isNull())
+        if (!constraint.exists() || constraint.isNull())
         {
             return null;
         }
 
+        return constraint;
+    }
+
+
+    private static Pair[] extractRequestedClaims(VerifiedClaimsConstraint verifiedClaimsConstraint)
+    {
         // "claims" in the "verified_claims".
         ClaimsConstraint claimsConstraint = verifiedClaimsConstraint.getClaims();
 
@@ -877,7 +1073,8 @@ public class AuthorizationPageModel implements Serializable
         // For each requested verified claim.
         for (Map.Entry<String, VerifiedClaimConstraint> entry : claimsConstraint.entrySet())
         {
-            addPurposePair(list, entry);
+            // Add a pair of claim name and its purpose.
+            addVerifiedClaim(list, entry);
         }
 
         if (list.size() == 0)
@@ -889,16 +1086,27 @@ public class AuthorizationPageModel implements Serializable
     }
 
 
-    private static void addPurposePair(List<Pair> list, Map.Entry<String, VerifiedClaimConstraint> entry)
+    private static void addVerifiedClaim(List<Pair> list, Map.Entry<String, VerifiedClaimConstraint> entry)
     {
-        String purpose = entry.getValue().getPurpose();
+        String claimName = entry.getKey();
+        String purpose   = entry.getValue().getPurpose();
 
-        if (purpose == null || purpose.length() == 0)
+        if (purpose == null)
         {
-            return;
+            purpose = "";
         }
 
-        // Add a pair of claim name and its purpose.
-        list.add(new Pair(entry.getKey(), purpose));
+        list.add(new Pair(claimName, purpose));
+    }
+
+
+    private boolean computeIdentityAssuranceRequired()
+    {
+        return purpose != null ||
+               allVerifiedClaimsForIdTokenRequested ||
+               verifiedClaimsForIdToken != null ||
+               allVerifiedClaimsForUserInfoRequested ||
+               verifiedClaimsForUserInfo != null
+               ;
     }
 }
