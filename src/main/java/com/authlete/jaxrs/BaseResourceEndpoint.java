@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.web.BearerToken;
+import com.authlete.common.web.DpopToken;
 
 
 /**
@@ -50,19 +51,25 @@ public class BaseResourceEndpoint extends BaseEndpoint
      * </p>
      *
      * @param authorization
-     *         A value of {@code Authorization} header whose scheme is
-     *         Bearer. For example, {@code "Bearer SlAV32hkKG"}.
+     *            A value of {@code Authorization} header whose scheme is
+     *            Bearer or DPoP. For example, {@code "Bearer SlAV32hkKG"}.
      *
      * @param accessTokenInRequestParameters
-     *         A value of {@code access_token} request parameter.
+     *            A value of {@code access_token} request parameter.
      *
      * @return
      *         An access token.
      */
     public String extractAccessToken(String authorization, String accessTokenInRequestParameters)
     {
-        // Extract an access token from the value of Authorization header.
-        String accessToken = BearerToken.parse(authorization);
+        // Extract a DPoP access token from the value of Authorization header.
+        String accessToken = DpopToken.parse(authorization);
+
+        if (accessToken == null)
+        {
+            // if a DPoP token wasn't found, look for a Bearer in the authorization header
+            accessToken = BearerToken.parse(authorization);
+        }
 
         // If an access token was not found in Authorization header.
         if (accessToken == null)
@@ -77,7 +84,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * #validateAccessToken(AuthleteApi, String, String[], String, String, String, String, String)
      * validateAccessToken}<code>(api, accessToken, null, null, null)</code>.
      *
      * @param api
@@ -95,13 +102,13 @@ public class BaseResourceEndpoint extends BaseEndpoint
      */
     public AccessTokenInfo validateAccessToken(AuthleteApi api, String accessToken) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, null, null, null);
+        return validateAccessToken(api, accessToken, null, null, null, null, null, null);
     }
 
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * #validateAccessToken(AuthleteApi, String, String[], String, String, String, String, String)
      * validateAccessToken}<code>(api, accessToken, requiredScopes, null, null)</code>.
      *
      * @param api
@@ -129,13 +136,13 @@ public class BaseResourceEndpoint extends BaseEndpoint
     public AccessTokenInfo validateAccessToken(
             AuthleteApi api, String accessToken, String[] requiredScopes) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, requiredScopes, null, null);
+        return validateAccessToken(api, accessToken, requiredScopes, null, null, null, null, null);
     }
 
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, String, String[], String, String)
+     * #validateAccessToken(AuthleteApi, String, String[], String, String, String, String, String)
      * validateAccessToken}<code>(api, accessToken, requiredScopes, requiredSubject, null)</code>.
      *
      * @param api
@@ -167,7 +174,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
     public AccessTokenInfo validateAccessToken(
             AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject) throws WebApplicationException
     {
-        return validateAccessToken(api, accessToken, requiredScopes, requiredSubject, null);
+        return validateAccessToken(api, accessToken, requiredScopes, requiredSubject, null, null, null, null);
     }
 
 
@@ -195,22 +202,21 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
-     *
      * @param accessToken
      *         An access token to validate.
-     *
      * @param requiredScopes
      *         Scopes that must be associated with the access token.
      *         {@code null} is okay.
-     *
      * @param requiredSubject
      *         Subject (= user's unique identifier) that must be associated
      *         with the access token. {@code null} is okay.
-     *
      * @param clientCertificate
      *         TLS Certificate of the client presented during a call to
      *         the resource server, used with TLS-bound access tokens.
      *         Can be {@code null} if no certificate is presented.
+     * @param dpopHeader TODO
+     * @param htm TODO
+     * @param htu TODO
      *
      * @return
      *         Information about the access token.
@@ -226,13 +232,15 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *         </ol>
      */
     public AccessTokenInfo validateAccessToken(
-            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate) throws WebApplicationException
+            AuthleteApi api, String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate,
+            String dpopHeader, String htm, String htu) throws WebApplicationException
     {
         try
         {
             // Validate the access token and obtain the information about it.
             return new AccessTokenValidator(api)
-                    .validate(accessToken, requiredScopes, requiredSubject, clientCertificate);
+                    .validate(accessToken, requiredScopes, requiredSubject,
+                            clientCertificate, dpopHeader, htm, htu);
         }
         catch (WebApplicationException e)
         {

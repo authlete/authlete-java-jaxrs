@@ -89,16 +89,26 @@ public class UserInfoRequestHandler extends BaseHandler
      * Core 1&#x002E;0</a>.
      *
      * @param accessToken
-     *         An access token.
+     *            An access token.
+     *
+     * @param clientCertificate
+     *            The certificate path used in mutual TLS authentication, in PEM format. The
+     *            client's own certificate is the first in this array. Can be {@code null}.
+     * @param dpopHeader
+     *            The value of the {@code DPoP} header of the token request.
+     * @param htm
+     *            The HTTP verb used to make this call, used in DPoP validation.
+     * @param htu
+     *            The HTTP URL used to make this call, used in DPoP validation.
      *
      * @return
      *         A response that should be returned from the endpoint to the
      *         client application.
      *
      * @throws WebApplicationException
-     *         An error occurred.
+     *             An error occurred.
      */
-    public Response handle(String accessToken) throws WebApplicationException
+    public Response handle(String accessToken, String clientCertificate, String dpopHeader, String htm, String htu) throws WebApplicationException
     {
         // If an access token is not available.
         if (accessToken == null)
@@ -111,7 +121,7 @@ public class UserInfoRequestHandler extends BaseHandler
         try
         {
             // Process the userinfo request with the access token.
-            return process(accessToken);
+            return process(accessToken, clientCertificate, dpopHeader, htm, htu);
         }
         catch (WebApplicationException e)
         {
@@ -128,10 +138,10 @@ public class UserInfoRequestHandler extends BaseHandler
     /**
      * Process the userinfo request with the access token.
      */
-    private Response process(String accessToken)
+    private Response process(String accessToken, String clientCertificate, String dpopHeader, String htm, String htu)
     {
         // Call Authlete's /api/auth/userinfo API.
-        UserInfoResponse response = getApiCaller().callUserInfo(accessToken);
+        UserInfoResponse response = getApiCaller().callUserInfo(accessToken, clientCertificate, dpopHeader, htm, htu);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
