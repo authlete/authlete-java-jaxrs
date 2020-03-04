@@ -56,19 +56,27 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      * </p>
      *
      * @param api
-     *         An implementation of {@link AuthleteApi}.
-     *
+     *            An implementation of {@link AuthleteApi}.
      * @param spi
-     *         An implementation of {@link UserInfoRequestHandlerSpi}.
-     *
+     *            An implementation of {@link UserInfoRequestHandlerSpi}.
      * @param accessToken
-     *         An access token.
+     *            An access token.
+     * @param clientCertificate
+     *            The certificate path used in mutual TLS authentication, in PEM format. The
+     *            client's own certificate is the first in this array. Can be {@code null}.
+     * @param dpopHeader
+     *            The value of the {@code DPoP} header of the request.
+     * @param htm
+     *            The HTTP verb used to make this call, used in DPoP validation.
+     * @param htu
+     *            The HTTP URL used to make this call, used in DPoP validation.
+     *
      *
      * @return
      *         A response that should be returned to the client application.
      */
     public Response handle(
-            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken)
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken, String clientCertificate, String dpopHeader, String htm, String htu)
     {
         try
         {
@@ -76,7 +84,7 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
             UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(accessToken);
+            return handler.handle(accessToken, clientCertificate, dpopHeader, htm, htu);
         }
         catch (WebApplicationException e)
         {

@@ -37,7 +37,7 @@ import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
  *
  * <p>
  * In an implementation of token endpoint, call {@link #handle(MultivaluedMap, String)}
- * or {@link #handle(MultivaluedMap, String, String[])} method and use the response
+ * or {@link #handle(MultivaluedMap, String, String[], String)} method and use the response
  * as the response from the endpoint to the client application. {@code handle()}
  * method calls Authlete's {@code /api/auth/token} API, receives a response from
  * the API, and dispatches processing according to the {@code action} parameter
@@ -82,7 +82,7 @@ public class TokenRequestHandler extends BaseHandler
      * Handle a token request.
      *
      * This method is an alias of the {@link #handle(MultivaluedMap, String,
-     * String[]) handle()} method which accepts 3 arguments.
+     * String[], String) handle()} method which accepts 3 arguments.
      *
      * @param parameters
      *         Request parameters of a token request.
@@ -104,7 +104,7 @@ public class TokenRequestHandler extends BaseHandler
     public Response handle(
             MultivaluedMap<String, String> parameters, String authorization) throws WebApplicationException
     {
-        return handle(parameters, authorization, null);
+        return handle(parameters, authorization, null, null, null, null);
     }
 
 
@@ -141,6 +141,50 @@ public class TokenRequestHandler extends BaseHandler
             MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath) throws WebApplicationException
     {
+        return handle(parameters, authorization, clientCertificatePath, null, null, null);
+    }
+
+
+    /**
+     * Handle a token request to a <a href="https://tools.ietf.org/html/rfc6749#section-3.2"
+     * >token endpoint</a> of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749"
+     * >RFC 6749</a>).
+     *
+     * @param parameters
+     *            Request parameters of a token request.
+     * @param authorization
+     *            The value of {@code Authorization} header in the token request.
+     *            A client application may embed its pair of client ID and client
+     *            secret in a token request using <a href=
+     *            "https://tools.ietf.org/html/rfc2617#section-2">Basic
+     *            Authentication</a>.
+     * @param clientCertificatePath
+     *            The path of the client's certificate, each in PEM format. The first
+     *            item in the array is the client's certificate itself. May be {@code null} if
+     *            the client did not send a certificate or path.
+     * @param dpopHeader
+     *            The value of the {@code DPoP} header in the token request.
+     *            Can be {@code null}.
+     * 
+     * @param htm
+     *            The HTTP verb used to make this call, used in DPoP validation.
+     * 
+     * @param htu
+     *            The HTTP URL used to make this call, used in DPoP validation.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *             An error occurred.
+     *
+     * @since 2.8
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization,
+            String[] clientCertificatePath, String dpopHeader, String htm, String htu) throws WebApplicationException
+    {
         // Convert the value of Authorization header (credentials of
         // the client application), if any, into BasicCredentials.
         BasicCredentials credentials = BasicCredentials.parse(authorization);
@@ -153,7 +197,8 @@ public class TokenRequestHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(parameters, clientId, clientSecret, clientCertificatePath);
+            return process(parameters, clientId, clientSecret, clientCertificatePath,
+                    dpopHeader, htm, htu);
         }
         catch (WebApplicationException e)
         {
@@ -172,7 +217,8 @@ public class TokenRequestHandler extends BaseHandler
      */
     private Response process(
             MultivaluedMap<String, String> parameters, String clientId,
-            String clientSecret, String[] clientCertificatePath)
+            String clientSecret, String[] clientCertificatePath,
+            String dpopHeader, String htm, String htu)
     {
         // Extra properties to associate with an access token.
         Property[] properties = mSpi.getProperties();
@@ -194,7 +240,7 @@ public class TokenRequestHandler extends BaseHandler
         // Call Authlete's /api/auth/token API.
         TokenResponse response = getApiCaller().callToken(
                 parameters, clientId, clientSecret, properties,
-                clientCertificate, clientCertificatePath);
+                clientCertificate, clientCertificatePath, dpopHeader, htm, htu);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

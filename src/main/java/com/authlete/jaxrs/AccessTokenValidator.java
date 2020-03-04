@@ -75,7 +75,7 @@ public class AccessTokenValidator extends BaseHandler
      */
     public AccessTokenInfo validate(String accessToken) throws WebApplicationException
     {
-        return validate(accessToken, null, null, null);
+        return validate(accessToken, null, null, null, null, null, null);
     }
 
 
@@ -113,7 +113,7 @@ public class AccessTokenValidator extends BaseHandler
      */
     public AccessTokenInfo validate(String accessToken, String[] requiredScopes) throws WebApplicationException
     {
-        return validate(accessToken, requiredScopes, null, null);
+        return validate(accessToken, requiredScopes, null, null, null, null, null);
     }
 
 
@@ -160,6 +160,54 @@ public class AccessTokenValidator extends BaseHandler
     public AccessTokenInfo validate(
             String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate) throws WebApplicationException
     {
+        return validate(accessToken, requiredScopes, requiredSubject, clientCertificate, null, null, null);
+    }
+
+
+    /**
+     * Validate an access token.
+     *
+     * </p>
+     * When the given access token is not valid, this method throws a
+     * {@link WebApplicationException}. The response contained in the
+     * exception complies with the requirements described in <a href=
+     * "http://tools.ietf.org/html/rfc6750">RFC 6750</a> (The OAuth
+     * 2.0 Authorization Framework: Bearer Token Usage).
+     * </p>
+     *
+     * @param accessToken
+     *            An access token to validate.
+     *
+     * @param requiredScopes
+     *            Scopes that must be associated with the access token.
+     *            {@code null} is okay.
+     *
+     * @param requiredSubject
+     *            Subject (= user's unique identifier) that must be associated
+     *            with the access token. {@code null} is okay.
+     *
+     * @param clientCertificate
+     *            TLS Certificate of the client presented during a call to
+     *            the resource server, used with TLS-bound access tokens.
+     *            Can be {@code null} if no certificate is presented.
+     *
+     * @return
+     *         Information about the access token.
+     *
+     * @throws WebApplicationException
+     *             The access token is invalid. To be concrete, one or more of
+     *             the following conditions meet.
+     *             <ol>
+     *             <li>The access token does not exist.
+     *             <li>The access token has expired.
+     *             <li>The access token does not cover the required scopes.
+     *             <li>The access token is not associated with the required subject.
+     *             </ol>
+     */
+    public AccessTokenInfo validate(
+            String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate,
+            String dpopHeader, String htm, String htu) throws WebApplicationException
+    {
         if (accessToken == null)
         {
             // Return "400 Bad Request".
@@ -168,7 +216,8 @@ public class AccessTokenValidator extends BaseHandler
 
         try
         {
-            return process(accessToken, requiredScopes, requiredSubject, clientCertificate);
+            return process(accessToken, requiredScopes, requiredSubject,
+                    clientCertificate, dpopHeader, htm, htu);
         }
         catch (WebApplicationException e)
         {
@@ -183,10 +232,12 @@ public class AccessTokenValidator extends BaseHandler
 
 
     private AccessTokenInfo process(
-            String accessToken, String[] scopes, String subject, String clientCertificate) throws WebApplicationException
+            String accessToken, String[] scopes, String subject, String clientCertificate,
+            String dpopHeader, String htm, String htu) throws WebApplicationException
     {
         // Call Authlete's /api/auth/introspection API.
-        IntrospectionResponse response = getApiCaller().callIntrospection(accessToken, scopes, subject, clientCertificate);
+        IntrospectionResponse response = getApiCaller().callIntrospection(accessToken, scopes, subject,
+                clientCertificate, dpopHeader, htm, htu);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
