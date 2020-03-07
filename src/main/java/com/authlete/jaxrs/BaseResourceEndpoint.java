@@ -230,6 +230,8 @@ public class BaseResourceEndpoint extends BaseEndpoint
      *           <li>The access token is bound to a client certificate, but the
      *               given one does not match.
      *         </ol>
+     *
+     * @since 2.8
      */
     public AccessTokenInfo validateAccessToken(
             AuthleteApi api, String accessToken, String[] requiredScopes,
@@ -248,6 +250,25 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token.
+     *
+     * <p>
+     * This method internally creates an {@link AccessTokenValidator} instance
+     * and calls its {@link AccessTokenValidator#validate(Params)
+     * validate()} method. Then, this method uses the value returned from the
+     * {@code validate()} method as a response from this method.
+     * </p>
+     *
+     * <p>
+     * When {@code AccessTokenValidator.validate()} method raises a {@link
+     * WebApplicationException}, this method calls {@link
+     * #onError(WebApplicationException) onError()} method with the exception.
+     * The default implementation of {@code onError()} does nothing. You can
+     * override the method as necessary. After calling {@code onError()}
+     * method, this method re-throws the exception. The response contained in
+     * the exception complies with the requirements described in <a href=
+     * "https://tools.ietf.org/html/rfc6750">RFC 6750</a> (The OAuth 2.0
+     * Authorization Framework: Bearer Token Usage).
+     * </p>
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
