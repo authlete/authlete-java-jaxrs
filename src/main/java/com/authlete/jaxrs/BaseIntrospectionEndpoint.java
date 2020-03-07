@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Authlete, Inc.
+ * Copyright (C) 2017-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,7 @@ public class BaseIntrospectionEndpoint extends BaseEndpoint
      * When {@code IntrospectionRequestHandler.handle()} method raises a
      * {@link WebApplicationException}, this method calls {@link
      * #onError(WebApplicationException) onError()} method with the exception.
-     * The default implementation of {@code onError()} calls {@code
-     * printStackTrace()} of the exception and does nothing else. You can
+     * The default implementation of {@code onError()} does nothing. You can
      * override the method as necessary. After calling {@code onError()}
      * method, this method calls {@code getResponse()} method of the
      * exception and uses the returned value as a response from this method.
