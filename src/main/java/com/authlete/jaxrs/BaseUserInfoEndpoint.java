@@ -70,19 +70,19 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      *
      * <p>
      * This method internally creates a {@link UserInfoRequestHandler} instance
-     * and calls its {@link UserInfoRequestHandler#handle(String)} method.
-     * Then, this method uses the value returned from the {@code handle()} method
-     * as a response from this method.
+     * and calls its {@link UserInfoRequestHandler#handle(Params)} method.
+     * Then, this method uses the value returned from the {@code handle()}
+     * method as a response from this method.
      * </p>
      *
      * <p>
      * When {@code UserInfoRequestHandler.handle()} method raises a {@link
-     * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
-     * onError()} method with the exception. The default implementation of {@code onError()}
-     * calls {@code printStackTrace()} of the exception and does nothing else. You
-     * can override the method as necessary. After calling {@code onError()} method,
-     * this method calls {@code getResponse()} method of the exception and uses the
-     * returned value as a response from this method.
+     * WebApplicationException}, this method calls {@link
+     * #onError(WebApplicationException) onError()} method with the exception.
+     * The default implementation of {@code onError()} does nothing. You can
+     * override the method as necessary. After calling {@code onError()}
+     * method, this method calls {@code getResponse()} method of the exception
+     * and uses the returned value as a response from this method.
      * </p>
      *
      * @param api
