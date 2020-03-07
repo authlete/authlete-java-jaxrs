@@ -40,8 +40,8 @@ import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
  * Core 1&#x002E;0</a>.
  *
  * <p>
- * In an implementation of userinfo endpoint, call {@link #handle(String)
- * handle()} method and use the response as the response from the endpoint
+ * In an implementation of userinfo endpoint, call one of {@code handle()}
+ * method variants and use the response as the response from the endpoint
  * to the client application. {@code handle()} method calls Authlete's
  * {@code /api/auth/userinfo} API and {@code /api/auth/userinfo/issue} API.
  * </p>
