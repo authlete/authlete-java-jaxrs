@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
@@ -51,6 +52,209 @@ import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
  */
 public class UserInfoRequestHandler extends BaseHandler
 {
+    /**
+     * Parameters passed to the {@link UserInfoRequestHandler#handle(Params)}
+     * method.
+     *
+     * @since 2.27
+     */
+    public static class Params implements Serializable
+    {
+        private static final long serialVersionUID = 1L;
+
+
+        private String accessToken;
+        private String clientCertificate;
+        private String dpop;
+        private String htm;
+        private String htu;
+
+
+        /**
+         * Get the access token included in the userinfo request.
+         *
+         * @return
+         *         The access token.
+         */
+        public String getAccessToken()
+        {
+            return accessToken;
+        }
+
+
+        /**
+         * Set the access token included in the userinfo request.
+         *
+         * @param accessToken
+         *         The access token.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setAccessToken(String accessToken)
+        {
+            this.accessToken = accessToken;
+
+            return this;
+        }
+
+
+        /**
+         * Get the client certificate included in the userinfo request.
+         *
+         * @return
+         *         The client certificate.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public String getClientCertificate()
+        {
+            return clientCertificate;
+        }
+
+
+        /**
+         * Set the client certificate included in the userinfo request.
+         *
+         * @param clientCertificate
+         *         The client certificate.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public Params setClientCertificate(String clientCertificate)
+        {
+            this.clientCertificate = clientCertificate;
+
+            return this;
+        }
+
+
+        /**
+         * Get the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * <p>
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @return
+         *         The DPoP proof JWT.
+         */
+        public String getDpop()
+        {
+            return dpop;
+        }
+
+
+        /**
+         * Set the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * <p>
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param dpop
+         *         The DPoP proof JWT.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setDpop(String dpop)
+        {
+            this.dpop = dpop;
+
+            return this;
+        }
+
+
+        /**
+         * Get the HTTP method of the userinfo request.
+         *
+         * @return
+         *         The HTTP method of the userinfo request.
+         */
+        public String getHtm()
+        {
+            return htm;
+        }
+
+
+        /**
+         * Set the HTTP method of the userinfo request.
+         *
+         * <p>
+         * The value should be either {@code "GET"} or {@code "POST"} unless
+         * new specifications allowing other HTTP methods at the userinfo
+         * endpoint are developed.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htm
+         *         The HTTP method of the userinfo request.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtm(String htm)
+        {
+            this.htm = htm;
+
+            return this;
+        }
+
+
+        /**
+         * Get the URL of the userinfo endpoint.
+         *
+         * @return
+         *         The URL of the userinfo endpoint.
+         */
+        public String getHtu()
+        {
+            return htu;
+        }
+
+
+        /**
+         * Set the URL of the userinfo endpoint.
+         *
+         * <p>
+         * If this parameter is omitted, the {@code userInfoEndpoint} property
+         * of {@link Service} will be used as the default value.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htu
+         *         The URL of the userinfo endpoint.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtu(String htu)
+        {
+            this.htu = htu;
+
+            return this;
+        }
+    }
+
+
     private static final String CHALLENGE_ON_MISSING_ACCESS_TOKEN
         = "Bearer error=\"invalid_token\",error_description=\""
         + "An access token must be sent as a Bearer Token. "
@@ -89,29 +293,42 @@ public class UserInfoRequestHandler extends BaseHandler
      * Core 1&#x002E;0</a>.
      *
      * @param accessToken
-     *            An access token.
-     *
-     * @param clientCertificate
-     *            The certificate path used in mutual TLS authentication, in PEM format. The
-     *            client's own certificate is the first in this array. Can be {@code null}.
-     * @param dpopHeader
-     *            The value of the {@code DPoP} header of the token request.
-     * @param htm
-     *            The HTTP verb used to make this call, used in DPoP validation.
-     * @param htu
-     *            The HTTP URL used to make this call, used in DPoP validation.
+     *         An access token.
      *
      * @return
      *         A response that should be returned from the endpoint to the
      *         client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *         An error occurred.
      */
-    public Response handle(String accessToken, String clientCertificate, String dpopHeader, String htm, String htu) throws WebApplicationException
+    public Response handle(String accessToken) throws WebApplicationException
+    {
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                ;
+
+        return handle(params);
+    }
+
+
+    /**
+     * Handle a userinfo request.
+     *
+     * @param params
+     *         Parameters needed to handle the userinfo request.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     */
+    public Response handle(Params params) throws WebApplicationException
     {
         // If an access token is not available.
-        if (accessToken == null)
+        if (params == null || params.getAccessToken() == null)
         {
             // Return "400 Bad Request".
             return ResponseUtil.bearerError(
@@ -120,8 +337,8 @@ public class UserInfoRequestHandler extends BaseHandler
 
         try
         {
-            // Process the userinfo request with the access token.
-            return process(accessToken, clientCertificate, dpopHeader, htm, htu);
+            // Process the userinfo request.
+            return process(params);
         }
         catch (WebApplicationException e)
         {
@@ -138,10 +355,16 @@ public class UserInfoRequestHandler extends BaseHandler
     /**
      * Process the userinfo request with the access token.
      */
-    private Response process(String accessToken, String clientCertificate, String dpopHeader, String htm, String htu)
+    private Response process(Params params)
     {
         // Call Authlete's /api/auth/userinfo API.
-        UserInfoResponse response = getApiCaller().callUserInfo(accessToken, clientCertificate, dpopHeader, htm, htu);
+        UserInfoResponse response = getApiCaller().callUserInfo(
+                params.getAccessToken(),
+                params.getClientCertificate(),
+                params.getDpop(),
+                params.getHtm(),
+                params.getHtu()
+        );
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

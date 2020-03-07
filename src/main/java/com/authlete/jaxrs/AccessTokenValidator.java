@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.io.Serializable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -34,6 +35,288 @@ import com.authlete.common.dto.IntrospectionResponse.Action;
  */
 public class AccessTokenValidator extends BaseHandler
 {
+    /**
+     * Parameters passed to the {@link AccessTokenValidator#validate(Params)}
+     * method.
+     *
+     * @since 2.27
+     */
+    public static class Params implements Serializable
+    {
+        private static final long serialVersionUID = 1L;
+
+
+        private String accessToken;
+        private String[] requiredScopes;
+        private String requiredSubject;
+        private String clientCertificate;
+        private String dpop;
+        private String htm;
+        private String htu;
+
+
+        /**
+         * Get the access token to validate.
+         *
+         * @return
+         *         The access token to validate.
+         */
+        public String getAccessToken()
+        {
+            return accessToken;
+        }
+
+
+        /**
+         * Set the access token to validate.
+         *
+         * <p>
+         * If {@code null} is given, the {@link AccessTokenValidator#validate(Params)
+         * validate} method will throw a {@link WebApplicationException}.
+         * </p>
+         *
+         * @param accessToken
+         *         The access token to validate.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setAccessToken(String accessToken)
+        {
+            this.accessToken = accessToken;
+
+            return this;
+        }
+
+
+        /**
+         * Get the scopes that must be associated with the access token.
+         *
+         * @return
+         *         The scopes that must be associated with the access token.
+         */
+        public String[] getRequiredScopes()
+        {
+            return requiredScopes;
+        }
+
+
+        /**
+         * Set the scopes that must be associated with the access token.
+         *
+         * <p>
+         * If a non-null value is given, it will be checked whether the scopes
+         * are associated with the access token.
+         * </p>
+         *
+         * @param scopes
+         *         The scopes that must be associated with the access token.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setRequiredScopes(String[] scopes)
+        {
+            this.requiredScopes = scopes;
+
+            return this;
+        }
+
+
+        /**
+         * Get the subject (= user's unique identifier) that must be associated
+         * with the access token.
+         *
+         * @return
+         *         The subject that must be associated with the access token.
+         */
+        public String getRequiredSubject()
+        {
+            return requiredSubject;
+        }
+
+
+        /**
+         * Set the subject (= user's unique identifier) that must be associated
+         * with the access token.
+         *
+         * <p>
+         * If a non-null value is given, it will be checked whether the subject
+         * is associated with the access token.
+         * </p>
+         *
+         * @param subject
+         *         The subject that must be associated with the access token.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setRequiredSubject(String subject)
+        {
+            this.requiredSubject = subject;
+
+            return this;
+        }
+
+
+        /**
+         * Get the client certificate presented during the API call to the
+         * protected resource endpoint.
+         *
+         * @return
+         *         The client certificate.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public String getClientCertificate()
+        {
+            return clientCertificate;
+        }
+
+
+        /**
+         * Set the client certificate presented during the API call to the
+         * protected resource endpoint.
+         *
+         * <p>
+         * If the access token is bound to a client certificate, it will be
+         * checked whether the presented client certificate matches the one
+         * bound to the access token. See <a href=
+         * "https://www.rfc-editor.org/rfc/rfc8705.html">RFC 8705</a> for
+         * details.
+         * </p>
+         *
+         * @param certificate
+         *         The client certificate.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public Params setClientCertificate(String certificate)
+        {
+            this.clientCertificate = certificate;
+
+            return this;
+        }
+
+
+        /**
+         * Get the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * @return
+         *         The DPoP proof JWT.
+         */
+        public String getDpop()
+        {
+            return dpop;
+        }
+
+
+        /**
+         * Set the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * <p>
+         * If the token type of the access token is DPoP, it will be checked
+         * whether the presented DPoP proof JWT is valid for the access token.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param dpop
+         *         The DPoP proof JWT.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setDpop(String dpop)
+        {
+            this.dpop = dpop;
+
+            return this;
+        }
+
+
+        /**
+         * Get the HTTP method of the API call to the protected resource
+         * endpoint.
+         *
+         * @return
+         *         The HTTP method of the API call to the protected resource
+         *         endpoint. For example, {@code "GET"}.
+         */
+        public String getHtm()
+        {
+            return htm;
+        }
+
+
+        /**
+         * Set the HTTP method of the API call to the protected resource
+         * endpoint.
+         *
+         * <p>
+         * If the token type of the access token is DPoP, it will be checked
+         * whether the HTTP method is valid for the presented DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htm
+         *         The HTTP method of the API call to the protected resource
+         *         endpoint. For example, {@code "GET"}.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtm(String htm)
+        {
+            this.htm = htm;
+
+            return this;
+        }
+
+
+        /**
+         * Get the URL of the protected resource endpoint.
+         *
+         * @return
+         *         The URL of the protected resource endpoint.
+         */
+        public String getHtu()
+        {
+            return htu;
+        }
+
+
+        /**
+         * Set the URL of the protected resource endpoint.
+         *
+         * <p>
+         * If the token type of the access token is DPoP, it will be checked
+         * whether the URL is valid for the presented DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htu
+         *         The URL of the protected resource endpoint.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtu(String htu)
+        {
+            this.htu = htu;
+
+            return this;
+        }
+    }
+
+
     private static final String CHALLENGE_ON_MISSING_ACCESS_TOKEN
         = "Bearer error=\"invalid_token\",error_description=\"An access token is missing.\"";
 
@@ -51,9 +334,8 @@ public class AccessTokenValidator extends BaseHandler
 
 
     /**
-     * Validate an access token. This method is an alias of {@link
-     * #validate(String, String[], String)
-     * validate}<code>(accessToken, null, null)</code>.
+     * Validate an access token. This method is an alias of the
+     * {@link #validate(Params)} method.
      *
      * </p>
      * When the given access token is not valid, this method throws a
@@ -75,14 +357,17 @@ public class AccessTokenValidator extends BaseHandler
      */
     public AccessTokenInfo validate(String accessToken) throws WebApplicationException
     {
-        return validate(accessToken, null, null, null, null, null, null);
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                ;
+
+        return validate(params);
     }
 
 
     /**
-     * Validate an access token. This method is an alias of {@link
-     * #validate(String, String[], String)
-     * validate}<code>(accessToken, requiredScopes, null)</code>.
+     * Validate an access token. This method is an alias of the
+     * {@link #validate(Params)} method.
      *
      * </p>
      * When the given access token is not valid, this method throws a
@@ -111,14 +396,21 @@ public class AccessTokenValidator extends BaseHandler
      *           <li>The access token does not cover the required scopes.
      *         </ol>
      */
-    public AccessTokenInfo validate(String accessToken, String[] requiredScopes) throws WebApplicationException
+    public AccessTokenInfo validate(
+            String accessToken, String[] requiredScopes) throws WebApplicationException
     {
-        return validate(accessToken, requiredScopes, null, null, null, null, null);
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                .setRequiredScopes(requiredScopes)
+                ;
+
+        return validate(params);
     }
 
 
     /**
-     * Validate an access token.
+     * Validate an access token. This method is an alias of the
+     * {@link #validate(Params)} method.
      *
      * </p>
      * When the given access token is not valid, this method throws a
@@ -155,60 +447,42 @@ public class AccessTokenValidator extends BaseHandler
      *           <li>The access token has expired.
      *           <li>The access token does not cover the required scopes.
      *           <li>The access token is not associated with the required subject.
+     *           <li>The access token is bound to a client certificate, but the
+     *               presented one does not match.
      *         </ol>
      */
     public AccessTokenInfo validate(
-            String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate) throws WebApplicationException
+            String accessToken, String[] requiredScopes,
+            String requiredSubject, String clientCertificate) throws WebApplicationException
     {
-        return validate(accessToken, requiredScopes, requiredSubject, clientCertificate, null, null, null);
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                .setRequiredScopes(requiredScopes)
+                .setRequiredSubject(requiredSubject)
+                .setClientCertificate(clientCertificate)
+                ;
+
+        return validate(params);
     }
 
 
     /**
      * Validate an access token.
      *
-     * </p>
-     * When the given access token is not valid, this method throws a
-     * {@link WebApplicationException}. The response contained in the
-     * exception complies with the requirements described in <a href=
-     * "http://tools.ietf.org/html/rfc6750">RFC 6750</a> (The OAuth
-     * 2.0 Authorization Framework: Bearer Token Usage).
-     * </p>
-     *
-     * @param accessToken
-     *            An access token to validate.
-     *
-     * @param requiredScopes
-     *            Scopes that must be associated with the access token.
-     *            {@code null} is okay.
-     *
-     * @param requiredSubject
-     *            Subject (= user's unique identifier) that must be associated
-     *            with the access token. {@code null} is okay.
-     *
-     * @param clientCertificate
-     *            TLS Certificate of the client presented during a call to
-     *            the resource server, used with TLS-bound access tokens.
-     *            Can be {@code null} if no certificate is presented.
+     * @param params
+     *         Parameters needed for access token validation.
      *
      * @return
      *         Information about the access token.
      *
      * @throws WebApplicationException
-     *             The access token is invalid. To be concrete, one or more of
-     *             the following conditions meet.
-     *             <ol>
-     *             <li>The access token does not exist.
-     *             <li>The access token has expired.
-     *             <li>The access token does not cover the required scopes.
-     *             <li>The access token is not associated with the required subject.
-     *             </ol>
+     *         The access token is invalid.
+     *
+     * @since 2.27
      */
-    public AccessTokenInfo validate(
-            String accessToken, String[] requiredScopes, String requiredSubject, String clientCertificate,
-            String dpopHeader, String htm, String htu) throws WebApplicationException
+    public AccessTokenInfo validate(Params params) throws WebApplicationException
     {
-        if (accessToken == null)
+        if (params == null || params.getAccessToken() == null)
         {
             // Return "400 Bad Request".
             throw toException(Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
@@ -216,8 +490,7 @@ public class AccessTokenValidator extends BaseHandler
 
         try
         {
-            return process(accessToken, requiredScopes, requiredSubject,
-                    clientCertificate, dpopHeader, htm, htu);
+            return process(params);
         }
         catch (WebApplicationException e)
         {
@@ -231,13 +504,18 @@ public class AccessTokenValidator extends BaseHandler
     }
 
 
-    private AccessTokenInfo process(
-            String accessToken, String[] scopes, String subject, String clientCertificate,
-            String dpopHeader, String htm, String htu) throws WebApplicationException
+    private AccessTokenInfo process(Params params) throws WebApplicationException
     {
         // Call Authlete's /api/auth/introspection API.
-        IntrospectionResponse response = getApiCaller().callIntrospection(accessToken, scopes, subject,
-                clientCertificate, dpopHeader, htm, htu);
+        IntrospectionResponse response = getApiCaller().callIntrospection(
+                params.getAccessToken(),
+                params.getRequiredScopes(),
+                params.getRequiredSubject(),
+                params.getClientCertificate(),
+                params.getDpop(),
+                params.getHtm(),
+                params.getHtu()
+        );
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -267,11 +545,11 @@ public class AccessTokenValidator extends BaseHandler
 
             case OK:
                 // Return access token information.
-                return new AccessTokenInfo(accessToken, response);
+                return new AccessTokenInfo(params.getAccessToken(), response);
 
             default:
                 // This never happens.
-                throw getApiCaller().unknownAction("/api/auth/userinfo", action);
+                throw getApiCaller().unknownAction("/api/auth/introspection", action);
         }
     }
 

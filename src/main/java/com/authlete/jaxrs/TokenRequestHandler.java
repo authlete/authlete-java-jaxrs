@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Authlete, Inc.
+ * Copyright (C) 2015-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -48,6 +49,246 @@ import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
  */
 public class TokenRequestHandler extends BaseHandler
 {
+    /**
+     * Parameters passed to the {@link TokenRequestHandler#handle(Params)}
+     * method.
+     *
+     * @since 2.27
+     */
+    public static class Params implements Serializable
+    {
+        private static final long serialVersionUID = 1L;
+
+
+        private MultivaluedMap<String, String> parameters;
+        private String authorization;
+        private String[] clientCertificatePath;
+        private String dpop;
+        private String htm;
+        private String htu;
+
+
+        /**
+         * Get the request parameters of the token request.
+         *
+         * @return
+         *         The request parameters of the token request.
+         */
+        public MultivaluedMap<String, String> getParameters()
+        {
+            return parameters;
+        }
+
+
+        /**
+         * Set the request parameters of the token request.
+         *
+         * @param parameters
+         *         The request parameters of the token request.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setParameters(MultivaluedMap<String, String> parameters)
+        {
+            this.parameters = parameters;
+
+            return this;
+        }
+
+
+        /**
+         * Get the value of the {@code Authorization} header in the token
+         * request. A pair of client ID and client secret is embedded there
+         * when the client authentication method is {@code client_secret_basic}.
+         *
+         * @return
+         *         The value of the {@code Authorization} header.
+         */
+        public String getAuthorization()
+        {
+            return authorization;
+        }
+
+
+        /**
+         * Set the value of the {@code Authorization} header in the token
+         * request. A pair of client ID and client secret is embedded there
+         * when the client authentication method is {@code client_secret_basic}.
+         *
+         * @param authorization
+         *         The value of the {@code Authorization} header.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setAuthorization(String authorization)
+        {
+            this.authorization = authorization;
+
+            return this;
+        }
+
+
+        /**
+         * Get the path of the client's certificate, each in PEM format.
+         * The first item in the array is the client's certificate itself.
+         *
+         * @return
+         *         The path of the client's certificate.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public String[] getClientCertificatePath()
+        {
+            return clientCertificatePath;
+        }
+
+
+        /**
+         * Set the path of the client's certificate, each in PEM format.
+         * The first item in the array is the client's certificate itself.
+         *
+         * @param path
+         *         The path of the client's certificate.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>
+         */
+        public Params setClientCertificatePath(String[] path)
+        {
+            this.clientCertificatePath = path;
+
+            return this;
+        }
+
+
+        /**
+         * Get the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * <p>
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @return
+         *         The DPoP proof JWT.
+         */
+        public String getDpop()
+        {
+            return dpop;
+        }
+
+
+        /**
+         * Set the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * <p>
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param dpop
+         *         The DPoP proof JWT.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setDpop(String dpop)
+        {
+            this.dpop = dpop;
+
+            return this;
+        }
+
+
+        /**
+         * Get the HTTP method of the token request.
+         *
+         * @return
+         *         The HTTP method of the token request.
+         */
+        public String getHtm()
+        {
+            return htm;
+        }
+
+
+        /**
+         * Set the HTTP method of the token request.
+         *
+         * <p>
+         * The value should be {@code "POST"} unless new specifications
+         * allowing other HTTP methods at the token endpoint are developed.
+         * If this parameter is omitted, {@code "POST"} is used as the
+         * default value.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htm
+         *         The HTTP method of the token request.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtm(String htm)
+        {
+            this.htm = htm;
+
+            return this;
+        }
+
+
+        /**
+         * Get the URL of the token endpoint.
+         *
+         * @return
+         *         The URL of the token endpoint.
+         */
+        public String getHtu()
+        {
+            return htu;
+        }
+
+
+        /**
+         * Set the URL of the token endpoint.
+         *
+         * <p>
+         * If this parameter is omitted, the {@code tokenEndpoint} property
+         * of {@link Service} will be used as the default value.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * See <i>"OAuth 2.0 Demonstration of Proof-of-Possession at the
+         * Application Layer (DPoP)"</i> for details.
+         * </p>
+         *
+         * @param htu
+         *         The URL of the token endpoint.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setHtu(String htu)
+        {
+            this.htu = htu;
+
+            return this;
+        }
+    }
+
+
     /**
      * The value for {@code WWW-Authenticate} header on 401 Unauthorized.
      */
@@ -81,8 +322,7 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Handle a token request.
      *
-     * This method is an alias of the {@link #handle(MultivaluedMap, String,
-     * String[], String) handle()} method which accepts 3 arguments.
+     * This method is an alias of the {@link #handle(Params)} method.
      *
      * @param parameters
      *         Request parameters of a token request.
@@ -104,14 +344,19 @@ public class TokenRequestHandler extends BaseHandler
     public Response handle(
             MultivaluedMap<String, String> parameters, String authorization) throws WebApplicationException
     {
-        return handle(parameters, authorization, null, null, null, null);
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                ;
+
+        return handle(params);
     }
 
 
     /**
-     * Handle a token request to a <a href="https://tools.ietf.org/html/rfc6749#section-3.2"
-     * >token endpoint</a> of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749"
-     * >RFC 6749</a>).
+     * Handle a token request.
+     *
+     * This method is an alias of the {@link #handle(Params)} method.
      *
      * @param parameters
      *         Request parameters of a token request.
@@ -141,53 +386,37 @@ public class TokenRequestHandler extends BaseHandler
             MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath) throws WebApplicationException
     {
-        return handle(parameters, authorization, clientCertificatePath, null, null, null);
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                .setClientCertificatePath(clientCertificatePath)
+                ;
+
+        return handle(params);
     }
 
 
     /**
-     * Handle a token request to a <a href="https://tools.ietf.org/html/rfc6749#section-3.2"
-     * >token endpoint</a> of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749"
-     * >RFC 6749</a>).
+     * Handle a token request.
      *
-     * @param parameters
-     *            Request parameters of a token request.
-     * @param authorization
-     *            The value of {@code Authorization} header in the token request.
-     *            A client application may embed its pair of client ID and client
-     *            secret in a token request using <a href=
-     *            "https://tools.ietf.org/html/rfc2617#section-2">Basic
-     *            Authentication</a>.
-     * @param clientCertificatePath
-     *            The path of the client's certificate, each in PEM format. The first
-     *            item in the array is the client's certificate itself. May be {@code null} if
-     *            the client did not send a certificate or path.
-     * @param dpopHeader
-     *            The value of the {@code DPoP} header in the token request.
-     *            Can be {@code null}.
-     * 
-     * @param htm
-     *            The HTTP verb used to make this call, used in DPoP validation.
-     * 
-     * @param htu
-     *            The HTTP URL used to make this call, used in DPoP validation.
+     * @param params
+     *         Parameters needed to handle the token request.
+     *         Must not be {@code null}.
      *
      * @return
      *         A response that should be returned from the endpoint to the
      *         client application.
      *
      * @throws WebApplicationException
-     *             An error occurred.
+     *         An error occurred.
      *
-     * @since 2.8
+     * @since 2.27
      */
-    public Response handle(
-            MultivaluedMap<String, String> parameters, String authorization,
-            String[] clientCertificatePath, String dpopHeader, String htm, String htu) throws WebApplicationException
+    public Response handle(Params params) throws WebApplicationException
     {
         // Convert the value of Authorization header (credentials of
         // the client application), if any, into BasicCredentials.
-        BasicCredentials credentials = BasicCredentials.parse(authorization);
+        BasicCredentials credentials = BasicCredentials.parse(params.getAuthorization());
 
         // The credentials of the client application extracted from
         // 'Authorization' header. These may be null.
@@ -197,8 +426,15 @@ public class TokenRequestHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(parameters, clientId, clientSecret, clientCertificatePath,
-                    dpopHeader, htm, htu);
+            return process(
+                    params.getParameters(),
+                    clientId,
+                    clientSecret,
+                    params.getClientCertificatePath(),
+                    params.getDpop(),
+                    params.getHtm(),
+                    params.getHtu()
+            );
         }
         catch (WebApplicationException e)
         {
@@ -218,7 +454,7 @@ public class TokenRequestHandler extends BaseHandler
     private Response process(
             MultivaluedMap<String, String> parameters, String clientId,
             String clientSecret, String[] clientCertificatePath,
-            String dpopHeader, String htm, String htu)
+            String dpop, String htm, String htu)
     {
         // Extra properties to associate with an access token.
         Property[] properties = mSpi.getProperties();
@@ -240,7 +476,7 @@ public class TokenRequestHandler extends BaseHandler
         // Call Authlete's /api/auth/token API.
         TokenResponse response = getApiCaller().callToken(
                 parameters, clientId, clientSecret, properties,
-                clientCertificate, clientCertificatePath, dpopHeader, htm, htu);
+                clientCertificate, clientCertificatePath, dpop, htm, htu);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
