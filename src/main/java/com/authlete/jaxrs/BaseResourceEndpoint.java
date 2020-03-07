@@ -194,6 +194,59 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
 
     /**
+     * Validate an access token. This method is an alias of {@link
+     * #validateAccessToken(AuthleteApi, Params)}.
+     *
+     * @param api
+     *         Implementation of {@link AuthleteApi} interface.
+     *
+     * @param accessToken
+     *         An access token to validate.
+     *
+     * @param requiredScopes
+     *         Scopes that must be associated with the access token.
+     *         {@code null} is okay.
+     *
+     * @param requiredSubject
+     *         Subject (= user's unique identifier) that must be associated
+     *         with the access token. {@code null} is okay.
+     *
+     * @param clientCertificate
+     *         TLS Certificate of the client presented during a call to
+     *         the resource server, used with TLS-bound access tokens.
+     *         Can be {@code null} if no certificate is presented.
+     *
+     * @return
+     *         Information about the access token.
+     *
+     * @throws WebApplicationException
+     *         The access token is invalid. To be concrete, one or more of
+     *         the following conditions meet.
+     *         <ol>
+     *           <li>The access token does not exist.
+     *           <li>The access token has expired.
+     *           <li>The access token does not cover the required scopes.
+     *           <li>The access token is not associated with the required subject.
+     *           <li>The access token is bound to a client certificate, but the
+     *               given one does not match.
+     *         </ol>
+     */
+    public AccessTokenInfo validateAccessToken(
+            AuthleteApi api, String accessToken, String[] requiredScopes,
+            String requiredSubject, String clientCertificate) throws WebApplicationException
+    {
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                .setRequiredScopes(requiredScopes)
+                .setRequiredSubject(requiredSubject)
+                .setClientCertificate(clientCertificate)
+                ;
+
+        return validateAccessToken(api, params);
+    }
+
+
+    /**
      * Validate an access token.
      *
      * @param api
