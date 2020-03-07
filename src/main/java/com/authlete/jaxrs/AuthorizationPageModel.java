@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -706,6 +706,15 @@ public class AuthorizationPageModel implements Serializable
      * Get the flag indicating whether the authorization request requests
      * all possible verified claims for the ID token.
      *
+     * <p>
+     * NOTE: In the version 1.0 of "OpenID Connect for Identity Assurance",
+     * {@code "claims":null} means <i>"a request for all possible Claims"</i>.
+     * However, this requirement will be dropped from the future version.
+     * Therefore, this method should not be used in the future.
+     * The relevant discussion can be found in <a href=
+     * "https://bitbucket.org/openid/ekyc-ida/issues/1142">Issue 1142</a>.
+     * </p>
+     *
      * @return
      *       {@code true} if the authorization request requests all possible
      *       verified claims for the ID token.
@@ -826,6 +835,15 @@ public class AuthorizationPageModel implements Serializable
     /**
      * Get the flag indicating whether the authorization request requests
      * all possible verified claims for the userinfo.
+     *
+     * <p>
+     * NOTE: In the version 1.0 of "OpenID Connect for Identity Assurance",
+     * {@code "claims":null} means <i>"a request for all possible Claims"</i>.
+     * However, this requirement will be dropped from the future version.
+     * Therefore, this method should not be used in the future.
+     * The relevant discussion can be found in <a href=
+     * "https://bitbucket.org/openid/ekyc-ida/issues/1142">Issue 1142</a>.
+     * </p>
      *
      * @return
      *       {@code true} if the authorization request requests all possible
