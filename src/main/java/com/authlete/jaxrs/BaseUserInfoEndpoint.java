@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.UserInfoRequestHandler.Params;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 
 
@@ -35,6 +36,35 @@ import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
  */
 public class BaseUserInfoEndpoint extends BaseResourceEndpoint
 {
+    /**
+     * Handle a userinfo request.
+     *
+     * This method is an alias of the {@link #handle(AuthleteApi,
+     * UserInfoRequestHandlerSpi, Params)} method.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link UserInfoRequestHandlerSpi}.
+     *
+     * @param accessToken
+     *         An access token.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     */
+    public Response handle(
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken)
+    {
+        Params params = new Params()
+                .setAccessToken(accessToken)
+                ;
+
+        return handle(api, spi, params);
+    }
+
+
     /**
      * Handle a userinfo request.
      *
@@ -56,27 +86,21 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
-     * @param spi
-     *            An implementation of {@link UserInfoRequestHandlerSpi}.
-     * @param accessToken
-     *            An access token.
-     * @param clientCertificate
-     *            The certificate path used in mutual TLS authentication, in PEM format. The
-     *            client's own certificate is the first in this array. Can be {@code null}.
-     * @param dpopHeader
-     *            The value of the {@code DPoP} header of the request.
-     * @param htm
-     *            The HTTP verb used to make this call, used in DPoP validation.
-     * @param htu
-     *            The HTTP URL used to make this call, used in DPoP validation.
+     *         An implementation of {@link AuthleteApi}.
      *
+     * @param spi
+     *         An implementation of {@link UserInfoRequestHandlerSpi}.
+     *
+     * @param params
+     *         Parameters needed to handle the userinfo request.
      *
      * @return
      *         A response that should be returned to the client application.
+     *
+     * @since 2.27
      */
     public Response handle(
-            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken, String clientCertificate, String dpopHeader, String htm, String htu)
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, Params params)
     {
         try
         {
@@ -84,7 +108,7 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
             UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(accessToken, clientCertificate, dpopHeader, htm, htu);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {

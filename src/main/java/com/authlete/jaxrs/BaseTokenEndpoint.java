@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.TokenRequestHandler.Params;
 import com.authlete.jaxrs.spi.TokenRequestHandlerSpi;
 
 
@@ -43,8 +44,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
      * Handle a token request.
      *
      * This method is an alias of the {@link #handle(AuthleteApi,
-     * TokenRequestHandlerSpi, MultivaluedMap, String, String[], String) handle()}
-     * method that accepts 5 arguments.
+     * TokenRequestHandlerSpi, Params)} method.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -65,44 +65,37 @@ public class BaseTokenEndpoint extends BaseEndpoint
             AuthleteApi api, TokenRequestHandlerSpi spi,
             MultivaluedMap<String, String> parameters, String authorization)
     {
-        return handle(api, spi, parameters, authorization, null, null, null, null);
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                ;
+
+        return handle(api, spi, params);
     }
 
 
     /**
      * Handle a token request.
      *
-     * <p>
-     * This method internally creates a {@link TokenRequestHandler} instance and
-     * calls its {@link TokenRequestHandler#handle(MultivaluedMap, String, String[], String)}
-     * method. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
-     * </p>
-     *
-     * <p>
-     * When {@code TokenRequestHandler.handle()} method raises a {@link
-     * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
-     * onError()} method with the exception. The default implementation of {@code onError()}
-     * does nothing. You can override the method as necessary. After calling
-     * {@code onError()} method, this method calls {@code getResponse()} method of
-     * the exception and uses the returned value as a response from this method.
-     * </p>
+     * This method is an alias of the {@link #handle(AuthleteApi,
+     * TokenRequestHandlerSpi, Params)} method.
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
      *
      * @param spi
-     *            An implementation of {@link TokenRequestHandlerSpi}.
+     *         An implementation of {@link TokenRequestHandlerSpi}.
      *
      * @param parameters
-     *            Request parameters of the token request.
+     *         Request parameters of the token request.
      *
      * @param authorization
-     *            The value of {@code Authorization} header of the token request.
+     *         The value of {@code Authorization} header of the token request.
      *
      * @param clientCertificatePath
-     *            The certificate path used in mutual TLS authentication, in PEM format. The
-     *            client's own certificate is the first in this array. Can be {@code null}.
+     *         The certificate path used in mutual TLS authentication, each in
+     *         PEM format. The client's own certificate is the first in this
+     *         array. Can be {@code null}.
      *
      * @return
      *         A response that should be returned to the client application.
@@ -113,7 +106,13 @@ public class BaseTokenEndpoint extends BaseEndpoint
             AuthleteApi api, TokenRequestHandlerSpi spi,
             MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath)
     {
-        return handle(api, spi, parameters, authorization, clientCertificatePath, null, null, null);
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                .setClientCertificatePath(clientCertificatePath)
+                ;
+
+        return handle(api, spi, params);
     }
 
 
@@ -122,7 +121,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link TokenRequestHandler} instance and
-     * calls its {@link TokenRequestHandler#handle(MultivaluedMap, String, String[], String)}
+     * calls its {@link TokenRequestHandler#handle(Params)}
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
@@ -137,33 +136,21 @@ public class BaseTokenEndpoint extends BaseEndpoint
      * </p>
      *
      * @param api
-     *            An implementation of {@link AuthleteApi}.
+     *         An implementation of {@link AuthleteApi}.
+     *
      * @param spi
-     *            An implementation of {@link TokenRequestHandlerSpi}.
-     * @param parameters
-     *            Request parameters of the token request.
-     * @param authorization
-     *            The value of {@code Authorization} header of the token request.
-     * @param clientCertificatePath
-     *            The certificate path used in mutual TLS authentication, in PEM format. The
-     *            client's own certificate is the first in this array. Can be {@code null}.
-     * @param dpopHeader
-     *            The value of the {@code DPoP} header of the token request.
-     * @param htm
-     *            The HTTP verb used to make this call, used in DPoP validation.
-     * @param htu
-     *            The HTTP URL used to make this call, used in DPoP validation.
+     *         An implementation of {@link TokenRequestHandlerSpi}.
+     *
+     * @param params
+     *         Parameters needed to handle the token request.
      *
      * @return
      *         A response that should be returned to the client application.
-     *         Can be {@code null}.
      *
-     * @since 2.8
+     * @since 2.27
      */
     public Response handle(
-            AuthleteApi api, TokenRequestHandlerSpi spi,
-            MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath,
-            String dpopHeader, String htm, String htu)
+            AuthleteApi api, TokenRequestHandlerSpi spi, Params params)
     {
         try
         {
@@ -171,7 +158,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
             TokenRequestHandler handler = new TokenRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization, clientCertificatePath, dpopHeader, htm, htu);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {

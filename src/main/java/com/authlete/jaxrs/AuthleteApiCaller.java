@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Authlete, Inc.
+ * Copyright (C) 2015-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -373,13 +373,13 @@ class AuthleteApiCaller
     public TokenResponse callToken(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
-            String dpopHeader, String htm, String htu)
+            String dpop, String htm, String htu)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callToken(params, clientId, clientSecret,
                 properties, clientCertificate, clientCertificatePath,
-                dpopHeader, htm, htu);
+                dpop, htm, htu);
     }
 
 
@@ -389,7 +389,7 @@ class AuthleteApiCaller
     public TokenResponse callToken(
             String parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
-            String dpopHeader, String htm, String htu)
+            String dpop, String htm, String htu)
     {
         if (parameters == null)
         {
@@ -407,7 +407,7 @@ class AuthleteApiCaller
             .setProperties(properties)
             .setClientCertificate(clientCertificate)
             .setClientCertificatePath(clientCertificatePath)
-            .setDpop(dpopHeader)
+            .setDpop(dpop)
             .setHtm(htm)
             .setHtu(htu)
             ;
@@ -678,13 +678,14 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/userinfo} API.
      */
-    public UserInfoResponse callUserInfo(String accessToken, String clientCertificate, String dpopHeader, String htm, String htu)
+    public UserInfoResponse callUserInfo(
+            String accessToken, String clientCertificate, String dpop, String htm, String htu)
     {
         // Create a request for Authlete's /api/auth/userinfo API.
         UserInfoRequest request = new UserInfoRequest()
             .setToken(accessToken)
             .setClientCertificate(clientCertificate)
-            .setDpop(dpopHeader)
+            .setDpop(dpop)
             .setHtm(htm)
             .setHtu(htu)
             ;
@@ -782,8 +783,9 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/introspection} API.
      */
-    public IntrospectionResponse callIntrospection(String accessToken, String[] scopes, String subject, String clientCertificate, 
-            String dpopHeader, String htm, String htu)
+    public IntrospectionResponse callIntrospection(
+            String accessToken, String[] scopes, String subject, String clientCertificate,
+            String dpop, String htm, String htu)
     {
         // Create a request for /api/auth/introspection API.
         IntrospectionRequest request = new IntrospectionRequest()
@@ -791,7 +793,7 @@ class AuthleteApiCaller
             .setScopes(scopes)
             .setSubject(subject)
             .setClientCertificate(clientCertificate)
-            .setDpop(dpopHeader)
+            .setDpop(dpop)
             .setHtm(htm)
             .setHtu(htu)
             ;

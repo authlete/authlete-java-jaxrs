@@ -1,6 +1,35 @@
 CHANGES
 =======
 
+- `AccessTokenValidator` class
+    * Added `Params` inner class.
+    * Added `validate(Params)` method.
+
+- `AuthleteApiCaller` class
+    * Added `dpop`, `htm` and `htu` arguments to `callIntrospection`,
+     `callToken` and `callUserInfo` methods.
+
+- `BaseResourceEndpoint` class
+    * Added `validateAccessToken(AuthleteApi, Params)` method.
+
+- `BaseTokenEndpoint` class
+    * Added `handle(AuthleteApi, TokenRequestHandlerSpi, Params)` method.
+
+- `BaseUserInfoEndpoint` class
+    * Added `handle(AuthleteApi, UserInfoRequestHandlerSpi, Params)` method.
+
+- `TokenRequestHandler` class
+    * Added `Params` inner class.
+    * Added `handle(Params)` method.
+
+- `UserInfoRequestHandler` class
+    * Added `Params` inner class.
+    * Added `handle(Params)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.65 to 2.71.
+
+
 2.26 (2019-12-23)
 -----------------
 

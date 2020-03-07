@@ -1,6 +1,35 @@
 変更点
 ======
 
+- `AccessTokenValidator` クラス
+    * 内部クラス `Params` を追加。
+    * `validate(Params)` メソッドを追加。
+
+- `AuthleteApiCaller` クラス
+    * `callIntrospection`, `callToken`, `callUserInfo` メソッドに
+      引数 `dpop`, `htm`, `htu` を追加。
+
+- `BaseResourceEndpoint` クラス
+    * `validateAccessToken(AuthleteApi, Params)` メソッドを追加。
+
+- `BaseTokenEndpoint` クラス
+    * `handle(AuthleteApi, TokenRequestHandlerSpi, Params)` メソッドを追加。
+
+- `BaseUserInfoEndpoint` クラス
+    * `handle(AuthleteApi, UserInfoRequestHandlerSpi, Params)` メソッドを追加。
+
+- `TokenRequestHandler` クラス
+    * 内部クラス `Params` を追加。
+    * `handle(Params)` メソッドを追加。
+
+- `UserInfoRequestHandler` クラス
+    * 内部クラス `Params` を追加。
+    * `handle(Params)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.65 から 2.71 へ更新。
+
+
 2.26 (2019 年 12 月 23 日)
 --------------------------
 
