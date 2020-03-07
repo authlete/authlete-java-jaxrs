@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.27 (2020-03-07)
+-----------------
+
 - `AccessTokenValidator` class
     * Added `Params` inner class.
     * Added `validate(Params)` method.
