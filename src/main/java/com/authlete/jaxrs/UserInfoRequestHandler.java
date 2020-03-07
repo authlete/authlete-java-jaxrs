@@ -19,6 +19,7 @@ package com.authlete.jaxrs;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -521,10 +522,18 @@ public class UserInfoRequestHandler extends BaseHandler
         }
 
         // Collect verified claims.
-        VerifiedClaims verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
+        List<VerifiedClaims> verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
 
+        // Embed the verified claims as "verified_claims".
+        return embedVerifiedClaims(claims, verifiedClaims);
+    }
+
+
+    private static Map<String, Object> embedVerifiedClaims(
+            Map<String, Object> claims, List<VerifiedClaims> verifiedClaims)
+    {
         // If no verified claims are provided.
-        if (verifiedClaims == null)
+        if (verifiedClaims == null || verifiedClaims.size() == 0)
         {
             return claims;
         }
@@ -534,8 +543,14 @@ public class UserInfoRequestHandler extends BaseHandler
             claims = new LinkedHashMap<String, Object>();
         }
 
-        // Embed the verified claims as "verified_claims".
-        claims.put("verified_claims", verifiedClaims);
+        if (verifiedClaims.size() == 1)
+        {
+            claims.put("verified_claims", verifiedClaims.get(0));
+        }
+        else
+        {
+            claims.put("verified_claims", verifiedClaims);
+        }
 
         return claims;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Authlete, Inc.
+ * Copyright (C) 2015-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -546,10 +546,18 @@ public class AuthorizationDecisionHandler extends BaseHandler
         }
 
         // Collect verified claims.
-        VerifiedClaims verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
+        List<VerifiedClaims> verifiedClaims = mSpi.getVerifiedClaims(subject, constraint);
 
+        // Embed the verified claims as "verified_claims".
+        return embedVerifiedClaims(claims, verifiedClaims);
+    }
+
+
+    private static Map<String, Object> embedVerifiedClaims(
+            Map<String, Object> claims, List<VerifiedClaims> verifiedClaims)
+    {
         // If no verified claims are provided.
-        if (verifiedClaims == null)
+        if (verifiedClaims == null || verifiedClaims.size() == 0)
         {
             return claims;
         }
@@ -559,8 +567,14 @@ public class AuthorizationDecisionHandler extends BaseHandler
             claims = new LinkedHashMap<String, Object>();
         }
 
-        // Embed the verified claims as "verified_claims".
-        claims.put("verified_claims", verifiedClaims);
+        if (verifiedClaims.size() == 1)
+        {
+            claims.put("verified_claims", verifiedClaims.get(0));
+        }
+        else
+        {
+            claims.put("verified_claims", verifiedClaims);
+        }
 
         return claims;
     }

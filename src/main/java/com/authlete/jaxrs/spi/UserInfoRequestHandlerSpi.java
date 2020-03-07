@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Authlete, Inc.
+ * Copyright (C) 2016-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
  */
 package com.authlete.jaxrs.spi;
 
+
+import java.util.List;
 import com.authlete.common.assurance.VerifiedClaims;
 import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
+
 
 /**
  * Service Provider Interface to work with {@link
@@ -194,5 +197,5 @@ public interface UserInfoRequestHandlerSpi
      *
      * @since 2.25
      */
-    VerifiedClaims getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint);
+    List<VerifiedClaims> getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint);
 }

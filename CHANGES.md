@@ -9,6 +9,10 @@ CHANGES
     * Added `dpop`, `htm` and `htu` arguments to `callIntrospection`,
      `callToken` and `callUserInfo` methods.
 
+- `AuthorizationDecisionHandlerSpi` interface
+    * Changed the return type of `getVerifiedClaims(String, VerifiedClaimsConstraint)`
+      method from `VerifiedClaims` to `List<VerifiedClaims>`.
+
 - `BaseResourceEndpoint` class
     * Added `validateAccessToken(AuthleteApi, Params)` method.
 
@@ -25,6 +29,10 @@ CHANGES
 - `UserInfoRequestHandler` class
     * Added `Params` inner class.
     * Added `handle(Params)` method.
+
+- `UserInfoRequestHandlerSpi` interface
+    * Changed the return type of `getVerifiedClaims(String, VerifiedClaimsConstraint)`
+      method from `VerifiedClaims` to `List<VerifiedClaims>`.
 
 - `pom.xml`
     * Updated the version of `authlete-java-common` from 2.65 to 2.71.

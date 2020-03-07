@@ -9,6 +9,10 @@
     * `callIntrospection`, `callToken`, `callUserInfo` メソッドに
       引数 `dpop`, `htm`, `htu` を追加。
 
+- `AuthorizationDecisionHandlerSpi` インターフェース
+    * `getVerifiedClaims(String, VerifiedClaimsConstraint)` メソッドの戻り値の型を
+      `VerifiedClaims` から `List<VerifiedClaims>` へ変更。
+
 - `BaseResourceEndpoint` クラス
     * `validateAccessToken(AuthleteApi, Params)` メソッドを追加。
 
@@ -25,6 +29,10 @@
 - `UserInfoRequestHandler` クラス
     * 内部クラス `Params` を追加。
     * `handle(Params)` メソッドを追加。
+
+- `UserInfoRequestHandlerSpi` インターフェース
+    * `getVerifiedClaims(String, VerifiedClaimsConstraint)` メソッドの戻り値の型を
+      `VerifiedClaims` から `List<VerifiedClaims>` へ変更。
 
 - `pom.xml`
     * `authlete-java-common` のバージョンを 2.65 から 2.71 へ更新。
