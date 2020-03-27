@@ -19,12 +19,16 @@ package com.authlete.jaxrs.api;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -95,6 +99,16 @@ import com.authlete.common.dto.UserInfoIssueResponse;
 import com.authlete.common.dto.UserInfoRequest;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.web.BasicCredentials;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.factories.DefaultJWSSignerFactory;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 
 
 /**
@@ -179,6 +193,10 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private ClientBuilder jaxRsClientBuilder;
 
+    private JWK mDpopJwk;
+    private JWSSigner mJwsSigner;
+
+
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
      *
@@ -198,9 +216,31 @@ public class AuthleteApiImpl implements AuthleteApi
         }
 
         mBaseUrl          = configuration.getBaseUrl();
+        extractDpop(configuration); // this has to be done before the credentials calls below
         mServiceOwnerAuth = createServiceOwnerCredentials(configuration);
         mServiceAuth      = createServiceCredentials(configuration);
         mSettings         = new Settings();
+    }
+
+
+    private void extractDpop(AuthleteConfiguration configuration)
+    {
+        if (configuration.getDpopKey() != null)
+        {
+            try
+            {
+                mDpopJwk = JWK.parse(configuration.getDpopKey());
+                if (mDpopJwk.getAlgorithm() == null)
+                {
+                    throw new IllegalArgumentException("DPoP JWK must contain an 'alg' field.");
+                }
+                mJwsSigner = new DefaultJWSSignerFactory().createJWSSigner(mDpopJwk);
+            }
+            catch (ParseException | JOSEException e)
+            {
+                throw new IllegalArgumentException("DPoP JWK is not valid.");
+            }
+        }
     }
 
 
@@ -211,7 +251,14 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         if (configuration.getServiceOwnerAccessToken() != null)
         {
-            return "Bearer " + configuration.getServiceOwnerAccessToken();
+            if (mDpopJwk != null)
+            {
+                return "DPoP " + configuration.getServiceOwnerAccessToken();
+            }
+            else
+            {
+                return "Bearer " + configuration.getServiceOwnerAccessToken();
+            }
         }
         else
         {
@@ -230,7 +277,14 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         if (configuration.getServiceAccessToken() != null)
         {
-            return "Bearer " + configuration.getServiceAccessToken();
+            if (mDpopJwk != null)
+            {
+                return "DPoP " + configuration.getServiceAccessToken();
+            }
+            else
+            {
+                return "Bearer " + configuration.getServiceAccessToken();
+            }
         }
         else
         {
@@ -377,6 +431,41 @@ public class AuthleteApiImpl implements AuthleteApi
     }
 
 
+    private Invocation.Builder wrapWithDpop(Invocation.Builder target, String path, String method)
+    {
+        if (mDpopJwk != null) {
+            String htu = mBaseUrl + path;
+            
+            JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+                    .type(new JOSEObjectType("dpop+jwt"))
+                    .jwk(mDpopJwk).build();
+            
+            JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                    .claim("htm", method)
+                    .claim("htu", htu)
+                    .jwtID(UUID.randomUUID().toString())
+                    .issueTime(new Date())
+                    .build();
+            
+            JWSObject dpop = new SignedJWT(header, claims);
+
+            try
+            {
+                dpop.sign(mJwsSigner);
+            }
+            catch (JOSEException e)
+            {
+                throw createApiException(e, null); // TODO: should this be a better message?
+            }
+
+            return target.header("DPoP", dpop.serialize());
+        } else {
+            // no DPoP configuration, just pass through the original target
+            return target;
+        }
+    }
+
+
     /**
      * Execute an Authlete API call.
      */
@@ -497,8 +586,7 @@ public class AuthleteApiImpl implements AuthleteApi
             }
         }
 
-        return webTarget
-                .request(APPLICATION_JSON_TYPE)
+        return wrapWithDpop(webTarget.request(APPLICATION_JSON_TYPE), path, "GET")
                 .header(AUTHORIZATION, auth)
                 .get(responseClass);
     }
@@ -520,9 +608,9 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private Void callDeleteApi(String auth, String path)
     {
-        getTarget()
+        wrapWithDpop(getTarget()
             .path(path)
-            .request()
+                .request(), path, "DELETE")
             .header(AUTHORIZATION, auth)
             .delete();
 
@@ -544,9 +632,9 @@ public class AuthleteApiImpl implements AuthleteApi
 
     private <TResponse> TResponse callPostApi(String auth, String path, Object request, Class<TResponse> responseClass)
     {
-        return getTarget()
+        return wrapWithDpop(getTarget()
                 .path(path)
-                .request(APPLICATION_JSON_TYPE)
+                .request(APPLICATION_JSON_TYPE), path, "POST")
                 .header(AUTHORIZATION, auth)
                 .post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
     }
@@ -885,8 +973,8 @@ public class AuthleteApiImpl implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return target
-                .request(APPLICATION_JSON_TYPE)
+        return wrapWithDpop(target
+                .request(APPLICATION_JSON_TYPE), AUTH_TOKEN_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceAuth)
                 .get(TokenListResponse.class);
     }
@@ -1042,8 +1130,8 @@ public class AuthleteApiImpl implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return target
-                .request(APPLICATION_JSON_TYPE)
+        return wrapWithDpop(target
+                .request(APPLICATION_JSON_TYPE), SERVICE_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceOwnerAuth)
                 .get(ServiceListResponse.class);
     }
@@ -1274,8 +1362,8 @@ public class AuthleteApiImpl implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return target
-                .request(APPLICATION_JSON_TYPE)
+        return wrapWithDpop(target
+                .request(APPLICATION_JSON_TYPE), CLIENT_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceAuth)
                 .get(ClientListResponse.class);
     }
