@@ -610,7 +610,7 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         wrapWithDpop(getTarget()
             .path(path)
-                .request(), path, "DELETE")
+            .request(), path, "DELETE")
             .header(AUTHORIZATION, auth)
             .delete();
 
