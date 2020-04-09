@@ -1,6 +1,14 @@
 変更点
 ======
 
+- `AuthleteApiImpl` クラス
+    * DPoP サポートを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.71 から 2.73 へ更新。
+    * `com.nimbusds:nimbus-jose-jwt:8.14` を追加。
+
+
 2.27 (2020 年 03 月 07 日)
 --------------------------
 
