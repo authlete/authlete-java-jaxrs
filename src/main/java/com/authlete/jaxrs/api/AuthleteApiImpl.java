@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Authlete, Inc.
+ * Copyright (C) 2014-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -435,18 +435,18 @@ public class AuthleteApiImpl implements AuthleteApi
     {
         if (mDpopJwk != null) {
             String htu = mBaseUrl + path;
-            
+
             JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
                     .type(new JOSEObjectType("dpop+jwt"))
                     .jwk(mDpopJwk).build();
-            
+
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .claim("htm", method)
                     .claim("htu", htu)
                     .jwtID(UUID.randomUUID().toString())
                     .issueTime(new Date())
                     .build();
-            
+
             JWSObject dpop = new SignedJWT(header, claims);
 
             try
