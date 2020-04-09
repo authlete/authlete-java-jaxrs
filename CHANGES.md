@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.28 (2020-04-09)
+-----------------
+
 - `AuthleteApiImpl` class
     * Added DPoP support.
 
