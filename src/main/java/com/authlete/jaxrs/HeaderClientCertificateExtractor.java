@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
  *   SSLCertificateFile /etc/certs/tls.crt
  *   SSLCertificateKeyFile /etc/certs/tls.key
  *   SSLVerifyClient optional_no_ca
- *   SSLOptions +StdEnvVars
+ *   SSLOptions +StdEnvVars +ExportCertData
  *   RequestHeader set X-Ssl-Cipher "%{SSL_CIPHER}e" env=SSL_CIPHER
  *   RequestHeader set X-Ssl-Cert "%{SSL_CLIENT_CERT}e" env=SSL_CLIENT_CERT
  *   RequestHeader set X-Ssl-Protocol "%{SSL_PROTOCOL}e" env=SSL_PROTOCOL
