@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.29 (2020-06-29)
+-----------------
+
 - `HeaderClientCertificateExtractor` class
     * Supported `$ssl_client_escaped_cert` of Nginx.
 
