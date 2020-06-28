@@ -58,7 +58,7 @@ Maven
 JavaDoc
 -------
 
-  <code>http://authlete.github.io/authlete-java-jaxrs</code>
+  <code>https://authlete.github.io/authlete-java-jaxrs</code>
 
 
 説明
@@ -544,29 +544,29 @@ JAX-RS クライアント実装をサポートしています。
 | 技術 | support@authlete.com |
 
 
-[1]: http://tools.ietf.org/html/rfc6749
-[2]: http://openid.net/connect/
+[1]: https://tools.ietf.org/html/rfc6749
+[2]: https://openid.net/connect/
 [3]: https://github.com/authlete/java-oauth-server
 [4]: https://github.com/authlete/authlete-java-common
 [5]: https://jcp.org/en/jsr/detail?id=339
-[6]: https://www.authlete.com/documents/apis
+[6]: https://docs.authlete.com/
 [7]: https://www.authlete.com/
-[8]: https://www.authlete.com/documents/overview
-[9]: http://tools.ietf.org/html/rfc6749#section-3.1
-[10]: http://tools.ietf.org/html/rfc6749#section-3.2
-[11]: http://authlete.github.io/authlete-java-jaxrs
-[12]: http://openid.net/specs/openid-connect-discovery-1_0.html
-[13]: http://openid.net/specs/openid-connect-core-1_0.html
-[14]: http://tools.ietf.org/html/rfc7009
-[15]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
-[16]: http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
-[17]: http://openid.net/specs/openid-connect-core-1_0.html#IDToken
-[18]: http://tools.ietf.org/html/rfc7009
+[8]: https://www.authlete.com/ja/developers/overview/
+[9]: https://tools.ietf.org/html/rfc6749#section-3.1
+[10]: https://tools.ietf.org/html/rfc6749#section-3.2
+[11]: https://authlete.github.io/authlete-java-jaxrs
+[12]: https://openid.net/specs/openid-connect-discovery-1_0.html
+[13]: https://openid.net/specs/openid-connect-core-1_0.html
+[14]: https://tools.ietf.org/html/rfc7009
+[15]: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+[16]: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
+[17]: https://openid.net/specs/openid-connect-core-1_0.html#IDToken
+[18]: https://tools.ietf.org/html/rfc7009
 [19]: https://github.com/authlete/java-resource-server
-[20]: http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
-[21]: http://tools.ietf.org/html/rfc7519
-[22]: http://tools.ietf.org/html/rfc6750
-[23]: http://tools.ietf.org/html/rfc7662
-[24]: http://tools.ietf.org/html/rfc7662#section-2.1
+[20]: https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+[21]: https://tools.ietf.org/html/rfc7519
+[22]: https://tools.ietf.org/html/rfc6750
+[23]: https://tools.ietf.org/html/rfc7662
+[24]: https://tools.ietf.org/html/rfc7662#section-2.1
 [25]: https://github.com/authlete/authlete-java-jaxrs/blob/master/src/main/java/com/authlete/jaxrs/api/AuthleteApiImpl.java
 [26]: https://jersey.github.io/
