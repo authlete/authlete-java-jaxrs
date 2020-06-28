@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Authlete, Inc.
+ * Copyright (C) 2018-2020 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.authlete.jaxrs;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,24 @@ import javax.servlet.http.HttpServletRequest;
  *   ProxyPassReverse "/" "http://localhost:8081/"
  * </pre>
  *
+ * <p>
+ * On the other hand, Nginx's configuration file may have the following line.
+ * </p>
+ *
+ * <pre>
+ *   proxy_set_header X-Ssl-Cert $ssl_client_escaped_cert;
+ * </pre>
+ *
+ * <p>
+ * Note that {@code $ssl_client_cert} is deprecated and it will cause an error
+ * when the value is sent to an upstream server which strictly conforms to the
+ * requirement described in "Section 3.2.4. Field Parsing" in RFC 7230. The RFC
+ * deprecates "line folding" which enables HTTP header values to span multiple
+ * lines by preceding each extra line with at least one space or horizontal tab.
+ * For example, Jetty reports "Bad Message 400 / reason: Header Folding" when
+ * it encounters line folding.
+ * </p>
+ *
  * @author jricher
  *
  * @since 2.8
@@ -90,12 +110,11 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
         for (String headerName : getClientCertificateChainHeaders())
         {
             String header = request.getHeader(headerName);
+            String cert   = normalizeCert(header);
 
-            // "(null)" is a value that misconfigured Apache servers will send
-            // instead of a missing header.
-            if (header != null && !header.isEmpty() && !header.equals("(null)"))
+            if (cert != null)
             {
-                headerCerts.add(header);
+                headerCerts.add(cert);
             }
         }
 
@@ -106,6 +125,45 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
         else
         {
             return headerCerts.toArray(new String[] {});
+        }
+    }
+
+
+    private static String normalizeCert(String cert)
+    {
+        if (cert == null || cert.isEmpty())
+        {
+            return null;
+        }
+
+        // "(null)" is a value that misconfigured Apache servers will send
+        // instead of a missing header.
+        if (cert.equals("(null)"))
+        {
+            return null;
+        }
+
+        // Nginx's $ssl_client_escaped_cert holds a "urlencoded" client
+        // certificate in the PEM format.
+        if (cert.startsWith("-----BEGIN%20"))
+        {
+            cert = urlDecode(cert);
+        }
+
+        return cert;
+    }
+
+
+    private static String urlDecode(String input)
+    {
+        try
+        {
+            return URLDecoder.decode(input, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            // Failed to decode the input string.
+            return input;
         }
     }
 

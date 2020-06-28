@@ -1,6 +1,10 @@
 変更点
 ======
 
+- `HeaderClientCertificateExtractor` クラス
+    * Nginx の `$ssl_client_escaped_cert` をサポート。
+
+
 2.28 (2020 年 04 月 09 日)
 --------------------------
 
