@@ -133,6 +133,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH             = "/api/auth/authorization/issue";
     private static final String AUTH_TOKEN_API_PATH                           = "/api/auth/token";
     private static final String AUTH_TOKEN_CREATE_API_PATH                    = "/api/auth/token/create";
+    private static final String AUTH_TOKEN_DELETE_API_PATH                    = "/api/auth/token/delete/%s";
     private static final String AUTH_TOKEN_FAIL_API_PATH                      = "/api/auth/token/fail";
     private static final String AUTH_TOKEN_GET_LIST_API_PATH                  = "/api/auth/token/get/list";
     private static final String AUTH_TOKEN_ISSUE_API_PATH                     = "/api/auth/token/issue";
@@ -872,6 +873,18 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServicePostApiCaller<TokenCreateResponse>(
                         TokenCreateResponse.class, request, AUTH_TOKEN_CREATE_API_PATH));
+    }
+
+
+    /**
+     * Call <code>/api/auth/token/delete/<i>{token}</i></code> API.
+     */
+    @Override
+    public void tokenDelete(String token) throws AuthleteApiException
+    {
+        executeApiCall(
+                new ServiceDeleteApiCaller(
+                        AUTH_TOKEN_DELETE_API_PATH, token));
     }
 
 
