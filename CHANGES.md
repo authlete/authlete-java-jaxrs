@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+2.30 (2020-11-02)
+-----------------
+
+- `AuthleteApiImpl` class
+    * Added `tokenDelete(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.73 to 2.81.
+
+
 2.29 (2020-06-29)
 -----------------
 
