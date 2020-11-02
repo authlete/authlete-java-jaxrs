@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.81 to 2.82.
+
+
 2.30 (2020-11-02)
 -----------------
 
