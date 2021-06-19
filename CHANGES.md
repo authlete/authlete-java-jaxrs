@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.32 (2021-06-20)
+-----------------
+
 - New classes
     * `CertificateUtils`
 
