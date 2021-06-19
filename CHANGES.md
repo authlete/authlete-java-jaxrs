@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+- New classes
+    * `CertificateUtils`
+
+
 2.31 (2020-11-02)
 -----------------
 
