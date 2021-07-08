@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+- `AuthleteApiImpl` class
+    * Added `hskCreate(HskCreateRequest)` method.
+    * Added `hskDelete(String)` method.
+    * Added `hskGet(String)` method.
+    * Added `hskGetList()` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.82 to 2.97.
+
+
 2.32 (2021-06-20)
 -----------------
 
