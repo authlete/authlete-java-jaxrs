@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.33 (2021-07-09)
+-----------------
+
 - `AuthleteApiImpl` class
     * Added `hskCreate(HskCreateRequest)` method.
     * Added `hskDelete(String)` method.
