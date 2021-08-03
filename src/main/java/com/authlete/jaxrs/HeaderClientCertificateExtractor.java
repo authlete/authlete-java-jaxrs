@@ -94,10 +94,12 @@ public class HeaderClientCertificateExtractor implements ClientCertificateExtrac
             "X-Ssl-Cert-Chain-1",
             "X-Ssl-Cert-Chain-2",
             "X-Ssl-Cert-Chain-3",
-            "X-Ssl-Cert-Chain-4"
-            // the intermediate certificate path, not including the client's
-            // certificate or root
+            "X-Ssl-Cert-Chain-4",    // the intermediate certificate path, not including the client's
+            						// certificate or root
+            "X-ARR-ClientCert" 		// Azure App Service Load balancer
+                                    // https://docs.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth
     );
+         
 
 
     @Override
