@@ -20,7 +20,6 @@ package com.authlete.jaxrs;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,23 +81,14 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @since 2.8
  */
-public class HeaderClientCertificateExtractor implements ClientCertificateExtractor
+public abstract class HeaderClientCertificateExtractor implements ClientCertificateExtractor
 {
 
     /**
      * Headers to check for certificate path with proxy-forwarded certificate
      * information; the first entry is the client's certificate itself
      */
-    private List<String> clientCertificateChainHeaders = Arrays.asList(
-            "X-Ssl-Cert", // the client's certificate
-            "X-Ssl-Cert-Chain-1",
-            "X-Ssl-Cert-Chain-2",
-            "X-Ssl-Cert-Chain-3",
-            "X-Ssl-Cert-Chain-4"
-            // the intermediate certificate path, not including the client's
-            // certificate or root
-    );
-
+    private List<String> clientCertificateChainHeaders;
 
     @Override
     public String[] extractClientCertificateChain(HttpServletRequest request)
