@@ -35,7 +35,8 @@ public class BaseEndpoint
 {
     private List<ClientCertificateExtractor> clientCertificateExtractors = Arrays.asList(
             new HttpsRequestClientCertificateExtractor(),
-            new HeaderClientCertificateExtractor()
+            new HeaderClientCertificateXSslExtractor(),
+            new HeaderClientCertificateClientCertExtractor()
             );
 
 
