@@ -4,7 +4,7 @@
 
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.33-SNAPSHOT</version>
+    <version>2.35-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Authlete library for JAX-RS (Java)</description>
@@ -55,12 +55,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.greenbytes.http</groupId>
-            <artifactId>structured-fields</artifactId>
-            <version>0.4</version>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
@@ -76,19 +70,6 @@
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus.version}</version>
-        </dependency>
-
-        <!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.11.2</version>
         </dependency>
     </dependencies>
 
@@ -171,8 +152,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <fork>true</fork>
                 </configuration>
             </plugin>

@@ -1,6 +1,26 @@
 変更点
 ======
 
+2.33 (2021 年 07 月 09 日)
+--------------------------
+
+- `AuthleteApiImpl` クラス
+    * `hskCreate(HskCreateRequest)` メソッドを追加。
+    * `hskDelete(String)` メソッドを追加。
+    * `hskGet(String)` メソッドを追加。
+    * `hskGetList()` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.82 から 2.97 へ更新。
+
+
+2.32 (2021 年 06 月 20 日)
+--------------------------
+
+- 新しいクラス
+    * `CertificateUtils`
+
+
 2.31 (2020 年 11 月 02 日)
 --------------------------
 
