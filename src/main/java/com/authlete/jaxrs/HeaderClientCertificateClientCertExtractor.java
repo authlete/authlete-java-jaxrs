@@ -17,15 +17,57 @@
 package com.authlete.jaxrs;
 
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.greenbytes.http.sfv.ByteSequenceItem;
+import org.greenbytes.http.sfv.OuterList;
+import org.greenbytes.http.sfv.Parser;
 
 public class HeaderClientCertificateClientCertExtractor extends HeaderClientCertificateExtractor
 {
 
   private List<String> clientCertificateChainHeaders = Arrays.asList(
-      "CLien-Cert"
+      "Client-Cert",
+      "Client-Cert-Chain"
   );
+
+  @Override
+  public String[] extractClientCertificateChain(HttpServletRequest request)
+  {
+    List<ByteSequenceItem> listCert=new ArrayList<>();
+    ByteSequenceItem[] byteSequenceCerts = new ByteSequenceItem[]{};
+
+    for (String headerName : getClientCertificateChainHeaders()) {
+      String header = request.getHeader(headerName);
+      OuterList parseCerts = Parser.parseList(header);
+      byteSequenceCerts = parseCerts.get()
+          .toArray(new ByteSequenceItem[]{});
+      for (ByteSequenceItem item:byteSequenceCerts)
+      {
+        listCert.add(item);
+      }
+    }
+
+    if (listCert.size() < 1)
+    {
+      return null;
+    } else {
+      return decodeByteBufferCerts(listCert);
+    }
+  }
+
+  private String[] decodeByteBufferCerts(List<ByteSequenceItem> sequenceItems)
+  {
+    ArrayList<String> certs = new ArrayList<>();
+    for (ByteSequenceItem item : sequenceItems)
+    {
+      certs.add(StandardCharsets.UTF_8.decode(item.get()).toString());
+    }
+    return certs.toArray(new String[]{});
+  }
 
   @Override
   public List<String> getClientCertificateChainHeaders()
