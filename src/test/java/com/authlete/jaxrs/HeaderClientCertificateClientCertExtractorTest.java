@@ -28,13 +28,15 @@ class HeaderClientCertificateClientCertExtractorTest {
   private HeaderClientCertificateClientCertExtractor headerClientCertificateClientCertExtractorUnderTest;
 
   @BeforeEach
-  void setUp() {
+  void setUp()
+  {
     headerClientCertificateClientCertExtractorUnderTest = new HeaderClientCertificateClientCertExtractor();
   }
 
   @Test
   @DisplayName("Extract Client-Cert and Client-Cert-Chain")
-  void should_extract_ClientCert_and_ClientCertChain() {
+  void should_extract_ClientCert_and_ClientCertChain()
+  {
     HttpServletRequest mockHttpServletRequest = getMockHttpServletRequest(CLIENT_CERT_VALUE,CLIENT_CERT_CHAIN_VALUE);
 
     // Run the test
@@ -52,7 +54,8 @@ class HeaderClientCertificateClientCertExtractorTest {
 
   @Test
   @DisplayName("Fail Extract Client-Cert and Client-Cert-Chain due to headers are null")
-  void should_fail_extract_Certs_due_to_headers_are_null() {
+  void should_fail_extract_Certs_due_to_headers_are_null()
+  {
 
 // mock HttpServletRequest
     final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
@@ -73,7 +76,8 @@ class HeaderClientCertificateClientCertExtractorTest {
 
   @Test
   @DisplayName("Fail Extract Client-Cert and Client-Cert-Chain due to Parsing Error")
-  void should_fail_extract_Certs_due_to_parse_Cert() {
+  void should_fail_extract_Certs_due_to_parse_Cert()
+  {
 
     final HttpServletRequest mockHttpServletRequest = getMockHttpServletRequest(CLIENT_CERT_WRONG_VALUE,CLIENT_CERT_WRONG_VALUE);
 
