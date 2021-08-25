@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Authlete, Inc.
+ * Copyright (C) 2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,33 +20,41 @@ package com.authlete.jaxrs;
 import java.util.Arrays;
 import java.util.List;
 
+
+/**
+ * A client certificate extractor for the {@code X-Ssl-Cert} and
+ * {@code X-Ssl-Cert-Chain-*} headers.
+ *
+ * @since 2.34
+ */
 public class HeaderClientCertificateXSslExtractor extends HeaderClientCertificateExtractor
 {
+    /**
+     * Headers to check for certificate path with proxy-forwarded certificate
+     * information; the first entry is the client's certificate itself
+     */
+    private List<String> clientCertificateChainHeaders = Arrays.asList(
+            "X-Ssl-Cert", // the client's certificate
+            "X-Ssl-Cert-Chain-1",
+            "X-Ssl-Cert-Chain-2",
+            "X-Ssl-Cert-Chain-3",
+            "X-Ssl-Cert-Chain-4"
+            // the intermediate certificate path, not including the client's
+            // certificate or root
+    );
 
-  /**
-   * Headers to check for certificate path with proxy-forwarded certificate
-   * information; the first entry is the client's certificate itself
-   */
-  private List<String> clientCertificateChainHeaders = Arrays.asList(
-      "X-Ssl-Cert", // the client's certificate
-      "X-Ssl-Cert-Chain-1",
-      "X-Ssl-Cert-Chain-2",
-      "X-Ssl-Cert-Chain-3",
-      "X-Ssl-Cert-Chain-4"
-      // the intermediate certificate path, not including the client's
-      // certificate or root
-  );
+
+    @Override
+    public List<String> getClientCertificateChainHeaders()
+    {
+        return clientCertificateChainHeaders;
+    }
 
 
-  public List<String> getClientCertificateChainHeaders()
-  {
-    return clientCertificateChainHeaders;
-  }
-
-  @Override
-  public HeaderClientCertificateExtractor setClientCertificateChainHeaders(
-      List<String> clientCertificateChainHeaders) {
-    throw new UnsupportedOperationException();
-  }
-
+    @Override
+    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(
+            List<String> clientCertificateChainHeaders)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

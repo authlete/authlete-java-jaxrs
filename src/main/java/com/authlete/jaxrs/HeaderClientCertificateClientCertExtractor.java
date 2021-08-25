@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,58 +26,72 @@ import org.greenbytes.http.sfv.ByteSequenceItem;
 import org.greenbytes.http.sfv.OuterList;
 import org.greenbytes.http.sfv.Parser;
 
+
+/**
+ * A client certificate extractor for the {@code Client-Cert} and
+ * {@code Client-Cert-Chain} headers.
+ *
+ * @since 2.34
+ */
 public class HeaderClientCertificateClientCertExtractor extends HeaderClientCertificateExtractor
 {
+    private List<String> clientCertificateChainHeaders = Arrays.asList(
+            "Client-Cert",
+            "Client-Cert-Chain");
 
-  private List<String> clientCertificateChainHeaders = Arrays.asList(
-      "Client-Cert",
-      "Client-Cert-Chain"
-  );
 
-  @Override
-  public String[] extractClientCertificateChain(HttpServletRequest request)
-  {
-    List<ByteSequenceItem> listCert=new ArrayList<>();
-    ByteSequenceItem[] byteSequenceCerts = new ByteSequenceItem[]{};
-
-    for (String headerName : getClientCertificateChainHeaders()) {
-      String header = request.getHeader(headerName);
-      OuterList parseCerts = Parser.parseList(header);
-      byteSequenceCerts = parseCerts.get()
-          .toArray(new ByteSequenceItem[]{});
-      for (ByteSequenceItem item:byteSequenceCerts)
-      {
-        listCert.add(item);
-      }
-    }
-
-    if (listCert.size() < 1)
+    @Override
+    public String[] extractClientCertificateChain(HttpServletRequest request)
     {
-      return null;
-    } else {
-      return decodeByteBufferCerts(listCert);
-    }
-  }
+        List<ByteSequenceItem> listCert = new ArrayList<>();
+        ByteSequenceItem[] byteSequenceCerts = new ByteSequenceItem[] {};
 
-  private String[] decodeByteBufferCerts(List<ByteSequenceItem> sequenceItems)
-  {
-    ArrayList<String> certs = new ArrayList<>();
-    for (ByteSequenceItem item : sequenceItems)
+        for (String headerName : getClientCertificateChainHeaders())
+        {
+            String header = request.getHeader(headerName);
+            OuterList parseCerts = Parser.parseList(header);
+            byteSequenceCerts = parseCerts.get()
+                    .toArray(new ByteSequenceItem[] {});
+
+            for (ByteSequenceItem item : byteSequenceCerts)
+            {
+                listCert.add(item);
+            }
+        }
+
+        if (listCert.size() < 1)
+        {
+            return null;
+        }
+
+        return decodeByteBufferCerts(listCert);
+    }
+
+
+    private String[] decodeByteBufferCerts(List<ByteSequenceItem> sequenceItems)
     {
-      certs.add(StandardCharsets.UTF_8.decode(item.get()).toString());
+        ArrayList<String> certs = new ArrayList<>();
+
+        for (ByteSequenceItem item : sequenceItems)
+        {
+            certs.add(StandardCharsets.UTF_8.decode(item.get()).toString());
+        }
+
+        return certs.toArray(new String[] {});
     }
-    return certs.toArray(new String[]{});
-  }
 
-  @Override
-  public List<String> getClientCertificateChainHeaders()
-  {
-    return clientCertificateChainHeaders;
-  }
 
-  @Override
-  public HeaderClientCertificateExtractor setClientCertificateChainHeaders(
-      List<String> clientCertificateChainHeaders) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public List<String> getClientCertificateChainHeaders()
+    {
+        return clientCertificateChainHeaders;
+    }
+
+
+    @Override
+    public HeaderClientCertificateExtractor setClientCertificateChainHeaders(
+            List<String> clientCertificateChainHeaders)
+    {
+        throw new UnsupportedOperationException();
+    }
 }
