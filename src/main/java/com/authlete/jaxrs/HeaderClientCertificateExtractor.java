@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Authlete, Inc.
+ * Copyright (C) 2018-2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,12 +83,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class HeaderClientCertificateExtractor implements ClientCertificateExtractor
 {
-
     /**
      * Headers to check for certificate path with proxy-forwarded certificate
      * information; the first entry is the client's certificate itself
      */
     private List<String> clientCertificateChainHeaders;
+
 
     @Override
     public String[] extractClientCertificateChain(HttpServletRequest request)
