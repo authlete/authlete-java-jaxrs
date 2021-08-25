@@ -1,6 +1,18 @@
 変更点
 ======
 
+2.34 (2021 年 08 月 25 日)
+--------------------------
+
+- `HeaderClientCertificateExtractor` クラス
+    * クラス定義に `abstract` を追加。
+    * `X-Ssl` 及び `X-Ssl-Chain-*` を `HeaderClientCertificateXSslExtractor` へ移動。
+
+- 新しいクラス
+    * `HeaderClientCertificateClientCertExtractor`
+    * `HeaderClientCertificateXSslExtractor`
+
+
 2.33 (2021 年 07 月 09 日)
 --------------------------
 

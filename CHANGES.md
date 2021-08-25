@@ -1,6 +1,18 @@
 CHANGES
 =======
 
+2.34 (2021-08-25)
+-----------------
+
+- `HeaderClientCertificateExtractor` class
+    * Added `abstract` to the class definition.
+    * Moved `X-Ssl` and `X-Ssl-Chain-*` to `HeaderClientCertificateXSslExtractor`.
+
+- New classes
+    * `HeaderClientCertificateClientCertExtractor`
+    * `HeaderClientCertificateXSslExtractor`
+
+
 2.33 (2021-07-09)
 -----------------
 
