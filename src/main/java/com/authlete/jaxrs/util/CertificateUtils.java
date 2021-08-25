@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import com.authlete.jaxrs.ClientCertificateExtractor;
-import com.authlete.jaxrs.HeaderClientCertificateExtractor;
+import com.authlete.jaxrs.HeaderClientCertificateClientCertExtractor;
+import com.authlete.jaxrs.HeaderClientCertificateXSslExtractor;
 import com.authlete.jaxrs.HttpsRequestClientCertificateExtractor;
 
 
@@ -65,7 +66,8 @@ public class CertificateUtils
     private static final List<ClientCertificateExtractor> CLIENT_CERTIFICATE_EXTRACTORS
     = Collections.unmodifiableList(Arrays.asList(
             new HttpsRequestClientCertificateExtractor(),
-            new HeaderClientCertificateExtractor()
+            new HeaderClientCertificateXSslExtractor(),
+            new HeaderClientCertificateClientCertExtractor()
     ));
 
 
