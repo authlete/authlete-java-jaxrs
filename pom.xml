@@ -4,7 +4,7 @@
 
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.34-SNAPSHOT</version>
+    <version>2.35-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Authlete library for JAX-RS (Java)</description>
@@ -35,7 +35,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <authlete-java-common.version>2.97</authlete-java-common.version>
+        <authlete-java-common.version>2.82</authlete-java-common.version>
         <gson.version>2.8.6</gson.version>
         <nimbus.version>8.14</nimbus.version>
     </properties>
