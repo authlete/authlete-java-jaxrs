@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+- `AuthleteApiImpl` class
+    * Added `echo(Map<String, String>)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 2.97 to 3.0.
+
+
 2.34 (2021-08-25)
 -----------------
 

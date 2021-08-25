@@ -1,6 +1,13 @@
 変更点
 ======
 
+- `AuthleteApiImpl` クラス
+    * `echo(Map<String, String>)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 2.97 から 3.0 へ更新。
+
+
 2.34 (2021 年 08 月 25 日)
 --------------------------
 

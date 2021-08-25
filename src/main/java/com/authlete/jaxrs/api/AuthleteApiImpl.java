@@ -31,6 +31,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
@@ -185,6 +186,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String HSK_DELETE_API_PATH                           = "/api/hsk/delete/%s";
     private static final String HSK_GET_API_PATH                              = "/api/hsk/get/%s";
     private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
+    private static final String ECHO_API_PATH                                 = "/api/misc/echo";
 
 
     private final String mBaseUrl;
@@ -1741,5 +1743,39 @@ public class AuthleteApiImpl implements AuthleteApi
                 new ServiceGetApiCaller<HskListResponse>(
                         HskListResponse.class,
                         HSK_GET_LIST_API_PATH));
+    }
+
+
+    @Override
+    public Map<String, String> echo(Map<String, String> parameters) throws AuthleteApiException
+    {
+        return executeApiCall(new AuthleteApiCall<Map<String, String>>() {
+            @Override
+            public Map<String, String> call()
+            {
+                return callEcho(parameters);
+            }
+        });
+    }
+
+
+    private Map<String, String> callEcho(Map<String, String> parameters)
+    {
+        WebTarget target = getTarget().path(ECHO_API_PATH);
+
+        if (parameters != null)
+        {
+            for (Map.Entry<String, String> entry : parameters.entrySet())
+            {
+                target = target.queryParam(entry.getKey(), entry.getValue());
+            }
+        }
+
+        // The API does not require any authentication, so the code below
+        // does not include '.header(AUTHORIZATION, ...)'.
+
+        return target
+                .request(APPLICATION_JSON_TYPE)
+                .get(new GenericType<Map<String, String>>(){});
     }
 }
