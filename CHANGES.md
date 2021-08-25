@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.35 (2021-08-25)
+-----------------
+
 - `AuthleteApiImpl` class
     * Added `echo(Map<String, String>)` method.
 
