@@ -33,7 +33,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
-import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
@@ -49,7 +48,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 
-public abstract class AuthleteApiImpl implements AuthleteApi
+public class AuthleteApiSupport
 {
     // "application/json;charset=UTF-8"
     private static final MediaType JSON_UTF8_TYPE = APPLICATION_JSON_TYPE.withCharset("UTF-8");
@@ -88,7 +87,7 @@ public abstract class AuthleteApiImpl implements AuthleteApi
      * @param configuration
      *            An instance of {@link AuthleteConfiguration}.
      */
-    public AuthleteApiImpl(AuthleteConfiguration configuration)
+    public AuthleteApiSupport(AuthleteConfiguration configuration)
     {
         if (configuration == null)
         {
@@ -254,13 +253,13 @@ public abstract class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    protected WebTarget getTarget()
+    public WebTarget getTarget()
     {
         return getJaxRsClient().target(mBaseUrl);
     }
 
 
-    protected Invocation.Builder wrapWithDpop(Invocation.Builder target, String path, String method)
+    public Invocation.Builder wrapWithDpop(Invocation.Builder target, String path, String method)
     {
         if (mDpopJwk != null)
         {
@@ -458,7 +457,6 @@ public abstract class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    @Override
     public Settings getSettings()
     {
         return mSettings;
