@@ -61,8 +61,6 @@ import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.common.dto.DeviceVerificationRequest;
 import com.authlete.common.dto.DeviceVerificationResponse;
-import com.authlete.common.dto.GMRequest;
-import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.HskCreateRequest;
 import com.authlete.common.dto.HskListResponse;
@@ -94,78 +92,78 @@ import com.authlete.common.dto.UserInfoIssueRequest;
 import com.authlete.common.dto.UserInfoIssueResponse;
 import com.authlete.common.dto.UserInfoRequest;
 import com.authlete.common.dto.UserInfoResponse;
-import com.authlete.common.web.BasicCredentials;
 import com.authlete.jaxrs.api.AuthleteApiSupport.AuthleteApiCall;
 
 
 /**
  * The implementation of {@link AuthleteApi} using JAX-RS 2.0 client API.
  *
- * @author Takahiko Kawasaki
+ * Supports Authlete API V3.
+ *
+ * @author Justin Richer
  */
-public class AuthleteApiImplV2 implements AuthleteApi
+public class AuthleteApiImplV3 implements AuthleteApi
 {
-    private static final String AUTH_AUTHORIZATION_API_PATH                   = "/api/auth/authorization";
-    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH              = "/api/auth/authorization/fail";
-    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH             = "/api/auth/authorization/issue";
-    private static final String AUTH_TOKEN_API_PATH                           = "/api/auth/token";
-    private static final String AUTH_TOKEN_CREATE_API_PATH                    = "/api/auth/token/create";
-    private static final String AUTH_TOKEN_DELETE_API_PATH                    = "/api/auth/token/delete/%s";
-    private static final String AUTH_TOKEN_FAIL_API_PATH                      = "/api/auth/token/fail";
-    private static final String AUTH_TOKEN_GET_LIST_API_PATH                  = "/api/auth/token/get/list";
-    private static final String AUTH_TOKEN_ISSUE_API_PATH                     = "/api/auth/token/issue";
-    private static final String AUTH_TOKEN_UPDATE_API_PATH                    = "/api/auth/token/update";
-    private static final String AUTH_REVOCATION_API_PATH                      = "/api/auth/revocation";
-    private static final String AUTH_USERINFO_API_PATH                        = "/api/auth/userinfo";
-    private static final String AUTH_USERINFO_ISSUE_API_PATH                  = "/api/auth/userinfo/issue";
-    private static final String AUTH_INTROSPECTION_API_PATH                   = "/api/auth/introspection";
-    private static final String AUTH_INTROSPECTION_STANDARD_API_PATH          = "/api/auth/introspection/standard";
-    private static final String SERVICE_CONFIGURATION_API_PATH                = "/api/service/configuration";
+    private static final String AUTH_AUTHORIZATION_API_PATH                   = "/api/%d/auth/authorization";
+    private static final String AUTH_AUTHORIZATION_FAIL_API_PATH              = "/api/%d/auth/authorization/fail";
+    private static final String AUTH_AUTHORIZATION_ISSUE_API_PATH             = "/api/%d/auth/authorization/issue";
+    private static final String AUTH_TOKEN_API_PATH                           = "/api/%d/auth/token";
+    private static final String AUTH_TOKEN_CREATE_API_PATH                    = "/api/%d/auth/token/create";
+    private static final String AUTH_TOKEN_DELETE_API_PATH                    = "/api/%d/auth/token/delete/%s";
+    private static final String AUTH_TOKEN_FAIL_API_PATH                      = "/api/%d/auth/token/fail";
+    private static final String AUTH_TOKEN_GET_LIST_API_PATH                  = "/api/%d/auth/token/get/list";
+    private static final String AUTH_TOKEN_ISSUE_API_PATH                     = "/api/%d/auth/token/issue";
+    private static final String AUTH_TOKEN_UPDATE_API_PATH                    = "/api/%d/auth/token/update";
+    private static final String AUTH_REVOCATION_API_PATH                      = "/api/%d/auth/revocation";
+    private static final String AUTH_USERINFO_API_PATH                        = "/api/%d/auth/userinfo";
+    private static final String AUTH_USERINFO_ISSUE_API_PATH                  = "/api/%d/auth/userinfo/issue";
+    private static final String AUTH_INTROSPECTION_API_PATH                   = "/api/%d/auth/introspection";
+    private static final String AUTH_INTROSPECTION_STANDARD_API_PATH          = "/api/%d/auth/introspection/standard";
+    private static final String SERVICE_CONFIGURATION_API_PATH                = "/api/%d/service/configuration";
     private static final String SERVICE_CREATE_API_PATH                       = "/api/service/create";
-    private static final String SERVICE_DELETE_API_PATH                       = "/api/service/delete/%d";
-    private static final String SERVICE_GET_API_PATH                          = "/api/service/get/%d";
+    private static final String SERVICE_DELETE_API_PATH                       = "/api/%d/service/delete";
+    private static final String SERVICE_GET_API_PATH                          = "/api/%d/service/get";
     private static final String SERVICE_GET_LIST_API_PATH                     = "/api/service/get/list";
-    private static final String SERVICE_JWKS_GET_API_PATH                     = "/api/service/jwks/get";
-    private static final String SERVICE_UPDATE_API_PATH                       = "/api/service/update/%d";
-    private static final String CLIENT_CREATE_API_PATH                        = "/api/client/create";
-    private static final String CLIENT_REGISTRATION_API_PATH                  = "/api/client/registration";
-    private static final String CLIENT_REGISTRATION_GET_API_PATH              = "/api/client/registration/get";
-    private static final String CLIENT_REGISTRATION_UPDATE_API_PATH           = "/api/client/registration/update";
-    private static final String CLIENT_REGISTRATION_DELETE_API_PATH           = "/api/client/registration/delete";
-    private static final String CLIENT_DELETE_API_PATH                        = "/api/client/delete/%s";
-    private static final String CLIENT_GET_API_PATH                           = "/api/client/get/%s";
-    private static final String CLIENT_GET_LIST_API_PATH                      = "/api/client/get/list";
-    private static final String CLIENT_SECRET_REFRESH_API_PATH                = "/api/client/secret/refresh/%s";
-    private static final String CLIENT_SECRET_UPDATE_API_PATH                 = "/api/client/secret/update/%s";
-    private static final String CLIENT_UPDATE_API_PATH                        = "/api/client/update/%d";
-    private static final String REQUESTABLE_SCOPES_DELETE_API_PATH            = "/api/client/extension/requestable_scopes/delete/%d";
-    private static final String REQUESTABLE_SCOPES_GET_API_PATH               = "/api/client/extension/requestable_scopes/get/%d";
-    private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH            = "/api/client/extension/requestable_scopes/update/%d";
-    private static final String GRANTED_SCOPES_GET_API_PATH                   = "/api/client/granted_scopes/get/%d";
-    private static final String GRANTED_SCOPES_DELETE_API_PATH                = "/api/client/granted_scopes/delete/%d";
-    private static final String CLIENT_AUTHORIZATION_DELETE_API_PATH          = "/api/client/authorization/delete/%d";
-    private static final String CLIENT_AUTHORIZATION_GET_LIST_API_PATH        = "/api/client/authorization/get/list";
-    private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH          = "/api/client/authorization/update/%d";
-    private static final String JOSE_VERIFY_API_PATH                          = "/api/jose/verify";
-    private static final String BACKCHANNEL_AUTHENTICATION_API_PATH           = "/api/backchannel/authentication";
-    private static final String BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH  = "/api/backchannel/authentication/complete";
-    private static final String BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH      = "/api/backchannel/authentication/fail";
-    private static final String BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH     = "/api/backchannel/authentication/issue";
-    private static final String DEVICE_AUTHORIZATION_API_PATH                 = "/api/device/authorization";
-    private static final String DEVICE_COMPLETE_API_PATH                      = "/api/device/complete";
-    private static final String DEVICE_VERIFICATION_API_PATH                  = "/api/device/verification";
-    private static final String PUSHED_AUTH_REQ_API_PATH                      = "/api/pushed_auth_req";
-    private static final String HSK_CREATE_API_PATH                           = "/api/hsk/create";
-    private static final String HSK_DELETE_API_PATH                           = "/api/hsk/delete/%s";
-    private static final String HSK_GET_API_PATH                              = "/api/hsk/get/%s";
-    private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
+    private static final String SERVICE_JWKS_GET_API_PATH                     = "/api/%d/service/jwks/get";
+    private static final String SERVICE_UPDATE_API_PATH                       = "/api/%d/service/update";
+    private static final String CLIENT_CREATE_API_PATH                        = "/api/%d/client/create";
+    private static final String CLIENT_REGISTRATION_API_PATH                  = "/api/%d/client/registration";
+    private static final String CLIENT_REGISTRATION_GET_API_PATH              = "/api/%d/client/registration/get";
+    private static final String CLIENT_REGISTRATION_UPDATE_API_PATH           = "/api/%d/client/registration/update";
+    private static final String CLIENT_REGISTRATION_DELETE_API_PATH           = "/api/%d/client/registration/delete";
+    private static final String CLIENT_DELETE_API_PATH                        = "/api/%d/client/delete/%s";
+    private static final String CLIENT_GET_API_PATH                           = "/api/%d/client/get/%s";
+    private static final String CLIENT_GET_LIST_API_PATH                      = "/api/%d/client/get/list";
+    private static final String CLIENT_SECRET_REFRESH_API_PATH                = "/api/%d/client/secret/refresh/%s";
+    private static final String CLIENT_SECRET_UPDATE_API_PATH                 = "/api/%d/client/secret/update/%s";
+    private static final String CLIENT_UPDATE_API_PATH                        = "/api/%d/client/update/%d";
+    private static final String REQUESTABLE_SCOPES_DELETE_API_PATH            = "/api/%d/client/extension/requestable_scopes/delete/%d";
+    private static final String REQUESTABLE_SCOPES_GET_API_PATH               = "/api/%d/client/extension/requestable_scopes/get/%d";
+    private static final String REQUESTABLE_SCOPES_UPDATE_API_PATH            = "/api/%d/client/extension/requestable_scopes/update/%d";
+    private static final String GRANTED_SCOPES_GET_API_PATH                   = "/api/%d/client/granted_scopes/get/%d";
+    private static final String GRANTED_SCOPES_DELETE_API_PATH                = "/api/%d/client/granted_scopes/delete/%d";
+    private static final String CLIENT_AUTHORIZATION_DELETE_API_PATH          = "/api/%d/client/authorization/delete/%d";
+    private static final String CLIENT_AUTHORIZATION_GET_LIST_API_PATH        = "/api/%d/client/authorization/get/list";
+    private static final String CLIENT_AUTHORIZATION_UPDATE_API_PATH          = "/api/%d/client/authorization/update/%d";
+    private static final String JOSE_VERIFY_API_PATH                          = "/api/%d/jose/verify";
+    private static final String BACKCHANNEL_AUTHENTICATION_API_PATH           = "/api/%d/backchannel/authentication";
+    private static final String BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH  = "/api/%d/backchannel/authentication/complete";
+    private static final String BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH      = "/api/%d/backchannel/authentication/fail";
+    private static final String BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH     = "/api/%d/backchannel/authentication/issue";
+    private static final String DEVICE_AUTHORIZATION_API_PATH                 = "/api/%d/device/authorization";
+    private static final String DEVICE_COMPLETE_API_PATH                      = "/api/%d/device/complete";
+    private static final String DEVICE_VERIFICATION_API_PATH                  = "/api/%d/device/verification";
+    private static final String PUSHED_AUTH_REQ_API_PATH                      = "/api/%d/pushed_auth_req";
+    private static final String HSK_CREATE_API_PATH                           = "/api/%d/hsk/create";
+    private static final String HSK_DELETE_API_PATH                           = "/api/%d/hsk/delete/%s";
+    private static final String HSK_GET_API_PATH                              = "/api/%d/hsk/get/%s";
+    private static final String HSK_GET_LIST_API_PATH                         = "/api/%d/hsk/get/list";
     private static final String ECHO_API_PATH                                 = "/api/misc/echo";
-    private static final String GM_API_PATH                                   = "/api/gm";
 
 
-    private final String mServiceOwnerAuth;
-    private final String mServiceAuth;
+    private final String mAuth;
     private final AuthleteApiSupport mSupport;
+    private final Long mServiceId;
 
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
@@ -178,49 +176,30 @@ public class AuthleteApiImplV2 implements AuthleteApi
      * @param configuration
      *         An instance of {@link AuthleteConfiguration}.
      */
-    public AuthleteApiImplV2(AuthleteConfiguration configuration)
+    public AuthleteApiImplV3(AuthleteConfiguration configuration)
     {
-        if (configuration.getApiVersion() != ApiVersion.V2)
+        if (configuration.getApiVersion() != ApiVersion.V3)
         {
-            throw new IllegalArgumentException("Configuration must be set to V2 for this implementation.");
+            throw new IllegalArgumentException("Configuration must be set to V3 for this implementation.");
         }
 
         mSupport = new AuthleteApiSupport(configuration);
-        mServiceOwnerAuth = createServiceOwnerCredentials(configuration);
-        mServiceAuth      = createServiceCredentials(configuration);
-    }
-
-
-    /**
-     * Create an authorization header for the service owner.
-     */
-    private String createServiceOwnerCredentials(AuthleteConfiguration configuration)
-    {
-        if (configuration.getServiceOwnerAccessToken() != null)
+        mAuth = createCredentials(configuration);
+        if (configuration.getServiceApiKey() != null)
         {
-            if (mSupport.isDpopEnabled())
-            {
-                return "DPoP " + configuration.getServiceOwnerAccessToken();
-            }
-            else
-            {
-                return "Bearer " + configuration.getServiceOwnerAccessToken();
-            }
+            mServiceId = Long.parseLong(configuration.getServiceApiKey());
         }
         else
         {
-            String key    = configuration.getServiceOwnerApiKey();
-            String secret = configuration.getServiceOwnerApiSecret();
-
-            return new BasicCredentials(key, secret).format();
+            mServiceId = null;
         }
     }
 
 
     /**
-     * Create an authorization header for the service.
+     * Create an authorization header for the access token.
      */
-    private String createServiceCredentials(AuthleteConfiguration configuration)
+    private String createCredentials(AuthleteConfiguration configuration)
     {
         if (configuration.getServiceAccessToken() != null)
         {
@@ -235,49 +214,27 @@ public class AuthleteApiImplV2 implements AuthleteApi
         }
         else
         {
-            String key    = configuration.getServiceApiKey();
-            String secret = configuration.getServiceApiSecret();
-
-            return new BasicCredentials(key, secret).format();
+            throw new IllegalArgumentException("V3 API requires an access token, not a key and secret");
         }
     }
 
 
-    private <TResponse> TResponse callServiceOwnerGetApi(
+    private <TResponse> TResponse callGetApi(
             String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return mSupport.callGetApi(mServiceOwnerAuth, path, responseClass, params);
+        return mSupport.callGetApi(mAuth, path, responseClass, params);
     }
 
 
-    private <TResponse> TResponse callServiceGetApi(
-            String path, Class<TResponse> responseClass, Map<String, Object[]> params)
+    private Void callDeleteApi(String path)
     {
-        return mSupport.callGetApi(mServiceAuth, path, responseClass, params);
+        return mSupport.callDeleteApi(mAuth, path);
     }
 
 
-    private Void callServiceOwnerDeleteApi(String path)
+    private <TResponse> TResponse callPostApi(String path, Object request, Class<TResponse> responseClass)
     {
-        return mSupport.callDeleteApi(mServiceOwnerAuth, path);
-    }
-
-
-    private Void callServiceDeleteApi(String path)
-    {
-        return mSupport.callDeleteApi(mServiceAuth, path);
-    }
-
-
-    private <TResponse> TResponse callServiceOwnerPostApi(String path, Object request, Class<TResponse> responseClass)
-    {
-        return mSupport.callPostApi(mServiceOwnerAuth, path, request, responseClass);
-    }
-
-
-    private <TResponse> TResponse callServicePostApi(String path, Object request, Class<TResponse> responseClass)
-    {
-        return mSupport.callPostApi(mServiceAuth, path, request, responseClass);
+        return mSupport.callPostApi(mAuth, path, request, responseClass);
     }
 
 
@@ -312,15 +269,15 @@ public class AuthleteApiImplV2 implements AuthleteApi
     }
 
 
-    private class ServiceOwnerDeleteApiCaller extends ApiCaller<Void>
+    private class DeleteApiCaller extends ApiCaller<Void>
     {
-        ServiceOwnerDeleteApiCaller(String path)
+        DeleteApiCaller(String path)
         {
             super(Void.class, null, path);
         }
 
 
-        ServiceOwnerDeleteApiCaller(String format, Object... args)
+        DeleteApiCaller(String format, Object... args)
         {
             super(Void.class, null, format, args);
         }
@@ -329,20 +286,20 @@ public class AuthleteApiImplV2 implements AuthleteApi
         @Override
         public Void call()
         {
-            return callServiceOwnerDeleteApi(mPath);
+            return callDeleteApi(mPath);
         }
     }
 
 
-    private class ServiceOwnerGetApiCaller<TResponse> extends ApiCaller<TResponse>
+    private class GetApiCaller<TResponse> extends ApiCaller<TResponse>
     {
-        ServiceOwnerGetApiCaller(Class<TResponse> responseClass, String path)
+        GetApiCaller(Class<TResponse> responseClass, String path)
         {
             super(responseClass, null, path);
         }
 
 
-        ServiceOwnerGetApiCaller(Class<TResponse> responseClass, String format, Object... args)
+        GetApiCaller(Class<TResponse> responseClass, String format, Object... args)
         {
             super(responseClass, null, format, args);
         }
@@ -351,20 +308,20 @@ public class AuthleteApiImplV2 implements AuthleteApi
         @Override
         public TResponse call()
         {
-            return callServiceOwnerGetApi(mPath, mResponseClass, mParams);
+            return callGetApi(mPath, mResponseClass, mParams);
         }
     }
 
 
-    private class ServiceOwnerPostApiCaller<TResponse> extends ApiCaller<TResponse>
+    private class PostApiCaller<TResponse> extends ApiCaller<TResponse>
     {
-        ServiceOwnerPostApiCaller(Class<TResponse> responseClass, Object request, String path)
+        PostApiCaller(Class<TResponse> responseClass, Object request, String path)
         {
             super(responseClass, request, path);
         }
 
 
-        ServiceOwnerPostApiCaller(Class<TResponse> responseClass, Object request, String format, Object... args)
+        PostApiCaller(Class<TResponse> responseClass, Object request, String format, Object... args)
         {
             super(responseClass, request, format, args);
         }
@@ -373,182 +330,116 @@ public class AuthleteApiImplV2 implements AuthleteApi
         @Override
         public TResponse call()
         {
-            return callServiceOwnerPostApi(mPath, mRequest, mResponseClass);
-        }
-    }
-
-
-    private class ServiceDeleteApiCaller extends ApiCaller<Void>
-    {
-        ServiceDeleteApiCaller(String path)
-        {
-            super(Void.class, null, path);
-        }
-
-
-        ServiceDeleteApiCaller(String format, Object... args)
-        {
-            super(Void.class, null, format, args);
-        }
-
-
-        @Override
-        public Void call()
-        {
-            return callServiceDeleteApi(mPath);
-        }
-    }
-
-
-    private class ServiceGetApiCaller<TResponse> extends ApiCaller<TResponse>
-    {
-        ServiceGetApiCaller(Class<TResponse> responseClass, String path)
-        {
-            super(responseClass, null, path);
-        }
-
-
-        ServiceGetApiCaller(Class<TResponse> responseClass, String format, Object... args)
-        {
-            super(responseClass, null, format, args);
-        }
-
-
-        @Override
-        public TResponse call()
-        {
-            return callServiceGetApi(mPath, mResponseClass, mParams);
-        }
-    }
-
-
-    private class ServicePostApiCaller<TResponse> extends ApiCaller<TResponse>
-    {
-        ServicePostApiCaller(Class<TResponse> responseClass, Object request, String path)
-        {
-            super(responseClass, request, path);
-        }
-
-
-        ServicePostApiCaller(Class<TResponse> responseClass, Object request, String format, Object... args)
-        {
-            super(responseClass, request, format, args);
-        }
-
-
-        @Override
-        public TResponse call()
-        {
-            return callServicePostApi(mPath, mRequest, mResponseClass);
+            return callPostApi(mPath, mRequest, mResponseClass);
         }
     }
 
 
     /**
-     * Call {@code /api/auth/authorization} API.
+     * Call {@code /api/{serviceId}/auth/authorization} API.
      */
     @Override
     public AuthorizationResponse authorization(AuthorizationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<AuthorizationResponse>(
-                        AuthorizationResponse.class, request, AUTH_AUTHORIZATION_API_PATH));
+                new PostApiCaller<AuthorizationResponse>(
+                        AuthorizationResponse.class, request, AUTH_AUTHORIZATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/authorization/fail} API.
+     * Call {@code /api/{serviceId}/auth/authorization/fail} API.
      */
     @Override
     public AuthorizationFailResponse authorizationFail(AuthorizationFailRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<AuthorizationFailResponse>(
-                        AuthorizationFailResponse.class, request, AUTH_AUTHORIZATION_FAIL_API_PATH));
+                new PostApiCaller<AuthorizationFailResponse>(
+                        AuthorizationFailResponse.class, request, AUTH_AUTHORIZATION_FAIL_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/authorization/issue} API.
+     * Call {@code /api/{serviceId}/auth/authorization/issue} API.
      */
     @Override
     public AuthorizationIssueResponse authorizationIssue(AuthorizationIssueRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<AuthorizationIssueResponse>(
-                        AuthorizationIssueResponse.class, request, AUTH_AUTHORIZATION_ISSUE_API_PATH));
+                new PostApiCaller<AuthorizationIssueResponse>(
+                        AuthorizationIssueResponse.class, request, AUTH_AUTHORIZATION_ISSUE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/token} API.
+     * Call {@code /api/{serviceId}/auth/token} API.
      */
     @Override
     public TokenResponse token(TokenRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<TokenResponse>(
-                        TokenResponse.class, request, AUTH_TOKEN_API_PATH));
+                new PostApiCaller<TokenResponse>(
+                        TokenResponse.class, request, AUTH_TOKEN_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/token/create} API.
+     * Call {@code /api/{serviceId}/auth/token/create} API.
      */
     @Override
     public TokenCreateResponse tokenCreate(TokenCreateRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<TokenCreateResponse>(
-                        TokenCreateResponse.class, request, AUTH_TOKEN_CREATE_API_PATH));
+                new PostApiCaller<TokenCreateResponse>(
+                        TokenCreateResponse.class, request, AUTH_TOKEN_CREATE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call <code>/api/auth/token/delete/<i>{token}</i></code> API.
+     * Call <code>/api/{serviceId}/auth/token/delete/<i>{token}</i></code> API.
      */
     @Override
     public void tokenDelete(String token) throws AuthleteApiException
     {
         mSupport.executeApiCall(
-                new ServiceDeleteApiCaller(
-                        AUTH_TOKEN_DELETE_API_PATH, token));
+                new DeleteApiCaller(
+                        AUTH_TOKEN_DELETE_API_PATH, mServiceId, token));
     }
 
 
     /**
-     * Call {@code /api/auth/token/fail} API.
+     * Call {@code /api/{serviceId}/auth/token/fail} API.
      */
     @Override
     public TokenFailResponse tokenFail(TokenFailRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<TokenFailResponse>(
-                        TokenFailResponse.class, request, AUTH_TOKEN_FAIL_API_PATH));
+                new PostApiCaller<TokenFailResponse>(
+                        TokenFailResponse.class, request, AUTH_TOKEN_FAIL_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/token/issue} API.
+     * Call {@code /api/{serviceId}/auth/token/issue} API.
      */
     @Override
     public TokenIssueResponse tokenIssue(TokenIssueRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<TokenIssueResponse>(
-                        TokenIssueResponse.class, request, AUTH_TOKEN_ISSUE_API_PATH));
+                new PostApiCaller<TokenIssueResponse>(
+                        TokenIssueResponse.class, request, AUTH_TOKEN_ISSUE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/token/update} API.
+     * Call {@code /api/{serviceId}/auth/token/update} API.
      */
     @Override
     public TokenUpdateResponse tokenUpdate(TokenUpdateRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<TokenUpdateResponse>(
-                        TokenUpdateResponse.class, request, AUTH_TOKEN_UPDATE_API_PATH));
+                new PostApiCaller<TokenUpdateResponse>(
+                        TokenUpdateResponse.class, request, AUTH_TOKEN_UPDATE_API_PATH, mServiceId));
     }
 
 
@@ -598,7 +489,9 @@ public class AuthleteApiImplV2 implements AuthleteApi
     private TokenListResponse callGetTokenList(
             String clientIdentifier, String subject, int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mSupport.getTarget().path(AUTH_TOKEN_GET_LIST_API_PATH);
+        String path = String.format(AUTH_TOKEN_GET_LIST_API_PATH, mServiceId);
+
+        WebTarget target = mSupport.getTarget().path(path);
 
         if (clientIdentifier != null)
         {
@@ -615,71 +508,72 @@ public class AuthleteApiImplV2 implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
+        // FIXME: it feels weird that this is in its own space instead of the caller classes, is there a reason for that?
         return mSupport.wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), AUTH_TOKEN_GET_LIST_API_PATH, "GET")
-                .header(AUTHORIZATION, mServiceAuth)
+                .header(AUTHORIZATION, mAuth)
                 .get(TokenListResponse.class);
     }
 
 
     /**
-     * Call {@code /api/auth/revocation} API.
+     * Call {@code /api/{serviceId}/auth/revocation} API.
      */
     @Override
     public RevocationResponse revocation(RevocationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<RevocationResponse>(
-                        RevocationResponse.class, request, AUTH_REVOCATION_API_PATH));
+                new PostApiCaller<RevocationResponse>(
+                        RevocationResponse.class, request, AUTH_REVOCATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/userinfo} API.
+     * Call {@code /api/{serviceId}/auth/userinfo} API.
      */
     @Override
     public UserInfoResponse userinfo(UserInfoRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<UserInfoResponse>(
-                        UserInfoResponse.class, request, AUTH_USERINFO_API_PATH));
+                new PostApiCaller<UserInfoResponse>(
+                        UserInfoResponse.class, request, AUTH_USERINFO_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/userinfo/issue} API.
+     * Call {@code /api/{serviceId}/auth/userinfo/issue} API.
      */
     @Override
     public UserInfoIssueResponse userinfoIssue(UserInfoIssueRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<UserInfoIssueResponse>(
-                        UserInfoIssueResponse.class, request, AUTH_USERINFO_ISSUE_API_PATH));
+                new PostApiCaller<UserInfoIssueResponse>(
+                        UserInfoIssueResponse.class, request, AUTH_USERINFO_ISSUE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/introspection} API.
+     * Call {@code /api/{serviceId}/auth/introspection} API.
      */
     @Override
     public IntrospectionResponse introspection(IntrospectionRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<IntrospectionResponse>(
-                        IntrospectionResponse.class, request, AUTH_INTROSPECTION_API_PATH));
+                new PostApiCaller<IntrospectionResponse>(
+                        IntrospectionResponse.class, request, AUTH_INTROSPECTION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/auth/introspection/standard} API.
+     * Call {@code /api/{serviceId}/auth/introspection/standard} API.
      */
     @Override
     public StandardIntrospectionResponse standardIntrospection(
             StandardIntrospectionRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<StandardIntrospectionResponse>(
-                        StandardIntrospectionResponse.class, request, AUTH_INTROSPECTION_STANDARD_API_PATH));
+                new PostApiCaller<StandardIntrospectionResponse>(
+                        StandardIntrospectionResponse.class, request, AUTH_INTROSPECTION_STANDARD_API_PATH, mServiceId));
     }
 
 
@@ -690,7 +584,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public Service createService(Service service) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceOwnerPostApiCaller<Service>(
+                new PostApiCaller<Service>(
                         Service.class, service, SERVICE_CREATE_API_PATH));
     }
 
@@ -707,25 +601,25 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
 
     /**
-     * Call <code>/api/service/delete/<i>{serviceApiKey}</i></code> API.
+     * Call <code>/api/{serviceId}/service/delete/</code> API.
      */
     @Override
     public void deleteService(long apiKey) throws AuthleteApiException
     {
         mSupport.executeApiCall(
-                new ServiceOwnerDeleteApiCaller(
+                new DeleteApiCaller(
                         SERVICE_DELETE_API_PATH, apiKey));
     }
 
 
     /**
-     * Call <code>/api/service/get/<i>{serviceApiKey}</i></code> API.
+     * Call <code>/api/{serviceId}/service/get</i></code> API.
      */
     @Override
     public Service getService(long apiKey) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceOwnerGetApiCaller<Service>(
+                new GetApiCaller<Service>(
                         Service.class, SERVICE_GET_API_PATH, apiKey));
     }
 
@@ -773,138 +667,139 @@ public class AuthleteApiImplV2 implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
+        // FIXME: it feels strange that this doesn't use the caller structures above
         return mSupport.wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), SERVICE_GET_LIST_API_PATH, "GET")
-                .header(AUTHORIZATION, mServiceOwnerAuth)
+                .header(AUTHORIZATION, mAuth)
                 .get(ServiceListResponse.class);
     }
 
 
     /**
-     * Call <code>/api/service/update/<i>{serviceApiKey}</i></code> API.
+     * Call <code>/api/{serviceId}/service/update/</code> API.
      */
     @Override
     public Service updateService(final Service service) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceOwnerPostApiCaller<Service>(
+                new PostApiCaller<Service>(
                         Service.class, service, SERVICE_UPDATE_API_PATH, service.getApiKey()));
     }
 
 
     /**
-     * Call {@code /api/service/jwks/get} API
+     * Call {@code /api/{serviceId}/service/jwks/get} API
      */
     @Override
     public String getServiceJwks() throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<String>(
-                        String.class, SERVICE_JWKS_GET_API_PATH));
+                new GetApiCaller<String>(
+                        String.class, SERVICE_JWKS_GET_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/service/jwks/get} API
+     * Call {@code /api/{serviceId}/service/jwks/get} API
      */
     @Override
     public String getServiceJwks(boolean pretty, boolean includePrivateKeys) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<String>(
-                        String.class, SERVICE_JWKS_GET_API_PATH)
+                new GetApiCaller<String>(
+                        String.class, SERVICE_JWKS_GET_API_PATH, mServiceId)
                 .addParam("pretty", pretty)
                 .addParam("includePrivateKeys", includePrivateKeys));
     }
 
 
     /**
-     * Call {@code /api/service/configuration} API
+     * Call {@code /api/{serviceId}/service/configuration} API
      */
     @Override
     public String getServiceConfiguration() throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<String>(
-                        String.class, SERVICE_CONFIGURATION_API_PATH));
+                new GetApiCaller<String>(
+                        String.class, SERVICE_CONFIGURATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/service/configuration} API
+     * Call {@code /api/{serviceId}/service/configuration} API
      */
     @Override
     public String getServiceConfiguration(boolean pretty) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<String>(
-                        String.class, SERVICE_CONFIGURATION_API_PATH)
+                new GetApiCaller<String>(
+                        String.class, SERVICE_CONFIGURATION_API_PATH, mServiceId)
                 .addParam("pretty", pretty));
     }
 
 
     /**
-     * Call {@code /api/client/create} API.
+     * Call {@code /api/{serviceId}/client/create} API.
      */
     @Override
     public Client createClient(Client client) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<Client>(
-                        Client.class, client, CLIENT_CREATE_API_PATH));
+                new PostApiCaller<Client>(
+                        Client.class, client, CLIENT_CREATE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/client/registration} API.
+     * Call {@code /api/{serviceId}/client/registration} API.
      */
     @Override
     public ClientRegistrationResponse dynamicClientRegister(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<ClientRegistrationResponse>(
-                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_API_PATH));
+                new PostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/client/registration/get} API.
+     * Call {@code /api/{serviceId}/client/registration/get} API.
      */
     @Override
     public ClientRegistrationResponse dynamicClientGet(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<ClientRegistrationResponse>(
-                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_GET_API_PATH));
+                new PostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_GET_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/client/registration/update} API.
+     * Call {@code /api/{serviceId}/client/registration/update} API.
      */
     @Override
     public ClientRegistrationResponse dynamicClientUpdate(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<ClientRegistrationResponse>(
-                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_UPDATE_API_PATH));
+                new PostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_UPDATE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/client/registration/delete} API.
+     * Call {@code /api/{serviceId}/client/registration/delete} API.
      */
     @Override
     public ClientRegistrationResponse dynamicClientDelete(ClientRegistrationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<ClientRegistrationResponse>(
-                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_DELETE_API_PATH));
+                new PostApiCaller<ClientRegistrationResponse>(
+                        ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_DELETE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call <code>/api/client/delete/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/delete/<i>{clientId}</i></code> API.
      */
     @Override
     public void deleteClient(long clientId) throws AuthleteApiException
@@ -914,19 +809,19 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
 
     /**
-     * Call <code>/api/client/delete/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/delete/<i>{clientId}</i></code> API.
      */
     @Override
     public void deleteClient(String clientId) throws AuthleteApiException
     {
         mSupport.executeApiCall(
-                new ServiceDeleteApiCaller(
-                        CLIENT_DELETE_API_PATH, clientId));
+                new DeleteApiCaller(
+                        CLIENT_DELETE_API_PATH, mServiceId, clientId));
     }
 
 
     /**
-     * Call <code>/api/client/get/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/get/<i>{clientId}</i></code> API.
      */
     @Override
     public Client getClient(long clientId) throws AuthleteApiException
@@ -936,19 +831,19 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
 
     /**
-     * Call <code>/api/client/get/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/get/<i>{clientId}</i></code> API.
      */
     @Override
     public Client getClient(String clientId) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<Client>(
-                        Client.class, CLIENT_GET_API_PATH, clientId));
+                new GetApiCaller<Client>(
+                        Client.class, CLIENT_GET_API_PATH, mServiceId, clientId));
     }
 
 
     /**
-     * Call {@code /api/client/get/list} API.
+     * Call {@code /api/{serviceId}/client/get/list} API.
      */
     @Override
     public ClientListResponse getClientList() throws AuthleteApiException
@@ -994,11 +889,13 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
     private ClientListResponse callGetClientList(String developer, int start, int end, boolean rangeGiven)
     {
+        String path = String.format(CLIENT_GET_LIST_API_PATH, mServiceId);
+
         WebTarget target = mSupport.getTarget().path(CLIENT_GET_LIST_API_PATH);
 
         if (developer != null)
         {
-            target = target.queryParam("developer", developer);
+            // the "developer" query field is deprecated
         }
 
         if (rangeGiven)
@@ -1006,48 +903,37 @@ public class AuthleteApiImplV2 implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
+        // FIXME: this seems weird that it's not the same caller structure as others
         return mSupport.wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), CLIENT_GET_LIST_API_PATH, "GET")
-                .header(AUTHORIZATION, mServiceAuth)
+                .header(AUTHORIZATION, mAuth)
                 .get(ClientListResponse.class);
     }
 
 
     /**
-     * Call <code>/api/client/update/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/update/<i>{clientId}</i></code> API.
      */
     @Override
     public Client updateClient(Client client) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<Client>(
-                        Client.class, client, CLIENT_UPDATE_API_PATH, client.getClientId()));
+                new PostApiCaller<Client>(
+                        Client.class, client, CLIENT_UPDATE_API_PATH, mServiceId, client.getClientId()));
     }
 
-
-
-    public ClientBuilder getJaxRsClientBuilder()
-    {
-        return mSupport.getJaxRsClientBuilder();
-    }
-
-
-    public void setJaxRsClientBuilder(ClientBuilder jaxRsClientBuilder)
-    {
-        mSupport.setJaxRsClientBuilder(jaxRsClientBuilder);
-    }
 
 
     /**
-     * Call <code>/api/client/extension/requestable_scopes/get/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/extension/requestable_scopes/get/<i>{clientId}</i></code> API.
      */
     @Override
     public String[] getRequestableScopes(long clientId) throws AuthleteApiException
     {
         // Call the API.
         RequestableScopes response = mSupport.executeApiCall(
-                new ServiceGetApiCaller<RequestableScopes>(
-                        RequestableScopes.class, REQUESTABLE_SCOPES_GET_API_PATH, clientId));
+                new GetApiCaller<RequestableScopes>(
+                        RequestableScopes.class, REQUESTABLE_SCOPES_GET_API_PATH, mServiceId, clientId));
 
         if (response != null)
         {
@@ -1069,8 +955,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
         // Call the API.
         RequestableScopes response = mSupport.executeApiCall(
-                new ServicePostApiCaller<RequestableScopes>(
-                        RequestableScopes.class, request, REQUESTABLE_SCOPES_UPDATE_API_PATH, clientId));
+                new PostApiCaller<RequestableScopes>(
+                        RequestableScopes.class, request, REQUESTABLE_SCOPES_UPDATE_API_PATH, mServiceId, clientId));
 
         if (response != null)
         {
@@ -1085,14 +971,14 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
 
     /**
-     * Call <code>/api/client/extension/requestable_scopes/delete/<i>{clientId}</i></code> API.
+     * Call <code>/api/{serviceId}/client/extension/requestable_scopes/delete/<i>{clientId}</i></code> API.
      */
     @Override
     public void deleteRequestableScopes(long clientId) throws AuthleteApiException
     {
         mSupport.executeApiCall(
-                new ServiceDeleteApiCaller(
-                        REQUESTABLE_SCOPES_DELETE_API_PATH, clientId));
+                new DeleteApiCaller(
+                        REQUESTABLE_SCOPES_DELETE_API_PATH, mServiceId, clientId));
     }
 
 
@@ -1104,8 +990,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
         // Call the API.
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<GrantedScopesGetResponse>(
-                        GrantedScopesGetResponse.class, request, GRANTED_SCOPES_GET_API_PATH, clientId));
+                new PostApiCaller<GrantedScopesGetResponse>(
+                        GrantedScopesGetResponse.class, request, GRANTED_SCOPES_GET_API_PATH, mServiceId, clientId));
     }
 
 
@@ -1116,8 +1002,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
         GrantedScopesRequest request = new GrantedScopesRequest(subject);
 
         mSupport.executeApiCall(
-                new ServicePostApiCaller<ApiResponse>(
-                        ApiResponse.class, request, GRANTED_SCOPES_DELETE_API_PATH, clientId));
+                new PostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, GRANTED_SCOPES_DELETE_API_PATH, mServiceId, clientId));
     }
 
 
@@ -1154,8 +1040,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
         ClientAuthorizationDeleteRequest request = new ClientAuthorizationDeleteRequest(subject);
 
         mSupport.executeApiCall(
-                new ServicePostApiCaller<ApiResponse>(
-                        ApiResponse.class, request, CLIENT_AUTHORIZATION_DELETE_API_PATH, clientId));
+                new PostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, CLIENT_AUTHORIZATION_DELETE_API_PATH, mServiceId, clientId));
     }
 
 
@@ -1163,8 +1049,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public AuthorizedClientListResponse getClientAuthorizationList(ClientAuthorizationGetListRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<AuthorizedClientListResponse>(
-                        AuthorizedClientListResponse.class, request, CLIENT_AUTHORIZATION_GET_LIST_API_PATH));
+                new PostApiCaller<AuthorizedClientListResponse>(
+                        AuthorizedClientListResponse.class, request, CLIENT_AUTHORIZATION_GET_LIST_API_PATH, mServiceId));
     }
 
 
@@ -1172,8 +1058,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public void updateClientAuthorization(long clientId, ClientAuthorizationUpdateRequest request) throws AuthleteApiException
     {
         mSupport.executeApiCall(
-                new ServicePostApiCaller<ApiResponse>(
-                        ApiResponse.class, request, CLIENT_AUTHORIZATION_UPDATE_API_PATH, clientId));
+                new PostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, CLIENT_AUTHORIZATION_UPDATE_API_PATH, mServiceId, clientId));
     }
 
 
@@ -1188,9 +1074,9 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public ClientSecretRefreshResponse refreshClientSecret(String clientIdentifier) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<ClientSecretRefreshResponse>(
+                new GetApiCaller<ClientSecretRefreshResponse>(
                         ClientSecretRefreshResponse.class,
-                        CLIENT_SECRET_REFRESH_API_PATH, clientIdentifier));
+                        CLIENT_SECRET_REFRESH_API_PATH, mServiceId, clientIdentifier));
     }
 
 
@@ -1211,105 +1097,105 @@ public class AuthleteApiImplV2 implements AuthleteApi
             = new ClientSecretUpdateRequest().setClientSecret(clientSecret);
 
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<ClientSecretUpdateResponse>(
+                new PostApiCaller<ClientSecretUpdateResponse>(
                         ClientSecretUpdateResponse.class, request,
-                        CLIENT_SECRET_UPDATE_API_PATH, clientIdentifier));
+                        CLIENT_SECRET_UPDATE_API_PATH, mServiceId, clientIdentifier));
     }
 
 
     /**
-     * Call {@code /api/jose/verify} API.
+     * Call {@code /api/{serviceId}/jose/verify} API.
      */
     @Override
     public JoseVerifyResponse verifyJose(JoseVerifyRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<JoseVerifyResponse>(
-                        JoseVerifyResponse.class, request, JOSE_VERIFY_API_PATH));
+                new PostApiCaller<JoseVerifyResponse>(
+                        JoseVerifyResponse.class, request, JOSE_VERIFY_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/backchannel/authentication} API.
+     * Call {@code /api/{serviceId}/backchannel/authentication} API.
      */
     @Override
     public BackchannelAuthenticationResponse backchannelAuthentication(BackchannelAuthenticationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<BackchannelAuthenticationResponse>(
-                        BackchannelAuthenticationResponse.class, request, BACKCHANNEL_AUTHENTICATION_API_PATH));
+                new PostApiCaller<BackchannelAuthenticationResponse>(
+                        BackchannelAuthenticationResponse.class, request, BACKCHANNEL_AUTHENTICATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/backchannel/authentication/issue} API.
+     * Call {@code /api/{serviceId}/backchannel/authentication/issue} API.
      */
     @Override
     public BackchannelAuthenticationIssueResponse backchannelAuthenticationIssue(BackchannelAuthenticationIssueRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<BackchannelAuthenticationIssueResponse>(
-                        BackchannelAuthenticationIssueResponse.class, request, BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH));
+                new PostApiCaller<BackchannelAuthenticationIssueResponse>(
+                        BackchannelAuthenticationIssueResponse.class, request, BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/backchannel/authentication/fail} API.
+     * Call {@code /api/{serviceId}/backchannel/authentication/fail} API.
      */
     @Override
     public BackchannelAuthenticationFailResponse backchannelAuthenticationFail(BackchannelAuthenticationFailRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<BackchannelAuthenticationFailResponse>(
-                        BackchannelAuthenticationFailResponse.class, request, BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH));
+                new PostApiCaller<BackchannelAuthenticationFailResponse>(
+                        BackchannelAuthenticationFailResponse.class, request, BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/backchannel/authentication/complete} API.
+     * Call {@code /api/{serviceId}/backchannel/authentication/complete} API.
      */
     @Override
     public BackchannelAuthenticationCompleteResponse backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<BackchannelAuthenticationCompleteResponse>(
-                        BackchannelAuthenticationCompleteResponse.class, request, BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH));
+                new PostApiCaller<BackchannelAuthenticationCompleteResponse>(
+                        BackchannelAuthenticationCompleteResponse.class, request, BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/device/authorization} API.
+     * Call {@code /api/{serviceId}/device/authorization} API.
      */
     @Override
     public DeviceAuthorizationResponse deviceAuthorization(DeviceAuthorizationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<DeviceAuthorizationResponse>(
-                        DeviceAuthorizationResponse.class, request, DEVICE_AUTHORIZATION_API_PATH));
+                new PostApiCaller<DeviceAuthorizationResponse>(
+                        DeviceAuthorizationResponse.class, request, DEVICE_AUTHORIZATION_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/device/complete} API.
+     * Call {@code /api/{serviceId}/device/complete} API.
      */
     @Override
     public DeviceCompleteResponse deviceComplete(DeviceCompleteRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<DeviceCompleteResponse>(
-                        DeviceCompleteResponse.class, request, DEVICE_COMPLETE_API_PATH));
+                new PostApiCaller<DeviceCompleteResponse>(
+                        DeviceCompleteResponse.class, request, DEVICE_COMPLETE_API_PATH, mServiceId));
     }
 
 
     /**
-     * Call {@code /api/device/verification} API.
+     * Call {@code /api/{serviceId}/device/verification} API.
      */
     @Override
     public DeviceVerificationResponse deviceVerification(DeviceVerificationRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<DeviceVerificationResponse>(
-                        DeviceVerificationResponse.class, request, DEVICE_VERIFICATION_API_PATH));
+                new PostApiCaller<DeviceVerificationResponse>(
+                        DeviceVerificationResponse.class, request, DEVICE_VERIFICATION_API_PATH, mServiceId));
     }
 
 
@@ -1317,8 +1203,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public PushedAuthReqResponse pushAuthorizationRequest(PushedAuthReqRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<PushedAuthReqResponse>(
-                        PushedAuthReqResponse.class, request, PUSHED_AUTH_REQ_API_PATH));
+                new PostApiCaller<PushedAuthReqResponse>(
+                        PushedAuthReqResponse.class, request, PUSHED_AUTH_REQ_API_PATH, mServiceId));
     }
 
 
@@ -1326,8 +1212,8 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public HskResponse hskCreate(HskCreateRequest request) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServicePostApiCaller<HskResponse>(
-                        HskResponse.class, request, HSK_CREATE_API_PATH));
+                new PostApiCaller<HskResponse>(
+                        HskResponse.class, request, HSK_CREATE_API_PATH, mServiceId));
     }
 
 
@@ -1335,9 +1221,9 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public HskResponse hskDelete(String handle) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<HskResponse>(
+                new GetApiCaller<HskResponse>(
                         HskResponse.class,
-                        HSK_DELETE_API_PATH, handle));
+                        HSK_DELETE_API_PATH, mServiceId, handle));
     }
 
 
@@ -1345,9 +1231,9 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public HskResponse hskGet(String handle) throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<HskResponse>(
+                new GetApiCaller<HskResponse>(
                         HskResponse.class,
-                        HSK_GET_API_PATH, handle));
+                        HSK_GET_API_PATH, mServiceId, handle));
     }
 
 
@@ -1355,9 +1241,21 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public HskListResponse hskGetList() throws AuthleteApiException
     {
         return mSupport.executeApiCall(
-                new ServiceGetApiCaller<HskListResponse>(
+                new GetApiCaller<HskListResponse>(
                         HskListResponse.class,
-                        HSK_GET_LIST_API_PATH));
+                        HSK_GET_LIST_API_PATH, mServiceId));
+    }
+
+
+    public ClientBuilder getJaxRsClientBuilder()
+    {
+        return mSupport.getJaxRsClientBuilder();
+    }
+
+
+    public void setJaxRsClientBuilder(ClientBuilder jaxRsClientBuilder)
+    {
+        mSupport.setJaxRsClientBuilder(jaxRsClientBuilder);
     }
 
 
@@ -1393,14 +1291,6 @@ public class AuthleteApiImplV2 implements AuthleteApi
         return target
                 .request(APPLICATION_JSON_TYPE)
                 .get(new GenericType<Map<String, String>>(){});
-    }
-
-
-    public GMResponse gm(GMRequest request) throws AuthleteApiException
-    {
-        return mSupport.executeApiCall(
-                new ServicePostApiCaller<GMResponse>(
-                        GMResponse.class, request, GM_API_PATH));
     }
 
 
