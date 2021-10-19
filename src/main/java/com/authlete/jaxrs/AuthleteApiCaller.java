@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Authlete, Inc.
+ * Copyright (C) 2015-2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.common.dto.DeviceVerificationRequest;
 import com.authlete.common.dto.DeviceVerificationResponse;
+import com.authlete.common.dto.GMRequest;
+import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.Property;
@@ -1285,6 +1287,23 @@ class AuthleteApiCaller
         {
             // the API call failed
             throw apiFailure("/api/pushed_auth_req", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/gm} API.
+     */
+    public GMResponse callGm(GMRequest request)
+    {
+        try
+        {
+            return mApi.gm(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/gm", e);
         }
     }
 }
