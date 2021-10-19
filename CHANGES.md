@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+- `AuthleteApiImpl` class
+    * Added `gm(GMRequest)` method.
+
+- `ClientRegistrationRequestHandler` class
+    * Supported `ClientRegistrationResponse.Action.UNAUTHORIZED`.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.0 to 3.4.
+
+
 2.36 (2021-08-25)
 -----------------
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Authlete, Inc.
+ * Copyright (C) 2015-2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,9 +155,15 @@ class ResponseUtil
      */
     public static Response unauthorized(String entity, String challenge)
     {
-        return builder(Status.UNAUTHORIZED, entity, MEDIA_TYPE_JSON)
-                .header(HttpHeaders.WWW_AUTHENTICATE, challenge)
-                .build();
+        ResponseBuilder builder =
+                builder(Status.UNAUTHORIZED, entity, MEDIA_TYPE_JSON);
+
+        if (challenge != null)
+        {
+            builder.header(HttpHeaders.WWW_AUTHENTICATE, challenge);
+        }
+
+        return builder.build();
     }
 
 
