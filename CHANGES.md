@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.38 (2021-10-20)
+-----------------
+
 - New classes
     * `BaseGrantManagementEndpoint`
 
