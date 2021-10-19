@@ -1,6 +1,22 @@
 変更点
 ======
 
+2.37 (2021 年 10 月 20 日)
+--------------------------
+
+- `AuthleteApiImpl` クラス
+    * `gm(GMRequest)` メソッドを追加。
+
+- `ClientRegistrationRequestHandler` クラス
+    * `ClientRegistrationResponse.Action.UNAUTHORIZED` をサポート。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.0 から 3.4 へ更新。
+
+- 新しいクラス
+    * `GMRequestHandler`
+
+
 2.36 (2021 年 08 月 25 日)
 --------------------------
 

@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.37 (2021-10-20)
+-----------------
+
 - `AuthleteApiImpl` class
     * Added `gm(GMRequest)` method.
 
@@ -9,6 +12,9 @@ CHANGES
 
 - `pom.xml`
     * Updated the version of `authlete-java-common` from 3.0 to 3.4.
+
+- New classes
+    * `GMRequestHandler`
 
 
 2.36 (2021-08-25)
