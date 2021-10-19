@@ -71,6 +71,8 @@ import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.common.dto.DeviceVerificationRequest;
 import com.authlete.common.dto.DeviceVerificationResponse;
+import com.authlete.common.dto.GMRequest;
+import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.HskCreateRequest;
 import com.authlete.common.dto.HskListResponse;
@@ -187,6 +189,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String HSK_GET_API_PATH                              = "/api/hsk/get/%s";
     private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
     private static final String ECHO_API_PATH                                 = "/api/misc/echo";
+    private static final String GM_API_PATH                                   = "/api/gm";
 
 
     private final String mBaseUrl;
@@ -1777,5 +1780,14 @@ public class AuthleteApiImpl implements AuthleteApi
         return target
                 .request(APPLICATION_JSON_TYPE)
                 .get(new GenericType<Map<String, String>>(){});
+    }
+
+
+    @Override
+    public GMResponse gm(GMRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<GMResponse>(
+                        GMResponse.class, request, GM_API_PATH));
     }
 }
