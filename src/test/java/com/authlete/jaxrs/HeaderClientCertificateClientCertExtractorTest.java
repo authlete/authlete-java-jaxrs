@@ -54,7 +54,7 @@ class HeaderClientCertificateClientCertExtractorTest {
 
   @Test
   @DisplayName("Fail Extract Client-Cert and Client-Cert-Chain due to headers are null")
-  void should_fail_extract_Certs_due_to_headers_are_null()
+  void should_fail_extract_Certs_due_to_headers_value_are_null()
   {
 
 // mock HttpServletRequest
@@ -72,6 +72,22 @@ class HeaderClientCertificateClientCertExtractorTest {
             .extractClientCertificateChain(mockHttpServletRequest);
       }
     });
+  }
+
+  @Test
+  @DisplayName("Should return null due to headers are null")
+  void should_return_null_due_to_headers_are_null()
+  {
+
+// mock HttpServletRequest
+    final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+
+    /// Run the test
+    final String[] result = headerClientCertificateClientCertExtractorUnderTest
+        .extractClientCertificateChain(mockHttpServletRequest);
+
+    // Verify the results
+    assertEquals(result,null);
   }
 
   @Test
