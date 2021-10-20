@@ -53,25 +53,19 @@ class HeaderClientCertificateClientCertExtractorTest {
   }
 
   @Test
-  @DisplayName("Fail Extract Client-Cert and Client-Cert-Chain due to headers are null")
-  void should_fail_extract_Certs_due_to_headers_value_are_null()
+  @DisplayName("should_return_null due to header values are null")
+  void should_return_null_due_to_headers_value_are_null()
   {
 
 // mock HttpServletRequest
-    final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+    HttpServletRequest mockHttpServletRequest = getMockHttpServletRequest(null,null);
 
-    when(mockHttpServletRequest.getHeader(CLIENT_CERT)).thenReturn(null);
-    when(mockHttpServletRequest.getHeader(CLIENT_CERT_CHAIN))
-        .thenReturn(null);
+    // Run the test
+    final String[] result = headerClientCertificateClientCertExtractorUnderTest
+        .extractClientCertificateChain(mockHttpServletRequest);
 
     // Verify the results
-    assertThrows(NullPointerException.class, new Executable() {
-      @Override
-      public void execute() {
-        headerClientCertificateClientCertExtractorUnderTest
-            .extractClientCertificateChain(mockHttpServletRequest);
-      }
-    });
+    assertEquals(result,null);
   }
 
   @Test
