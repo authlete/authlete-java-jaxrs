@@ -49,6 +49,9 @@ public class HeaderClientCertificateClientCertExtractor extends HeaderClientCert
         for (String headerName : getClientCertificateChainHeaders())
         {
             String header = request.getHeader(headerName);
+            if (header == null) {
+                return null;
+            }
             OuterList parseCerts = Parser.parseList(header);
             byteSequenceCerts = parseCerts.get()
                     .toArray(new ByteSequenceItem[] {});
