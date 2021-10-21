@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.39 (2021-10-21)
+-----------------
+
+- `HeaderClientCertificateClientCertExtractor` class
+    * Supported the case where the `Client-Cert` header is missing. (PR 24)
+
+
 2.38 (2021-10-20)
 -----------------
 
