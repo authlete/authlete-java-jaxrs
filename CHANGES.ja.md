@@ -1,6 +1,10 @@
 変更点
 ======
 
+- `HeaderClientCertificateXSslExtractor` クラス
+    * [不具合修正] SSL_CLIENT_CERT_CHAIN_n (Apache Module mod_ssl) の n は 1 からではなく 0 から開始する。
+
+
 2.39 (2021 年 10 月 21 日)
 --------------------------
 

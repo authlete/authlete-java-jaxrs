@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+- `HeaderClientCertificateXSslExtractor` class
+    * [bugfix] 'n' in SSL_CLIENT_CERT_CHAIN_n (Apache Module mod_ssl) starts from 0, not 1.
+
+
 2.39 (2021-10-21)
 -----------------
 

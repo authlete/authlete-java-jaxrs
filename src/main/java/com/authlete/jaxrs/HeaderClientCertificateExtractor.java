@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
  *   RequestHeader set X-Ssl-Cert "%{SSL_CLIENT_CERT}e" env=SSL_CLIENT_CERT
  *   RequestHeader set X-Ssl-Protocol "%{SSL_PROTOCOL}e" env=SSL_PROTOCOL
  *   RequestHeader set X-Ssl-Verify "%{SSL_CLIENT_VERIFY}e" env=SSL_CLIENT_VERIFY
+ *   RequestHeader set X-Ssl-Cert-Chain-0 "%{SSL_CLIENT_CERT_CHAIN_0}e" env=SSL_CLIENT_CERT_CHAIN_0
  *   RequestHeader set X-Ssl-Cert-Chain-1 "%{SSL_CLIENT_CERT_CHAIN_1}e" env=SSL_CLIENT_CERT_CHAIN_1
  *   RequestHeader set X-Ssl-Cert-Chain-2 "%{SSL_CLIENT_CERT_CHAIN_2}e" env=SSL_CLIENT_CERT_CHAIN_2
  *   RequestHeader set X-Ssl-Cert-Chain-3 "%{SSL_CLIENT_CERT_CHAIN_3}e" env=SSL_CLIENT_CERT_CHAIN_3
@@ -80,6 +81,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author jricher
  *
  * @since 2.8
+ *
+ * @see <a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html"
+ *      >Apache Module mod_ssl</a>
  */
 public abstract class HeaderClientCertificateExtractor implements ClientCertificateExtractor
 {
@@ -127,7 +131,8 @@ public abstract class HeaderClientCertificateExtractor implements ClientCertific
         }
 
         // "(null)" is a value that misconfigured Apache servers will send
-        // instead of a missing header.
+        // instead of a missing header. This happens when "SSLOptions" does
+        // not include "+ExportCertData".
         if (cert.equals("(null)"))
         {
             return null;

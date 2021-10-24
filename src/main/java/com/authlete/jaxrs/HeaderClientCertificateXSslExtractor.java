@@ -26,6 +26,9 @@ import java.util.List;
  * {@code X-Ssl-Cert-Chain-*} headers.
  *
  * @since 2.34
+ *
+ * @see <a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html"
+ *      >Apache Module mod_ssl</a>
  */
 public class HeaderClientCertificateXSslExtractor extends HeaderClientCertificateExtractor
 {
@@ -35,6 +38,7 @@ public class HeaderClientCertificateXSslExtractor extends HeaderClientCertificat
      */
     private List<String> clientCertificateChainHeaders = Arrays.asList(
             "X-Ssl-Cert", // the client's certificate
+            "X-Ssl-Cert-Chain-0",
             "X-Ssl-Cert-Chain-1",
             "X-Ssl-Cert-Chain-2",
             "X-Ssl-Cert-Chain-3",
