@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.41 (2021-11-28)
+-----------------
+
 - `AuthleteApiCaller` class
     * Added `claimsForTx` parameter to `authorizationIssue()`.
     * Added `claimsForTx` parameter to `userInfoIssue()`.

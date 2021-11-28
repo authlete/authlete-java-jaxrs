@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.41 (2021 年 11 月 28 日)
+--------------------------
+
 - `AuthleteApiCaller` クラス
     * `claimsForTx` パラメーターを `authorizationIssue()` に追加。
     * `claimsForTx` パラメーターを `userInfoIssue()` に追加。
