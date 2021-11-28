@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -415,6 +415,11 @@ public class UserInfoRequestHandler extends BaseHandler
         // Collect claim values of the user.
         Map<String, Object> claims = collectClaims(subject, response.getClaims());
 
+        // Collect claim data that are referenced when Authlete computes
+        // values of transformed claims.
+        Map<String, Object> claimsForTx =
+                collectClaims(subject, response.getRequestedClaimsForTx());
+
         // Collect verified claims.
         // See "OpenID Connect for Identity Assurance 1.0" for details.
         claims = collectVerifiedClaims(claims, subject, response.getUserInfoClaims());
@@ -423,7 +428,8 @@ public class UserInfoRequestHandler extends BaseHandler
         {
             // Generate a JSON or a JWT containing user information
             // by calling Authlete's /api/auth/userinfo/issue API.
-            return getApiCaller().userInfoIssue(response.getToken(), claims);
+            return getApiCaller().userInfoIssue(
+                    response.getToken(), claims, claimsForTx);
         }
         catch (WebApplicationException e)
         {

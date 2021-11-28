@@ -280,7 +280,8 @@ class AuthleteApiCaller
      */
     private AuthorizationIssueResponse callAuthorizationIssue(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String sub, Map<String, Object> claimsForTx)
     {
         // Create a request for /api/auth/authorization/issue API.
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
@@ -291,6 +292,7 @@ class AuthleteApiCaller
             .setProperties(properties)
             .setScopes(scopes)
             .setSub(sub)
+            .setClaimsForTx(claimsForTx)
             ;
 
         if (claims != null && claims.size() != 0)
@@ -331,9 +333,23 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
     {
+        return authorizationIssue(ticket, subject, authTime, acr, claims, properties, scopes, sub, null);
+    }
+
+
+    /**
+     * Issue an authorization code, an ID token and/or an access token.
+     * This method calls Authlete's {@code /api/auth/authorization/issue} API.
+     */
+    public Response authorizationIssue(
+            String ticket, String subject, long authTime, String acr,
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String sub, Map<String, Object> claimsForTx)
+    {
         // Call Authlete's /api/auth/authorization/issue API.
         AuthorizationIssueResponse response =
-            callAuthorizationIssue(ticket, subject, authTime, acr, claims, properties, scopes, sub);
+            callAuthorizationIssue(ticket, subject, authTime, acr, claims,
+                    properties, scopes, sub, claimsForTx);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -708,7 +724,8 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/userinfo/issue} API.
      */
-    private UserInfoIssueResponse callUserInfoIssue(String accessToken, Map<String, Object> claims)
+    private UserInfoIssueResponse callUserInfoIssue(String accessToken,
+            Map<String, Object> claims, Map<String, Object> claimsForTx)
     {
         // Create a request for /api/auth/userinfo/issue API.
         UserInfoIssueRequest request = new UserInfoIssueRequest()
@@ -717,6 +734,11 @@ class AuthleteApiCaller
         if (claims != null && claims.size() != 0)
         {
             request.setClaims(claims);
+        }
+
+        if (claimsForTx != null && claimsForTx.size() != 0)
+        {
+            request.setClaimsForTx(claimsForTx);
         }
 
         try
@@ -735,10 +757,12 @@ class AuthleteApiCaller
     /**
      * Issue a JSON or a JWT containing user information.
      */
-    public Response userInfoIssue(String accessToken, Map<String, Object> claims)
+    public Response userInfoIssue(String accessToken,
+            Map<String, Object> claims, Map<String, Object> claimsForTx)
     {
         // Call Authlete's /api/auth/userinfo/issue API.
-        UserInfoIssueResponse response = callUserInfoIssue(accessToken, claims);
+        UserInfoIssueResponse response =
+                callUserInfoIssue(accessToken, claims, claimsForTx);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

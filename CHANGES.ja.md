@@ -1,6 +1,24 @@
 変更点
 ======
 
+- `AuthleteApiCaller` クラス
+    * `claimsForTx` パラメーターを `authorizationIssue()` に追加。
+    * `claimsForTx` パラメーターを `userInfoIssue()` に追加。
+
+- `AuthorizationDecisionHandler` クラス
+    * `claimsForTx` を用意するよう更新。
+
+- `AuthorizationDecisionHandler.Params` クラス
+    * `getRequestedClaimsForTx()` メソッドを追加。
+    * `setRequestedClaimsForTx(String[])` メソッドを追加。
+
+- `UserInfoRequestHandler` クラス
+    * `claimsForTx` を用意するよう更新。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.4 から 3.9 へ更新。
+
+
 2.40 (2021 年 10 月 25 日)
 --------------------------
 

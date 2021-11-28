@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2021 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,6 +136,30 @@ public interface AuthorizationDecisionHandlerSpi
      * this method is not called when {@link #isClientAuthorized()}
      * has returned {@code false} or when {@link #getUserSubject()}
      * has returned {@code null}.
+     * </p>
+     *
+     * <p>
+     * If the claim name starts with two colons ({@code ::}), the claim is a
+     * predefined <i>transformed claim</i>. The value of the claim will be
+     * computed by Authlete, so the exact value returned by this method is
+     * not so important. If this method returns a non-null value, the value
+     * of the transformed claim will be computed by Authlete and embedded in
+     * the ID token.
+     * </p>
+     *
+     * <p>
+     * Likewise, if the claim name starts with one colon ({@code :}), the claim
+     * is a <i>transformed claim</i> defined in the {@code "transformed_claims"}
+     * property in the {@code claims} request parameter. If this method returns
+     * a non-null value, the value of the transformed claim will be computed by
+     * Authlete and embedded in the ID token.
+     * </p>
+     *
+     * <p>
+     * See <a href=
+     * "https://bitbucket.org/openid/ekyc-ida/src/master/openid-advanced-syntax-for-claims.md"
+     * >OpenID Connect Advanced Syntax for Claims (ASC) 1.0</a> for details
+     * about transformed claims.
      * </p>
      *
      * @param claimName

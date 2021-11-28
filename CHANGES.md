@@ -1,6 +1,24 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Added `claimsForTx` parameter to `authorizationIssue()`.
+    * Added `claimsForTx` parameter to `userInfoIssue()`.
+
+- `AuthorizationDecisionHandler` class
+    * Updated to prepare `claimsForTx`.
+
+- `AuthorizationDecisionHandler.Params` class
+    * Added `getRequestedClaimsForTx()` method.
+    * Added `setRequestedClaimsForTx(String[])` method.
+
+- `UserInfoRequestHandler` class
+    * Updated to prepare `claimsForTx`.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.4 to 3.9.
+
+
 2.40 (2021-10-25)
 -----------------
 

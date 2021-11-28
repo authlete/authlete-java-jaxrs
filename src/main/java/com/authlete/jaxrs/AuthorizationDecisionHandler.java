@@ -65,6 +65,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         private String[] claimNames;
         private String[] claimLocales;
         private String idTokenClaims;
+        private String[] requestedClaimsForTx;
 
 
         /**
@@ -196,6 +197,48 @@ public class AuthorizationDecisionHandler extends BaseHandler
 
 
         /**
+         * Get the claims that are indirectly requested by transformed claims.
+         *
+         * @return
+         *         Claims requested by transformed claims.
+         *
+         * @see <a href="https://bitbucket.org/openid/ekyc-ida/src/master/openid-advanced-syntax-for-claims.md"
+         *      >OpenID Connect Advanced Syntax for Claims (ASC) 1.0</a>
+         *
+         * @since 2.41
+         */
+        public String[] getRequestedClaimsForTx()
+        {
+            return requestedClaimsForTx;
+        }
+
+
+        /**
+         * Set the claims that are indirectly requested by transformed claims.
+         * The value given to this method should be the value of the
+         * {@code requestedClaimsForTx} parameter in a response from Authlete's
+         * {@code /api/auth/authorization} API.
+         *
+         * @param claims
+         *         Claims requested by transformed claims.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://bitbucket.org/openid/ekyc-ida/src/master/openid-advanced-syntax-for-claims.md"
+         *      >OpenID Connect Advanced Syntax for Claims (ASC) 1.0</a>
+         *
+         * @since 2.41
+         */
+        public Params setRequestedClaimsForTx(String[] claims)
+        {
+            this.requestedClaimsForTx = claims;
+
+            return this;
+        }
+
+
+        /**
          * Create a {@link Params} instance from an instance of
          * {@link AuthorizationResponse}.
          *
@@ -212,6 +255,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
                     .setClaimNames(response.getClaims())
                     .setClaimLocales(response.getClaimsLocales())
                     .setIdTokenClaims(response.getIdTokenClaims())
+                    .setRequestedClaimsForTx(response.getRequestedClaimsForTx())
                     ;
         }
     }
@@ -345,6 +389,11 @@ public class AuthorizationDecisionHandler extends BaseHandler
         Map<String, Object> claims = collectClaims(
                 subject, params.getClaimNames(), params.getClaimLocales());
 
+        // Collect values of claims that are indirectly requested by transformed claims.
+        // See "OpenID Connect Advanced Syntax for Claims (ASC) 1.0" for details.
+        Map<String, Object> claimsForTx = collectClaims(
+                subject, params.getRequestedClaimsForTx(), params.getClaimLocales());
+
         // Collect verified claims.
         // See "OpenID Connect for Identity Assurance 1.0" for details.
         claims = collectVerifiedClaims(claims, subject, params.getIdTokenClaims());
@@ -360,7 +409,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
         String[] scopes = mSpi.getScopes();
 
         // Authorize the authorization request.
-        return authorize(params.getTicket(), subject, authTime, acr, claims, properties, scopes, sub);
+        return authorize(params.getTicket(), subject, authTime, acr, claims,
+                properties, scopes, sub, claimsForTx);
     }
 
 
@@ -696,12 +746,22 @@ public class AuthorizationDecisionHandler extends BaseHandler
      *         ignored if it is not included in the original authorization
      *         request.
      *
+     * @param sub
+     *         The value for the {@code sub} claim used in the ID token.
+     *         If this parameter is null, {@code subject} is used as the
+     *         value of the {@code sub} claim.
+     *
+     * @param claimsForTx
+     *         Pairs of claim key and claim value that will be referenced
+     *         when Authlete computes values of transformed claims.
+     *
      * @return
      *         A response that should be returned to the client application.
      */
     private Response authorize(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String sub, Map<String, Object> claimsForTx)
     {
         try
         {
@@ -710,7 +770,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // request had response_type=none, no tokens will be contained in
             // the generated response, though.
             return getApiCaller().authorizationIssue(
-                    ticket, subject, authTime, acr, claims, properties, scopes, sub);
+                    ticket, subject, authTime, acr, claims, properties,
+                    scopes, sub, claimsForTx);
         }
         catch (WebApplicationException e)
         {
