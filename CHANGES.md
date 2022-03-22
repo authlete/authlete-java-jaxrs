@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.42 (2022-03-23)
+-----------------
+
 - `AuthorizationDecisionHandler.Params` class
     * Added `isOldIdaFormatUsed()` method.
     * Added `setOldIdaFormatUsed(boolean)` method.

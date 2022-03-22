@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.42 (2022 年 03 月 23 日)
+--------------------------
+
 - `AuthorizationDecisionHandler.Params` クラス
     * `isOldIdaFormatUsed()` メソッドを追加。
     * `setOldIdaFormatUsed(boolean)` メソッドを追加。
