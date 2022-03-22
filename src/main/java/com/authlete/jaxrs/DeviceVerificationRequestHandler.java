@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
-import com.authlete.common.dto.DeviceVerificationResponse.Action;
 import com.authlete.common.dto.DeviceVerificationResponse;
+import com.authlete.common.dto.DeviceVerificationResponse.Action;
 import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
 
 
 /**
  * Handler for getting information associated with a user code that the end-user
- * inputed at the verification endpoint in OAuth 2.0 Device Authorization Grant
+ * input at the verification endpoint in OAuth 2.0 Device Authorization Grant
  * (Device Flow).
  *
  * <p>
- * {@link #handle(String, String[]) handle()} method should be called after the
- * authorization server receives a user code that the end-user inputed at the verification
+ * {@link #handle()} method should be called after the
+ * authorization server receives a user code that the end-user input at the verification
  * endpoint. The {@code handle()} method calls Authlete's {@code /api/device/verification}
  * API, receives a response from the API, and dispatches processing according to
  * the {@code action} parameter in the response.
@@ -69,8 +69,8 @@ public class DeviceVerificationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle getting information associated with a user code that the end-user
-     * inputed at the verification endpoint in OAuth 2.0 Device Authorization Grant
+     * Handle information associated with a user code that the end-user
+     * input at the verification endpoint in OAuth 2.0 Device Authorization Grant
      * (Device Flow).
      *
      * @return

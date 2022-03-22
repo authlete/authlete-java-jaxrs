@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class DeviceVerificationPageModel implements Serializable
 
 
     /**
-     * The user code inputed by the user.
+     * The user code input by the user.
      */
     private String userCode;
 

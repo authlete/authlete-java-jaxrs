@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class BaseDeviceCompleteEndpoint extends BaseEndpoint
      *         An implementation of {@link DeviceCompleteRequestHandlerSpi}.
      *
      * @param userCode
-     *         The user code that the end-user inputed.
+     *         The user code that the end-user input.
      *
      * @param claimNames
      *         Names of requested claims. Use the value of the {@code claimNames}

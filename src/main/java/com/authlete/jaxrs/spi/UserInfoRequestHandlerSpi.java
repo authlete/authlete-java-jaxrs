@@ -392,8 +392,7 @@ public interface UserInfoRequestHandlerSpi
      * </pre>
      *
      * @param subject
-     *         The subject of the user. The same value returned by
-     *         {@link #getUserSubject()}.
+     *         The subject of the user.
      *
      * @param verifiedClaimsRequest
      *         An object that represents the {@code "verified_claims"} in the

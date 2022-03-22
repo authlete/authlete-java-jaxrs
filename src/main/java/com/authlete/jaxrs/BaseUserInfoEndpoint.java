@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      * Handle a userinfo request.
      *
      * This method is an alias of the {@link #handle(AuthleteApi,
-     * UserInfoRequestHandlerSpi, Params)} method.
+     * UserInfoRequestHandlerSpi, UserInfoRequestHandler.Params)} method.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -70,9 +70,10 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      *
      * <p>
      * This method internally creates a {@link UserInfoRequestHandler} instance
-     * and calls its {@link UserInfoRequestHandler#handle(Params)} method.
-     * Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
+     * and calls its
+     * {@link UserInfoRequestHandler#handle(UserInfoRequestHandler.Params)
+     * handle(Params)} method. Then, this method uses the value returned from
+     * the {@code handle()} method as a response from this method.
      * </p>
      *
      * <p>

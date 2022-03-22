@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
      * Handle a token request.
      *
      * This method is an alias of the {@link #handle(AuthleteApi,
-     * TokenRequestHandlerSpi, Params)} method.
+     * TokenRequestHandlerSpi, TokenRequestHandler.Params)} method.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -78,7 +78,7 @@ public class BaseTokenEndpoint extends BaseEndpoint
      * Handle a token request.
      *
      * This method is an alias of the {@link #handle(AuthleteApi,
-     * TokenRequestHandlerSpi, Params)} method.
+     * TokenRequestHandlerSpi, TokenRequestHandler.Params)} method.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -121,9 +121,9 @@ public class BaseTokenEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link TokenRequestHandler} instance and
-     * calls its {@link TokenRequestHandler#handle(Params)}
-     * method. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
+     * calls its {@link TokenRequestHandler#handle(TokenRequestHandler.Params)
+     * handle(Params)} method. Then, this method uses the value returned from
+     * the {@code handle()} method as a response from this method.
      * </p>
      *
      * <p>

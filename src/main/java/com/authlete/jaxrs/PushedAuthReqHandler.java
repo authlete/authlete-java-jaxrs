@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,9 @@ import com.authlete.common.web.BasicCredentials;
  *
  * <p>
  * In an implementation of the pushed authorization request endpoint, call
- * {@link #handle()} method and use the response as the response from the
- * endpoint to the client application. {@code handle()} method calls Authlete's
+ * {@link #handle(MultivaluedMap, String, String[]) handle()} method and use
+ * the response as the response from the endpoint to the client application.
+ * The {@code handle()} method calls Authlete's
  * {@code /api/pushed_auth_req} API, receives a response from the API, and
  * dispatches processing according to the {@code action} parameter in the response.
  * </p>

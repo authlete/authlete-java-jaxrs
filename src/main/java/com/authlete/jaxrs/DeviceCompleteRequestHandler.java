@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteRequest.Result;
+import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.common.dto.DeviceCompleteResponse.Action;
 import com.authlete.common.dto.Property;
-import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.jaxrs.spi.DeviceCompleteRequestHandlerSpi;
 
 
@@ -79,7 +79,7 @@ public class DeviceCompleteRequestHandler extends BaseHandler
      * 2.0 Device Authorization Grant (Device Flow).
      *
      * @param userCode
-     *         The user code that the end-user inputed.
+     *         The user code that the end-user input.
      *
      * @param claimNames
      *         Names of requested claims. Use the value of the {@code claimNames}

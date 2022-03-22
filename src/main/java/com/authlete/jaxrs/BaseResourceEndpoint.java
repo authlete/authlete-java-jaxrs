@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, Params)}.
+     * #validateAccessToken(AuthleteApi, AccessTokenValidator.Params)}.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -113,7 +113,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, Params)}.
+     * #validateAccessToken(AuthleteApi, AccessTokenValidator.Params)}.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -151,7 +151,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, Params)}.
+     * #validateAccessToken(AuthleteApi, AccessTokenValidator.Params)}.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
@@ -195,7 +195,7 @@ public class BaseResourceEndpoint extends BaseEndpoint
 
     /**
      * Validate an access token. This method is an alias of {@link
-     * #validateAccessToken(AuthleteApi, Params)}.
+     * #validateAccessToken(AuthleteApi, AccessTokenValidator.Params)}.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.
