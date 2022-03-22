@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import com.authlete.common.assurance.constraint.ClaimsConstraint;
@@ -50,7 +51,7 @@ import com.google.gson.GsonBuilder;
  */
 public class AuthorizationPageModel implements Serializable
 {
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
 
     /**
@@ -179,6 +180,16 @@ public class AuthorizationPageModel implements Serializable
      * @since 2.26
      */
     private boolean identityAssuranceRequired;
+
+
+    /**
+     * Flag indicating whether this class assumes that the old format of
+     * {@code "verified_claims"} is used. "Old" here means the 2nd
+     * Implementer's Draft of OpenID Connect for Identity Assurance 1.0.
+     *
+     * @since 2.42
+     */
+    private boolean oldIdaFormatUsed;
 
 
     /**
@@ -905,6 +916,55 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * Get the flag indicating whether the old format of {@code "verified_claims"}
+     * is used. "Old" here means the 2nd Implementer's Draft of OpenID Connect for
+     * Identity Assurance 1.0 which was published on May 19, 2020.
+     *
+     * <p>
+     * The Implementer's Draft 3 of OpenID Connect for Identity Assurance 1.0,
+     * which was published on September 6, 2021, made many breaking changes.
+     * </p>
+     *
+     * @return
+     *         {@code true} if the old format of {@code "verified_claims"} is used.
+     *
+     * @since 2.42
+     *
+     * @see <a href="https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html"
+     *      >OpenID Connect for Identity Assurance 1.0</a>
+     */
+    public boolean isOldIdaFormatUsed()
+    {
+        return oldIdaFormatUsed;
+    }
+
+
+    /**
+     * Set the flag indicating whether the old format of {@code "verified_claims"}
+     * is used. "Old" here means the 2nd Implementer's Draft of OpenID Connect for
+     * Identity Assurance 1.0 which was published on May 19, 2020.
+     *
+     * <p>
+     * The Implementer's Draft 3 of OpenID Connect for Identity Assurance 1.0,
+     * which was published on September 6, 2021, made many breaking changes.
+     * </p>
+     *
+     * @param used
+     *         {@code true} to indicate that the old format of {@code "verified_claims"}
+     *         is used.
+     *
+     * @since 2.42
+     *
+     * @see <a href="https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html"
+     *      >OpenID Connect for Identity Assurance 1.0</a>
+     */
+    public void setOldIdaFormatUsed(boolean used)
+    {
+        this.oldIdaFormatUsed = used;
+    }
+
+
+    /**
      * Get the string representation of the given URI.
      *
      * @param uri
@@ -1004,6 +1064,31 @@ public class AuthorizationPageModel implements Serializable
 
     private void setupVerifiedClaimsForIdToken(AuthorizationResponse info)
     {
+        if (isOldIdaFormatUsed())
+        {
+            setupVerifiedClaimsForIdToken_Old(info);
+            return;
+        }
+
+        // allVerifiedClaimsForIdTokenRequested is not set up here.
+        //
+        // The flag was prepared for a certain requirement which existed in the
+        // first Implementer's Draft of OpenID Connect for Identity Assurance 1.0.
+        // However, the requirement was abolished by the second draft.
+        //
+        // History:
+        //
+        //   I objected to the requirement during the review period of the first
+        //   draft but my feedback was not reflected to the first draft.
+        //
+        //     https://bitbucket.org/openid/ekyc-ida/issues/1110
+
+        verifiedClaimsForIdToken = extractRequestedClaims(info.getIdTokenClaims());
+    }
+
+
+    private void setupVerifiedClaimsForIdToken_Old(AuthorizationResponse info)
+    {
         // "verified_claims" in "id_token" in the "claims" request parameter.
         VerifiedClaimsConstraint verifiedClaimsConstraint =
                 extractVerifiedClaims(info.getIdTokenClaims());
@@ -1029,6 +1114,31 @@ public class AuthorizationPageModel implements Serializable
 
 
     private void setupVerifiedClaimsForUserInfo(AuthorizationResponse info)
+    {
+        if (isOldIdaFormatUsed())
+        {
+            setupVerifiedClaimsForUserInfo_Old(info);
+            return;
+        }
+
+        // allVerifiedClaimsForUserInfoRequested is not set up here.
+        //
+        // The flag was prepared for a certain requirement which existed in the
+        // first Implementer's Draft of OpenID Connect for Identity Assurance 1.0.
+        // However, the requirement was abolished by the second draft.
+        //
+        // History:
+        //
+        //   I objected to the requirement during the review period of the first
+        //   draft but my feedback was not reflected to the first draft.
+        //
+        //     https://bitbucket.org/openid/ekyc-ida/issues/1110
+
+        verifiedClaimsForUserInfo = extractRequestedClaims(info.getUserInfoClaims());
+    }
+
+
+    private void setupVerifiedClaimsForUserInfo_Old(AuthorizationResponse info)
     {
         // "verified_claims" in "userinfo" in the "claims" request parameter.
         VerifiedClaimsConstraint verifiedClaimsConstraint =
@@ -1126,5 +1236,143 @@ public class AuthorizationPageModel implements Serializable
                allVerifiedClaimsForUserInfoRequested ||
                verifiedClaimsForUserInfo != null
                ;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static Pair[] extractRequestedClaims(String claimsString)
+    {
+        if (claimsString == null)
+        {
+            return null;
+        }
+
+        // Interpret the string as JSON.
+        Map<String, Object> claims =
+                (Map<String, Object>)new Gson().fromJson(claimsString, Map.class);
+
+        // The value of "verified_claims".
+        Object verifiedClaims = claims.get("verified_claims");
+
+        // Case 1: The value of "verified_claims" is a JSON array.
+        if (verifiedClaims instanceof List)
+        {
+            return extractRequestedClaimsFromList((List<?>)verifiedClaims);
+        }
+        // Case 2: The value of "verified_claims" is a JSON object.
+        else if (verifiedClaims instanceof Map)
+        {
+            return extractRequestedClaimsFromMap((Map<String, Object>)verifiedClaims);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static Pair[] extractRequestedClaimsFromList(List<?> list)
+    {
+        List<Pair> pairList = new ArrayList<>();
+
+        // For each element in the "verified_claims" array.
+        for (Object element : list)
+        {
+            // If the element is not a JSON object.
+            // (This case is a specification violation.)
+            if (!(element instanceof Map))
+            {
+                // This element is ignored.
+                continue;
+            }
+
+            // Extract pairs of claim name and "purpose" from "claims"
+            // in the JSON object.
+            Pair[] pairs = extractRequestedClaimsFromMap((Map<String, Object>)element);
+
+            if (pairs == null)
+            {
+                continue;
+            }
+
+            pairList.addAll(Arrays.asList(pairs));
+        }
+
+        if (pairList.size() == 0)
+        {
+            return null;
+        }
+
+        // Convert the List instance to an array.
+        return pairList.stream().toArray(Pair[]::new);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static Pair[] extractRequestedClaimsFromMap(Map<String, Object> map)
+    {
+        // The value of "claims".
+        Object claims = map.get("claims");
+
+        // If "claims" does not exist or its value is not a JSON object.
+        if (!(claims instanceof Map))
+        {
+            // In either case, it's a specification violation.
+            return null;
+        }
+
+        // "claims": {
+        //    "{claimName1}": null,
+        //    "{claimName2}": {
+        //      "purpose": "...",
+        //      ...
+        //    },
+        //    ....
+        // }
+
+        // Convert properties in "claims" into Pair's.
+        Pair[] pairs = ((Map<String, Object>)claims).entrySet().stream()
+                .map(entry -> extractClaimNamePurposePair(entry)).toArray(Pair[]::new);
+
+        return (pairs.length != 0) ? pairs : null;
+    }
+
+
+    private static Pair extractClaimNamePurposePair(Map.Entry<String, Object> entry)
+    {
+        // "{claimName}": {
+        //   "purpose": "...",
+        //   ...
+        // }
+
+        String claimName = entry.getKey();
+        String purpose   = extractPurpose(entry.getValue());
+
+        return new Pair(claimName, purpose);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static String extractPurpose(Object value)
+    {
+        if (!(value instanceof Map))
+        {
+            return null;
+        }
+
+        // {
+        //   "purpose": "...",
+        //   ...
+        // }
+
+        Object purpose = ((Map<String, Object>)value).get("purpose");
+
+        if (!(purpose instanceof String))
+        {
+            return null;
+        }
+
+        return (String)purpose;
     }
 }

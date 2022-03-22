@@ -1,6 +1,27 @@
 CHANGES
 =======
 
+- `AuthorizationDecisionHandler.Params` class
+    * Added `isOldIdaFormatUsed()` method.
+    * Added `setOldIdaFormatUsed(boolean)` method.
+
+- `AuthorizationDecisionHandlerSpi` interface
+    * Added `getVerifiedClaims(String, Object)` method.
+    * Marked `getVerifiedClaims(String, VerifiedClaimsConstraint)` method as deprecated.
+
+- `AuthorizationPageModel` class
+    * Added `isOldIdaFormatUsed()` method.
+    * Added `setOldIdaFormatUsed(boolean)` method.
+
+- `UserInfoRequestHandler.Params` class
+    * Added `isOldIdaFormatUsed()` method.
+    * Added `setOldIdaFormatUsed(boolean)` method.
+
+- `UserInfoRequestHandlerSpi` interface
+    * Added `getVerifiedClaims(String, Object)` method.
+    * Marked `getVerifiedClaims(String, VerifiedClaimsConstraint)` method as deprecated.
+
+
 2.41 (2021-11-28)
 -----------------
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,13 @@ public class UserInfoRequestHandlerSpiAdapter implements UserInfoRequestHandlerS
 
     @Override
     public List<VerifiedClaims> getVerifiedClaims(String subject, VerifiedClaimsConstraint constraint)
+    {
+        return null;
+    }
+
+
+    @Override
+    public Object getVerifiedClaims(String subject, Object verifiedClaimsRequest)
     {
         return null;
     }

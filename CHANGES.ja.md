@@ -1,6 +1,27 @@
 変更点
 ======
 
+- `AuthorizationDecisionHandler.Params` クラス
+    * `isOldIdaFormatUsed()` メソッドを追加。
+    * `setOldIdaFormatUsed(boolean)` メソッドを追加。
+
+- `AuthorizationDecisionHandlerSpi` インターフェース
+    * `getVerifiedClaims(String, Object)` メソッドを追加。
+    * `getVerifiedClaims(String, VerifiedClaimsConstraint)` メソッドを非推奨化。
+
+- `AuthorizationPageModel` クラス
+    * `isOldIdaFormatUsed()` メソッドを追加。
+    * `setOldIdaFormatUsed(boolean)` メソッドを追加。
+
+- `UserInfoRequestHandler.Params` クラス
+    * `isOldIdaFormatUsed()` メソッドを追加。
+    * `setOldIdaFormatUsed(boolean)` メソッドを追加。
+
+- `UserInfoRequestHandlerSpi` インターフェース
+    * `getVerifiedClaims(String, Object)` メソッドを追加。
+    * `getVerifiedClaims(String, VerifiedClaimsConstraint)` メソッドを非推奨化。
+
+
 2.41 (2021 年 11 月 28 日)
 --------------------------
 

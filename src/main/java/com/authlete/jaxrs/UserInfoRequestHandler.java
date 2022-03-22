@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
 import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstraint;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.dto.UserInfoResponse.Action;
+import com.authlete.common.util.Utils;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 
 
@@ -61,7 +63,7 @@ public class UserInfoRequestHandler extends BaseHandler
      */
     public static class Params implements Serializable
     {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 2L;
 
 
         private String accessToken;
@@ -69,6 +71,7 @@ public class UserInfoRequestHandler extends BaseHandler
         private String dpop;
         private String htm;
         private String htu;
+        private boolean oldIdaFormatUsed;
 
 
         /**
@@ -253,6 +256,131 @@ public class UserInfoRequestHandler extends BaseHandler
 
             return this;
         }
+
+
+        /**
+         * Get the flag indicating whether {@link UserInfoRequestHandler}
+         * uses the old format of {@code "verified_claims"} defined in the
+         * Implementer's Draft 2 of OpenID Connect for Identity Assurance 1&#x002E;0
+         * which was published on May 19, 2020.
+         *
+         * <p>
+         * When this flag is on, {@link UserInfoRequestHandler} calls the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         * VerifiedClaimsConstraint) getVerifiedClaims(String, VerifiedClaimsConstraint)}
+         * method of {@link UserInfoRequestHandlerSpi}. On the other hand,
+         * if this flag is off, the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String, Object)
+         * getVerifiedClaims(String, Object)} method is called instead.
+         * This is a breaking change from
+         * <a href="https://github.com/authlete/authlete-java-jaxrs"
+         * >authlete-java-jaxrs</a> version 2.41. This flag exists to mitigate
+         * the breaking change.
+         * </p>
+         *
+         * <p>
+         * The Implementer's Draft 3 of OpenID Connect for Identity Assurance 1.0,
+         * which was published on September 6, 2021, made many breaking changes.
+         * In addition, it is certain that further breaking changes will be made
+         * in the next draft. Considering the instability of the specification,
+         * it is not a good approach to define Java classes that correspond to
+         * elements in {@code "verified_claims"}. The
+         * {@code com.authlete.common.assurance} package in the <a href=
+         * "https://github.com/authlete/authlete-java-common">authlete-java-common</a>
+         * library was developed based on the approach for the Implementer's
+         * Draft 2, but it is not useful any more. This is the reason the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         * VerifiedClaimsConstraint) getVerifiedClaims(String,
+         * VerifiedClaimsConstraint)} method (whose second argument is an
+         * instance of {@link VerifiedClaimsConstraint} which is defined in
+         * the {@code com.authlete.common.assurance.constraint} package) was
+         * marked as deprecated.
+         * </p>
+         *
+         * @return
+         *         {@code true} if {@link UserInfoRequestHandler} calls
+         *         {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         *         VerifiedClaimsConstraint) getVerifiedClaims(String,
+         *         VerifiedClaimsConstraint)} method of
+         *         {@link UserInfoRequestHandlerSpi}. {@code false} if
+         *         {@link UserInfoRequestHandler} calls
+         *         {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String, Object)
+         *         getVerifiedClaims(String, Object)} method instead.
+         *
+         * @since 2.42
+         *
+         * @see <a href="https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html"
+         *      >OpenID Connect for Identity Assurance 1.0</a>
+         */
+        public boolean isOldIdaFormatUsed()
+        {
+            return oldIdaFormatUsed;
+        }
+
+
+        /**
+         * Set the flag indicating whether {@link UserInfoRequestHandler}
+         * uses the old format of {@code "verified_claims"} defined in the
+         * Implementer's Draft 2 of OpenID Connect for Identity Assurance 1&#x002E;0
+         * which was published on May 19, 2020.
+         *
+         * <p>
+         * When this flag is on, {@link UserInfoRequestHandler} calls the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         * VerifiedClaimsConstraint) getVerifiedClaims(String, VerifiedClaimsConstraint)}
+         * method of {@link UserInfoRequestHandlerSpi}. On the other hand,
+         * if this flag is off, the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String, Object)
+         * getVerifiedClaims(String, Object)} method is called instead.
+         * This is a breaking change from
+         * <a href="https://github.com/authlete/authlete-java-jaxrs"
+         * >authlete-java-jaxrs</a> version 2.41. This flag exists to mitigate
+         * the breaking change.
+         * </p>
+         *
+         * <p>
+         * The Implementer's Draft 3 of OpenID Connect for Identity Assurance 1.0,
+         * which was published on September 6, 2021, made many breaking changes.
+         * In addition, it is certain that further breaking changes will be made
+         * in the next draft. Considering the instability of the specification,
+         * it is not a good approach to define Java classes that correspond to
+         * elements in {@code "verified_claims"}. The
+         * {@code com.authlete.common.assurance} package in the <a href=
+         * "https://github.com/authlete/authlete-java-common">authlete-java-common</a>
+         * library was developed based on the approach for the Implementer's
+         * Draft 2, but it is not useful any more. This is the reason the
+         * {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         * VerifiedClaimsConstraint) getVerifiedClaims(String,
+         * VerifiedClaimsConstraint)} method (whose second argument is an
+         * instance of {@link VerifiedClaimsConstraint} which is defined in
+         * the {@code com.authlete.common.assurance.constraint} package) was
+         * marked as deprecated.
+         * </p>
+         *
+         * @param used
+         *         {@code true} to make {@link UserInfoRequestHandler} call
+         *         {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String,
+         *         VerifiedClaimsConstraint)
+         *         getVerifiedClaims(String, VerifiedClaimsConstraint)} method
+         *         of {@link UserInfoRequestHandlerSpi}. {@code false} to make
+         *         {@link UserInfoRequestHandler} call
+         *         {@link UserInfoRequestHandlerSpi#getVerifiedClaims(String, Object)
+         *         getVerifiedClaims(String, Object)} method instead.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @since 2.42
+         *
+         * @see <a href="https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html"
+         *      >OpenID Connect for Identity Assurance 1.0</a>
+         */
+        public Params setOldIdaFormatUsed(boolean used)
+        {
+            this.oldIdaFormatUsed = used;
+
+            return this;
+        }
     }
 
 
@@ -395,7 +523,7 @@ public class UserInfoRequestHandler extends BaseHandler
 
             case OK:
                 // Return the user information.
-                return getUserInfo(response);
+                return getUserInfo(params, response);
 
             default:
                 // This never happens.
@@ -408,7 +536,7 @@ public class UserInfoRequestHandler extends BaseHandler
      * Generate a JSON or a JWT containing user information by calling
      * Authlete's {@code /api/auth/userinfo/issue} API.
      */
-    private Response getUserInfo(UserInfoResponse response)
+    private Response getUserInfo(Params params, UserInfoResponse response)
     {
         String subject = response.getSubject();
 
@@ -420,9 +548,17 @@ public class UserInfoRequestHandler extends BaseHandler
         Map<String, Object> claimsForTx =
                 collectClaims(subject, response.getRequestedClaimsForTx());
 
-        // Collect verified claims.
-        // See "OpenID Connect for Identity Assurance 1.0" for details.
-        claims = collectVerifiedClaims(claims, subject, response.getUserInfoClaims());
+        // When the 'oldIdaFormatUsed' flag is on.
+        if (params.isOldIdaFormatUsed())
+        {
+            // Collect verified claims.
+            claims = collectVerifiedClaims_Old(claims, subject, response.getUserInfoClaims());
+        }
+        else
+        {
+            // Collect verified claims.
+            claims = collectVerifiedClaims(claims, subject, response.getUserInfoClaims());
+        }
 
         try
         {
@@ -503,7 +639,7 @@ public class UserInfoRequestHandler extends BaseHandler
     }
 
 
-    private Map<String, Object> collectVerifiedClaims(
+    private Map<String, Object> collectVerifiedClaims_Old(
             Map<String, Object> claims, String subject, String userInfoClaims)
     {
         // If the "claims" parameter in the authorization request has not
@@ -557,6 +693,49 @@ public class UserInfoRequestHandler extends BaseHandler
         {
             claims.put("verified_claims", verifiedClaims);
         }
+
+        return claims;
+    }
+
+
+    private Map<String, Object> collectVerifiedClaims(
+            Map<String, Object> claims, String subject, String claimsRequest)
+    {
+        // If the "claims" parameter does not contain a "userinfo" property.
+        if (claimsRequest == null || claimsRequest.length() == 0)
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // Extract the value of "verified_claims" from the claims request.
+        Object verifiedClaimsRequest =
+                Utils.fromJson(claimsRequest, Map.class).get("verified_claims");
+
+        if (verifiedClaimsRequest == null)
+        {
+            // No need to collect verified claims.
+            return claims;
+        }
+
+        // Collect verified claims.
+        Object verifiedClaimsValue =
+                mSpi.getVerifiedClaims(subject, verifiedClaimsRequest);
+
+        // If the SPI implementation did not prepare a value for "verified_claims".
+        if (verifiedClaimsValue == null)
+        {
+            // "verified_claims" won't be included in the userinfo response.
+            return claims;
+        }
+
+        if (claims == null)
+        {
+            claims = new HashMap<>();
+        }
+
+        // Embed "verified_claims" in the userinfo response.
+        claims.put("verified_claims", verifiedClaimsValue);
 
         return claims;
     }
