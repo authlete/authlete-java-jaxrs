@@ -33,6 +33,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
+import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
@@ -48,7 +49,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 
-public class AuthleteApiSupport
+public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 {
     // "application/json;charset=UTF-8"
     private static final MediaType JSON_UTF8_TYPE = APPLICATION_JSON_TYPE.withCharset("UTF-8");
@@ -87,7 +88,7 @@ public class AuthleteApiSupport
      * @param configuration
      *            An instance of {@link AuthleteConfiguration}.
      */
-    public AuthleteApiSupport(AuthleteConfiguration configuration)
+    public AuthleteApiJaxrsImpl(AuthleteConfiguration configuration)
     {
         if (configuration == null)
         {
@@ -95,7 +96,7 @@ public class AuthleteApiSupport
         }
 
         mBaseUrl = configuration.getBaseUrl();
-        extractDpop(configuration); // this has to be done before the credentials calls below
+        extractDpop(configuration); // this has to be done before the credentials calls
         mSettings = new Settings();
     }
 
@@ -253,13 +254,13 @@ public class AuthleteApiSupport
     }
 
 
-    public WebTarget getTarget()
+    protected WebTarget getTarget()
     {
         return getJaxRsClient().target(mBaseUrl);
     }
 
 
-    public Invocation.Builder wrapWithDpop(Invocation.Builder target, String path, String method)
+    protected Invocation.Builder wrapWithDpop(Invocation.Builder target, String path, String method)
     {
         if (mDpopJwk != null)
         {

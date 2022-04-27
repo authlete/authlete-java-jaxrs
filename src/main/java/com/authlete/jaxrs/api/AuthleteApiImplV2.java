@@ -21,12 +21,11 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
-import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.conf.AuthleteConfiguration.ApiVersion;
 import com.authlete.common.dto.ApiResponse;
@@ -95,7 +94,6 @@ import com.authlete.common.dto.UserInfoIssueResponse;
 import com.authlete.common.dto.UserInfoRequest;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.web.BasicCredentials;
-import com.authlete.jaxrs.api.AuthleteApiSupport.AuthleteApiCall;
 
 
 /**
@@ -103,7 +101,7 @@ import com.authlete.jaxrs.api.AuthleteApiSupport.AuthleteApiCall;
  *
  * @author Takahiko Kawasaki
  */
-public class AuthleteApiImplV2 implements AuthleteApi
+public class AuthleteApiImplV2 extends AuthleteApiJaxrsImpl
 {
     private static final String AUTH_AUTHORIZATION_API_PATH                   = "/api/auth/authorization";
     private static final String AUTH_AUTHORIZATION_FAIL_API_PATH              = "/api/auth/authorization/fail";
@@ -165,7 +163,6 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
     private final String mServiceOwnerAuth;
     private final String mServiceAuth;
-    private final AuthleteApiSupport mSupport;
 
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
@@ -180,12 +177,12 @@ public class AuthleteApiImplV2 implements AuthleteApi
      */
     public AuthleteApiImplV2(AuthleteConfiguration configuration)
     {
+        super(configuration);
         if (configuration.getApiVersion() != ApiVersion.V2)
         {
             throw new IllegalArgumentException("Configuration must be set to V2 for this implementation.");
         }
 
-        mSupport = new AuthleteApiSupport(configuration);
         mServiceOwnerAuth = createServiceOwnerCredentials(configuration);
         mServiceAuth      = createServiceCredentials(configuration);
     }
@@ -198,7 +195,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     {
         if (configuration.getServiceOwnerAccessToken() != null)
         {
-            if (mSupport.isDpopEnabled())
+            if (isDpopEnabled())
             {
                 return "DPoP " + configuration.getServiceOwnerAccessToken();
             }
@@ -224,7 +221,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     {
         if (configuration.getServiceAccessToken() != null)
         {
-            if (mSupport.isDpopEnabled())
+            if (isDpopEnabled())
             {
                 return "DPoP " + configuration.getServiceAccessToken();
             }
@@ -246,38 +243,38 @@ public class AuthleteApiImplV2 implements AuthleteApi
     private <TResponse> TResponse callServiceOwnerGetApi(
             String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return mSupport.callGetApi(mServiceOwnerAuth, path, responseClass, params);
+        return callGetApi(mServiceOwnerAuth, path, responseClass, params);
     }
 
 
     private <TResponse> TResponse callServiceGetApi(
             String path, Class<TResponse> responseClass, Map<String, Object[]> params)
     {
-        return mSupport.callGetApi(mServiceAuth, path, responseClass, params);
+        return callGetApi(mServiceAuth, path, responseClass, params);
     }
 
 
     private Void callServiceOwnerDeleteApi(String path)
     {
-        return mSupport.callDeleteApi(mServiceOwnerAuth, path);
+        return callDeleteApi(mServiceOwnerAuth, path);
     }
 
 
     private Void callServiceDeleteApi(String path)
     {
-        return mSupport.callDeleteApi(mServiceAuth, path);
+        return callDeleteApi(mServiceAuth, path);
     }
 
 
     private <TResponse> TResponse callServiceOwnerPostApi(String path, Object request, Class<TResponse> responseClass)
     {
-        return mSupport.callPostApi(mServiceOwnerAuth, path, request, responseClass);
+        return callPostApi(mServiceOwnerAuth, path, request, responseClass);
     }
 
 
     private <TResponse> TResponse callServicePostApi(String path, Object request, Class<TResponse> responseClass)
     {
-        return mSupport.callPostApi(mServiceAuth, path, request, responseClass);
+        return callPostApi(mServiceAuth, path, request, responseClass);
     }
 
 
@@ -450,7 +447,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public AuthorizationResponse authorization(AuthorizationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<AuthorizationResponse>(
                         AuthorizationResponse.class, request, AUTH_AUTHORIZATION_API_PATH));
     }
@@ -462,7 +459,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public AuthorizationFailResponse authorizationFail(AuthorizationFailRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<AuthorizationFailResponse>(
                         AuthorizationFailResponse.class, request, AUTH_AUTHORIZATION_FAIL_API_PATH));
     }
@@ -474,7 +471,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public AuthorizationIssueResponse authorizationIssue(AuthorizationIssueRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<AuthorizationIssueResponse>(
                         AuthorizationIssueResponse.class, request, AUTH_AUTHORIZATION_ISSUE_API_PATH));
     }
@@ -486,7 +483,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public TokenResponse token(TokenRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<TokenResponse>(
                         TokenResponse.class, request, AUTH_TOKEN_API_PATH));
     }
@@ -498,7 +495,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public TokenCreateResponse tokenCreate(TokenCreateRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<TokenCreateResponse>(
                         TokenCreateResponse.class, request, AUTH_TOKEN_CREATE_API_PATH));
     }
@@ -510,7 +507,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public void tokenDelete(String token) throws AuthleteApiException
     {
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServiceDeleteApiCaller(
                         AUTH_TOKEN_DELETE_API_PATH, token));
     }
@@ -522,7 +519,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public TokenFailResponse tokenFail(TokenFailRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<TokenFailResponse>(
                         TokenFailResponse.class, request, AUTH_TOKEN_FAIL_API_PATH));
     }
@@ -534,7 +531,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public TokenIssueResponse tokenIssue(TokenIssueRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<TokenIssueResponse>(
                         TokenIssueResponse.class, request, AUTH_TOKEN_ISSUE_API_PATH));
     }
@@ -546,7 +543,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public TokenUpdateResponse tokenUpdate(TokenUpdateRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<TokenUpdateResponse>(
                         TokenUpdateResponse.class, request, AUTH_TOKEN_UPDATE_API_PATH));
     }
@@ -584,7 +581,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
             final String clientIdentifier, final String subject,
             final int start, final int end, final boolean rangeGiven) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(new AuthleteApiCall<TokenListResponse>()
+        return executeApiCall(new AuthleteApiCall<TokenListResponse>()
         {
             @Override
             public TokenListResponse call()
@@ -598,7 +595,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     private TokenListResponse callGetTokenList(
             String clientIdentifier, String subject, int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mSupport.getTarget().path(AUTH_TOKEN_GET_LIST_API_PATH);
+        WebTarget target = getTarget().path(AUTH_TOKEN_GET_LIST_API_PATH);
 
         if (clientIdentifier != null)
         {
@@ -615,7 +612,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return mSupport.wrapWithDpop(target
+        return wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), AUTH_TOKEN_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceAuth)
                 .get(TokenListResponse.class);
@@ -628,7 +625,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public RevocationResponse revocation(RevocationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<RevocationResponse>(
                         RevocationResponse.class, request, AUTH_REVOCATION_API_PATH));
     }
@@ -640,7 +637,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public UserInfoResponse userinfo(UserInfoRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<UserInfoResponse>(
                         UserInfoResponse.class, request, AUTH_USERINFO_API_PATH));
     }
@@ -652,7 +649,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public UserInfoIssueResponse userinfoIssue(UserInfoIssueRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<UserInfoIssueResponse>(
                         UserInfoIssueResponse.class, request, AUTH_USERINFO_ISSUE_API_PATH));
     }
@@ -664,7 +661,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public IntrospectionResponse introspection(IntrospectionRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<IntrospectionResponse>(
                         IntrospectionResponse.class, request, AUTH_INTROSPECTION_API_PATH));
     }
@@ -677,7 +674,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public StandardIntrospectionResponse standardIntrospection(
             StandardIntrospectionRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<StandardIntrospectionResponse>(
                         StandardIntrospectionResponse.class, request, AUTH_INTROSPECTION_STANDARD_API_PATH));
     }
@@ -689,7 +686,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Service createService(Service service) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceOwnerPostApiCaller<Service>(
                         Service.class, service, SERVICE_CREATE_API_PATH));
     }
@@ -712,7 +709,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public void deleteService(long apiKey) throws AuthleteApiException
     {
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServiceOwnerDeleteApiCaller(
                         SERVICE_DELETE_API_PATH, apiKey));
     }
@@ -724,7 +721,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Service getService(long apiKey) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceOwnerGetApiCaller<Service>(
                         Service.class, SERVICE_GET_API_PATH, apiKey));
     }
@@ -750,7 +747,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     private ServiceListResponse getServiceList(
             final int start, final int end, final boolean rangeGiven) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(new AuthleteApiCall<ServiceListResponse>()
+        return executeApiCall(new AuthleteApiCall<ServiceListResponse>()
         {
             @Override
             public ServiceListResponse call()
@@ -766,14 +763,14 @@ public class AuthleteApiImplV2 implements AuthleteApi
      */
     private ServiceListResponse callGetServiceList(int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mSupport.getTarget().path(SERVICE_GET_LIST_API_PATH);
+        WebTarget target = getTarget().path(SERVICE_GET_LIST_API_PATH);
 
         if (rangeGiven)
         {
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return mSupport.wrapWithDpop(target
+        return wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), SERVICE_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceOwnerAuth)
                 .get(ServiceListResponse.class);
@@ -786,7 +783,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Service updateService(final Service service) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceOwnerPostApiCaller<Service>(
                         Service.class, service, SERVICE_UPDATE_API_PATH, service.getApiKey()));
     }
@@ -798,7 +795,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public String getServiceJwks() throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_JWKS_GET_API_PATH));
     }
@@ -810,7 +807,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public String getServiceJwks(boolean pretty, boolean includePrivateKeys) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_JWKS_GET_API_PATH)
                 .addParam("pretty", pretty)
@@ -824,7 +821,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public String getServiceConfiguration() throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_CONFIGURATION_API_PATH));
     }
@@ -836,7 +833,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public String getServiceConfiguration(boolean pretty) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_CONFIGURATION_API_PATH)
                 .addParam("pretty", pretty));
@@ -849,7 +846,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Client createClient(Client client) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<Client>(
                         Client.class, client, CLIENT_CREATE_API_PATH));
     }
@@ -861,7 +858,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public ClientRegistrationResponse dynamicClientRegister(ClientRegistrationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
                         ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_API_PATH));
     }
@@ -873,7 +870,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public ClientRegistrationResponse dynamicClientGet(ClientRegistrationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
                         ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_GET_API_PATH));
     }
@@ -885,7 +882,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public ClientRegistrationResponse dynamicClientUpdate(ClientRegistrationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
                         ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_UPDATE_API_PATH));
     }
@@ -897,7 +894,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public ClientRegistrationResponse dynamicClientDelete(ClientRegistrationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<ClientRegistrationResponse>(
                         ClientRegistrationResponse.class, request, CLIENT_REGISTRATION_DELETE_API_PATH));
     }
@@ -919,7 +916,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public void deleteClient(String clientId) throws AuthleteApiException
     {
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServiceDeleteApiCaller(
                         CLIENT_DELETE_API_PATH, clientId));
     }
@@ -941,7 +938,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Client getClient(String clientId) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<Client>(
                         Client.class, CLIENT_GET_API_PATH, clientId));
     }
@@ -981,7 +978,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     private ClientListResponse getClientList(
             final String developer, final int start, final int end, final boolean rangeGiven) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(new AuthleteApiCall<ClientListResponse>()
+        return executeApiCall(new AuthleteApiCall<ClientListResponse>()
         {
             @Override
             public ClientListResponse call()
@@ -994,7 +991,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
     private ClientListResponse callGetClientList(String developer, int start, int end, boolean rangeGiven)
     {
-        WebTarget target = mSupport.getTarget().path(CLIENT_GET_LIST_API_PATH);
+        WebTarget target = getTarget().path(CLIENT_GET_LIST_API_PATH);
 
         if (developer != null)
         {
@@ -1006,7 +1003,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
             target = target.queryParam("start", start).queryParam("end", end);
         }
 
-        return mSupport.wrapWithDpop(target
+        return wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), CLIENT_GET_LIST_API_PATH, "GET")
                 .header(AUTHORIZATION, mServiceAuth)
                 .get(ClientListResponse.class);
@@ -1019,23 +1016,11 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Client updateClient(Client client) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<Client>(
                         Client.class, client, CLIENT_UPDATE_API_PATH, client.getClientId()));
     }
 
-
-
-    public ClientBuilder getJaxRsClientBuilder()
-    {
-        return mSupport.getJaxRsClientBuilder();
-    }
-
-
-    public void setJaxRsClientBuilder(ClientBuilder jaxRsClientBuilder)
-    {
-        mSupport.setJaxRsClientBuilder(jaxRsClientBuilder);
-    }
 
 
     /**
@@ -1045,7 +1030,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     public String[] getRequestableScopes(long clientId) throws AuthleteApiException
     {
         // Call the API.
-        RequestableScopes response = mSupport.executeApiCall(
+        RequestableScopes response = executeApiCall(
                 new ServiceGetApiCaller<RequestableScopes>(
                         RequestableScopes.class, REQUESTABLE_SCOPES_GET_API_PATH, clientId));
 
@@ -1068,7 +1053,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
         RequestableScopes request = new RequestableScopes().setRequestableScopes(scopes);
 
         // Call the API.
-        RequestableScopes response = mSupport.executeApiCall(
+        RequestableScopes response = executeApiCall(
                 new ServicePostApiCaller<RequestableScopes>(
                         RequestableScopes.class, request, REQUESTABLE_SCOPES_UPDATE_API_PATH, clientId));
 
@@ -1090,7 +1075,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public void deleteRequestableScopes(long clientId) throws AuthleteApiException
     {
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServiceDeleteApiCaller(
                         REQUESTABLE_SCOPES_DELETE_API_PATH, clientId));
     }
@@ -1103,7 +1088,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
         GrantedScopesRequest request = new GrantedScopesRequest(subject);
 
         // Call the API.
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<GrantedScopesGetResponse>(
                         GrantedScopesGetResponse.class, request, GRANTED_SCOPES_GET_API_PATH, clientId));
     }
@@ -1115,7 +1100,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
         // Prepare a request body.
         GrantedScopesRequest request = new GrantedScopesRequest(subject);
 
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServicePostApiCaller<ApiResponse>(
                         ApiResponse.class, request, GRANTED_SCOPES_DELETE_API_PATH, clientId));
     }
@@ -1153,7 +1138,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
         // Prepare a request body.
         ClientAuthorizationDeleteRequest request = new ClientAuthorizationDeleteRequest(subject);
 
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServicePostApiCaller<ApiResponse>(
                         ApiResponse.class, request, CLIENT_AUTHORIZATION_DELETE_API_PATH, clientId));
     }
@@ -1162,7 +1147,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public AuthorizedClientListResponse getClientAuthorizationList(ClientAuthorizationGetListRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<AuthorizedClientListResponse>(
                         AuthorizedClientListResponse.class, request, CLIENT_AUTHORIZATION_GET_LIST_API_PATH));
     }
@@ -1171,7 +1156,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public void updateClientAuthorization(long clientId, ClientAuthorizationUpdateRequest request) throws AuthleteApiException
     {
-        mSupport.executeApiCall(
+        executeApiCall(
                 new ServicePostApiCaller<ApiResponse>(
                         ApiResponse.class, request, CLIENT_AUTHORIZATION_UPDATE_API_PATH, clientId));
     }
@@ -1187,7 +1172,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public ClientSecretRefreshResponse refreshClientSecret(String clientIdentifier) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<ClientSecretRefreshResponse>(
                         ClientSecretRefreshResponse.class,
                         CLIENT_SECRET_REFRESH_API_PATH, clientIdentifier));
@@ -1210,7 +1195,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
         ClientSecretUpdateRequest request
             = new ClientSecretUpdateRequest().setClientSecret(clientSecret);
 
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<ClientSecretUpdateResponse>(
                         ClientSecretUpdateResponse.class, request,
                         CLIENT_SECRET_UPDATE_API_PATH, clientIdentifier));
@@ -1223,7 +1208,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public JoseVerifyResponse verifyJose(JoseVerifyRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<JoseVerifyResponse>(
                         JoseVerifyResponse.class, request, JOSE_VERIFY_API_PATH));
     }
@@ -1235,7 +1220,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public BackchannelAuthenticationResponse backchannelAuthentication(BackchannelAuthenticationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<BackchannelAuthenticationResponse>(
                         BackchannelAuthenticationResponse.class, request, BACKCHANNEL_AUTHENTICATION_API_PATH));
     }
@@ -1247,7 +1232,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public BackchannelAuthenticationIssueResponse backchannelAuthenticationIssue(BackchannelAuthenticationIssueRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<BackchannelAuthenticationIssueResponse>(
                         BackchannelAuthenticationIssueResponse.class, request, BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH));
     }
@@ -1259,7 +1244,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public BackchannelAuthenticationFailResponse backchannelAuthenticationFail(BackchannelAuthenticationFailRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<BackchannelAuthenticationFailResponse>(
                         BackchannelAuthenticationFailResponse.class, request, BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH));
     }
@@ -1271,7 +1256,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public BackchannelAuthenticationCompleteResponse backchannelAuthenticationComplete(BackchannelAuthenticationCompleteRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<BackchannelAuthenticationCompleteResponse>(
                         BackchannelAuthenticationCompleteResponse.class, request, BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH));
     }
@@ -1283,7 +1268,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public DeviceAuthorizationResponse deviceAuthorization(DeviceAuthorizationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<DeviceAuthorizationResponse>(
                         DeviceAuthorizationResponse.class, request, DEVICE_AUTHORIZATION_API_PATH));
     }
@@ -1295,7 +1280,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public DeviceCompleteResponse deviceComplete(DeviceCompleteRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<DeviceCompleteResponse>(
                         DeviceCompleteResponse.class, request, DEVICE_COMPLETE_API_PATH));
     }
@@ -1307,7 +1292,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public DeviceVerificationResponse deviceVerification(DeviceVerificationRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<DeviceVerificationResponse>(
                         DeviceVerificationResponse.class, request, DEVICE_VERIFICATION_API_PATH));
     }
@@ -1316,7 +1301,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public PushedAuthReqResponse pushAuthorizationRequest(PushedAuthReqRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<PushedAuthReqResponse>(
                         PushedAuthReqResponse.class, request, PUSHED_AUTH_REQ_API_PATH));
     }
@@ -1325,7 +1310,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public HskResponse hskCreate(HskCreateRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<HskResponse>(
                         HskResponse.class, request, HSK_CREATE_API_PATH));
     }
@@ -1334,7 +1319,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public HskResponse hskDelete(String handle) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<HskResponse>(
                         HskResponse.class,
                         HSK_DELETE_API_PATH, handle));
@@ -1344,7 +1329,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public HskResponse hskGet(String handle) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<HskResponse>(
                         HskResponse.class,
                         HSK_GET_API_PATH, handle));
@@ -1354,7 +1339,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public HskListResponse hskGetList() throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServiceGetApiCaller<HskListResponse>(
                         HskListResponse.class,
                         HSK_GET_LIST_API_PATH));
@@ -1364,7 +1349,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
     @Override
     public Map<String, String> echo(Map<String, String> parameters) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(new AuthleteApiCall<Map<String, String>>()
+        return executeApiCall(new AuthleteApiCall<Map<String, String>>()
         {
             @Override
             public Map<String, String> call()
@@ -1377,7 +1362,7 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
     private Map<String, String> callEcho(Map<String, String> parameters)
     {
-        WebTarget target = mSupport.getTarget().path(ECHO_API_PATH);
+        WebTarget target = getTarget().path(ECHO_API_PATH);
 
         if (parameters != null)
         {
@@ -1398,15 +1383,15 @@ public class AuthleteApiImplV2 implements AuthleteApi
 
     public GMResponse gm(GMRequest request) throws AuthleteApiException
     {
-        return mSupport.executeApiCall(
+        return executeApiCall(
                 new ServicePostApiCaller<GMResponse>(
                         GMResponse.class, request, GM_API_PATH));
     }
 
 
     @Override
-    public Settings getSettings()
+    public void updateClientLockFlag(String clientIdentifier, boolean clientLocked) throws AuthleteApiException
     {
-        return mSupport.getSettings();
+        throw new NotSupportedException();
     }
 }
