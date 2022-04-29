@@ -18,7 +18,6 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +28,9 @@ import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.assurance.VerifiedClaims;
 import com.authlete.common.assurance.constraint.VerifiedClaimsConstraint;
 import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstraint;
+import com.authlete.common.dto.StringArray;
 import com.authlete.common.dto.UserInfoResponse;
 import com.authlete.common.dto.UserInfoResponse.Action;
-import com.authlete.common.util.Utils;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 
 
@@ -548,6 +547,10 @@ public class UserInfoRequestHandler extends BaseHandler
         Map<String, Object> claimsForTx =
                 collectClaims(subject, response.getRequestedClaimsForTx());
 
+        // Values of verified claims that are used to compute values of
+        // transformed claims under "verified_claims/claims".
+        List<Map<String, Object>> verifiedClaimsForTx = null;
+
         // When the 'oldIdaFormatUsed' flag is on.
         if (params.isOldIdaFormatUsed())
         {
@@ -558,6 +561,11 @@ public class UserInfoRequestHandler extends BaseHandler
         {
             // Collect verified claims.
             claims = collectVerifiedClaims(claims, subject, response.getUserInfoClaims());
+
+            // Collect verified claims that are used to compute transformed claims.
+            verifiedClaimsForTx = collectVerifiedClaimsForTx(
+                    subject, response.getUserInfoClaims(),
+                    response.getRequestedVerifiedClaimsForTx());
         }
 
         try
@@ -565,7 +573,7 @@ public class UserInfoRequestHandler extends BaseHandler
             // Generate a JSON or a JWT containing user information
             // by calling Authlete's /api/auth/userinfo/issue API.
             return getApiCaller().userInfoIssue(
-                    response.getToken(), claims, claimsForTx);
+                    response.getToken(), claims, claimsForTx, verifiedClaimsForTx);
         }
         catch (WebApplicationException e)
         {
@@ -639,6 +647,7 @@ public class UserInfoRequestHandler extends BaseHandler
     }
 
 
+    @SuppressWarnings("deprecation")
     private Map<String, Object> collectVerifiedClaims_Old(
             Map<String, Object> claims, String subject, String userInfoClaims)
     {
@@ -701,42 +710,39 @@ public class UserInfoRequestHandler extends BaseHandler
     private Map<String, Object> collectVerifiedClaims(
             Map<String, Object> claims, String subject, String claimsRequest)
     {
-        // If the "claims" parameter does not contain a "userinfo" property.
-        if (claimsRequest == null || claimsRequest.length() == 0)
-        {
-            // No need to collect verified claims.
-            return claims;
-        }
+        // Collect values of verified claims. "verified_claims" is added to
+        // "claims" when appropriate.
+        //
+        // The given "claims" is returned from the collect() method. When the
+        // given "claims" is null but it is necessary to add "verified_claims",
+        // a new Map instance is created in the collect() method and the
+        // instance is returned.
+        return createVerifiedClaimsCollector()
+                .collect(claims, subject, claimsRequest);
+    }
 
-        // Extract the value of "verified_claims" from the claims request.
-        Object verifiedClaimsRequest =
-                Utils.fromJson(claimsRequest, Map.class).get("verified_claims");
 
-        if (verifiedClaimsRequest == null)
-        {
-            // No need to collect verified claims.
-            return claims;
-        }
+    private List<Map<String, Object>> collectVerifiedClaimsForTx(
+            String subject, String claimsRequest,
+            StringArray[] requestedVerifiedClaimsForTx)
+    {
+        // Collect values of verified claims referenced by transformed claims.
+        return createVerifiedClaimsCollector()
+                .collectForTx(subject, claimsRequest, requestedVerifiedClaimsForTx);
+    }
 
-        // Collect verified claims.
-        Object verifiedClaimsValue =
-                mSpi.getVerifiedClaims(subject, verifiedClaimsRequest);
 
-        // If the SPI implementation did not prepare a value for "verified_claims".
-        if (verifiedClaimsValue == null)
-        {
-            // "verified_claims" won't be included in the userinfo response.
-            return claims;
-        }
-
-        if (claims == null)
-        {
-            claims = new HashMap<>();
-        }
-
-        // Embed "verified_claims" in the userinfo response.
-        claims.put("verified_claims", verifiedClaimsValue);
-
-        return claims;
+    private VerifiedClaimsCollector createVerifiedClaimsCollector()
+    {
+        // Create a collector that collects verified claims by using the SPI
+        // implementation.
+        //
+        // The collector class implements the complex logic of how to call
+        // the method provided by the SPI implementation so that the SPI
+        // implementation can focus on building a new dataset that satisfies
+        // conditions of a "verified_claims" request without needing to know
+        // how to interact with Authlete APIs.
+        return new VerifiedClaimsCollector(
+                (sub, req) -> mSpi.getVerifiedClaims(sub, req));
     }
 }
