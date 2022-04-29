@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.43 (2022 年 04 月 30 日)
+--------------------------
+
 - `AuthleteApiCaller` クラス
     * 引数 `verifiedClaimsForTx` を `authorizationIssue` メソッドに追加。
     * 引数 `verifiedClaimsForTx` を `userInfoIssue` メソッドに追加。

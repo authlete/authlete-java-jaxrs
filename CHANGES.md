@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.43 (2022-04-30)
+-----------------
+
 - `AuthleteApiCaller` class
     * Added an argument `verifiedClaimsForTx` to `authorizationIssue` method.
     * Added an argument `verifiedClaimsForTx` to `userInfoIssue` method.
