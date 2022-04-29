@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Authlete, Inc.
+ * Copyright (C) 2015-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -281,7 +281,8 @@ class AuthleteApiCaller
     private AuthorizationIssueResponse callAuthorizationIssue(
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
-            String sub, Map<String, Object> claimsForTx)
+            String sub, Map<String, Object> claimsForTx,
+            List<Map<String, Object>> verifiedClaimsForTx)
     {
         // Create a request for /api/auth/authorization/issue API.
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
@@ -293,6 +294,7 @@ class AuthleteApiCaller
             .setScopes(scopes)
             .setSub(sub)
             .setClaimsForTx(claimsForTx)
+            .setVerifiedClaimsForTx(verifiedClaimsForTx)
             ;
 
         if (claims != null && claims.size() != 0)
@@ -333,7 +335,8 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
     {
-        return authorizationIssue(ticket, subject, authTime, acr, claims, properties, scopes, sub, null);
+        return authorizationIssue(
+                ticket, subject, authTime, acr, claims, properties, scopes, sub, null, null);
     }
 
 
@@ -344,12 +347,13 @@ class AuthleteApiCaller
     public Response authorizationIssue(
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
-            String sub, Map<String, Object> claimsForTx)
+            String sub, Map<String, Object> claimsForTx,
+            List<Map<String, Object>> verifiedClaimsForTx)
     {
         // Call Authlete's /api/auth/authorization/issue API.
         AuthorizationIssueResponse response =
             callAuthorizationIssue(ticket, subject, authTime, acr, claims,
-                    properties, scopes, sub, claimsForTx);
+                    properties, scopes, sub, claimsForTx, verifiedClaimsForTx);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -725,7 +729,8 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/auth/userinfo/issue} API.
      */
     private UserInfoIssueResponse callUserInfoIssue(String accessToken,
-            Map<String, Object> claims, Map<String, Object> claimsForTx)
+            Map<String, Object> claims, Map<String, Object> claimsForTx,
+            List<Map<String, Object>> verifiedClaimsForTx)
     {
         // Create a request for /api/auth/userinfo/issue API.
         UserInfoIssueRequest request = new UserInfoIssueRequest()
@@ -739,6 +744,11 @@ class AuthleteApiCaller
         if (claimsForTx != null && claimsForTx.size() != 0)
         {
             request.setClaimsForTx(claimsForTx);
+        }
+
+        if (verifiedClaimsForTx != null && verifiedClaimsForTx.size() != 0)
+        {
+            request.setVerifiedClaimsForTx(verifiedClaimsForTx);
         }
 
         try
@@ -758,11 +768,12 @@ class AuthleteApiCaller
      * Issue a JSON or a JWT containing user information.
      */
     public Response userInfoIssue(String accessToken,
-            Map<String, Object> claims, Map<String, Object> claimsForTx)
+            Map<String, Object> claims, Map<String, Object> claimsForTx,
+            List<Map<String, Object>> verifiedClaimsForTx)
     {
         // Call Authlete's /api/auth/userinfo/issue API.
-        UserInfoIssueResponse response =
-                callUserInfoIssue(accessToken, claims, claimsForTx);
+        UserInfoIssueResponse response = callUserInfoIssue(
+                accessToken, claims, claimsForTx, verifiedClaimsForTx);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

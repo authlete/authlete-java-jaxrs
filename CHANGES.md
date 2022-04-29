@@ -1,6 +1,31 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Added an argument `verifiedClaimsForTx` to `authorizationIssue` method.
+    * Added an argument `verifiedClaimsForTx` to `userInfoIssue` method.
+
+- `AuthleteApiImpl` class
+    * Implemented `updateClientLockFlag(String, boolean)` method.
+
+- `AuthorizationDecisionHandler` class
+    * Updated to support transformed claims in `verified_claims/claims`.
+
+- `AuthorizationDecisionHandler.Params` class
+    * Added `getRequestedVerifiedClaimsForTx()` method.
+    * Added `setRequestedVerifiedClaimsForTx(StringArray[])` method.
+
+- `UserInfoRequestHandler` class
+    * Updated to support transformed claims in `verified_claims/claims`.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.9 to 3.18.
+    * Updated the version of `com.nimbusds:nimbus-jose-jwt` from 8.14 to 9.22.
+
+- New types
+    * `VerifiedClaimsCollector` class
+
+
 2.42 (2022-03-23)
 -----------------
 

@@ -19,7 +19,6 @@ package com.authlete.jaxrs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,7 @@ import com.authlete.common.assurance.constraint.VerifiedClaimsContainerConstrain
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.Property;
-import com.authlete.common.util.Utils;
+import com.authlete.common.dto.StringArray;
 import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 
 
@@ -60,7 +59,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
      */
     public static class Params implements Serializable
     {
-        private static final long serialVersionUID = 2L;
+        private static final long serialVersionUID = 3L;
 
 
         private String ticket;
@@ -68,6 +67,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
         private String[] claimLocales;
         private String idTokenClaims;
         private String[] requestedClaimsForTx;
+        private StringArray[] requestedVerifiedClaimsForTx;
         private boolean oldIdaFormatUsed;
 
 
@@ -242,6 +242,71 @@ public class AuthorizationDecisionHandler extends BaseHandler
 
 
         /**
+         * Get the verified claims that are indirectly requested by transformed
+         * claims.
+         *
+         * <p>
+         * See the JavaDoc of the
+         * <a href="https://authlete.github.io/authlete-java-common/com/authlete/common/dto/AuthorizationResponse.html#getRequestedVerifiedClaimsForTx--"
+         * >getRequestedVerifiedClaimsForTx()</a> method of
+         * <a href="https://authlete.github.io/authlete-java-common/com/authlete/common/dto/AuthorizationResponse.html"
+         * >AuthorizationResponse</a> class for details about the format of
+         * the return value.
+         * </p>
+         *
+         * @return
+         *         Verified claims requested by transformed claims.
+         *
+         * @since 2.43
+         *
+         * @see <a href="https://bitbucket.org/openid/ekyc-ida/src/master/openid-advanced-syntax-for-claims.md"
+         *      >OpenID Connect Advanced Syntax for Claims (ASC) 1.0</a>
+         *
+         * @see AuthorizationResponse#getRequestedClaimsForTx()
+         */
+        public StringArray[] getRequestedVerifiedClaimsForTx()
+        {
+            return requestedVerifiedClaimsForTx;
+        }
+
+
+        /**
+         * Set the verified claims that are indirectly requested by transformed
+         * claims. The value given to this method should be the value of the
+         * {@code requestedVerifiedClaimsForTx} parameter in a response from
+         * Authlete's {@code /api/auth/authorization} API.
+         *
+         * <p>
+         * See the JavaDoc of the
+         * <a href="https://authlete.github.io/authlete-java-common/com/authlete/common/dto/AuthorizationResponse.html#getRequestedVerifiedClaimsForTx--"
+         * >getRequestedVerifiedClaimsForTx()</a> method of
+         * <a href="https://authlete.github.io/authlete-java-common/com/authlete/common/dto/AuthorizationResponse.html"
+         * >AuthorizationResponse</a> class for details about the format of
+         * the argument.
+         * </p>
+         *
+         * @param claims
+         *         Verified claims requested by transformed claims.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @since 2.43
+         *
+         * @see <a href="https://bitbucket.org/openid/ekyc-ida/src/master/openid-advanced-syntax-for-claims.md"
+         *      >OpenID Connect Advanced Syntax for Claims (ASC) 1.0</a>
+         *
+         * @see AuthorizationResponse#getRequestedClaimsForTx()
+         */
+        public Params setRequestedVerifiedClaimsForTx(StringArray[] claims)
+        {
+            this.requestedVerifiedClaimsForTx = claims;
+
+            return this;
+        }
+
+
+        /**
          * Get the flag indicating whether {@link AuthorizationDecisionHandler}
          * uses the old format of {@code "verified_claims"} defined in the
          * Implementer's Draft 2 of OpenID Connect for Identity Assurance 1&#x002E;0
@@ -382,6 +447,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
                     .setClaimLocales(response.getClaimsLocales())
                     .setIdTokenClaims(response.getIdTokenClaims())
                     .setRequestedClaimsForTx(response.getRequestedClaimsForTx())
+                    .setRequestedVerifiedClaimsForTx(response.getRequestedVerifiedClaimsForTx())
                     ;
         }
     }
@@ -520,6 +586,10 @@ public class AuthorizationDecisionHandler extends BaseHandler
         Map<String, Object> claimsForTx = collectClaims(
                 subject, params.getRequestedClaimsForTx(), params.getClaimLocales());
 
+        // Values of verified claims that are used to compute values of
+        // transformed claims under "verified_claims/claims".
+        List<Map<String, Object>> verifiedClaimsForTx = null;
+
         // When the 'oldIdaFormatUsed' flag is on.
         if (params.isOldIdaFormatUsed())
         {
@@ -530,6 +600,11 @@ public class AuthorizationDecisionHandler extends BaseHandler
         {
             // Collect verified claims.
             claims = collectVerifiedClaims(claims, subject, params.getIdTokenClaims());
+
+            // Collect verified claims that are used to compute transformed claims.
+            verifiedClaimsForTx = collectVerifiedClaimsForTx(
+                    subject, params.getIdTokenClaims(),
+                    params.getRequestedVerifiedClaimsForTx());
         }
 
         // Extra properties to associate with an access token and/or
@@ -544,7 +619,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
 
         // Authorize the authorization request.
         return authorize(params.getTicket(), subject, authTime, acr, claims,
-                properties, scopes, sub, claimsForTx);
+                properties, scopes, sub, claimsForTx, verifiedClaimsForTx);
     }
 
 
@@ -706,6 +781,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
     }
 
 
+    @SuppressWarnings("deprecation")
     private Map<String, Object> collectVerifiedClaims_Old(
             Map<String, Object> claims, String subject, String idTokenClaims)
     {
@@ -767,43 +843,40 @@ public class AuthorizationDecisionHandler extends BaseHandler
     private Map<String, Object> collectVerifiedClaims(
             Map<String, Object> claims, String subject, String claimsRequest)
     {
-        // If the "claims" parameter does not contain an "id_token" property.
-        if (claimsRequest == null || claimsRequest.length() == 0)
-        {
-            // No need to collect verified claims.
-            return claims;
-        }
+        // Collect values of verified claims. "verified_claims" is added to
+        // "claims" when appropriate.
+        //
+        // The given "claims" is returned from the collect() method. When the
+        // given "claims" is null but it is necessary to add "verified_claims",
+        // a new Map instance is created in the collect() method and the
+        // instance is returned.
+        return createVerifiedClaimsCollector()
+                .collect(claims, subject, claimsRequest);
+    }
 
-        // Extract the value of "verified_claims" from the claims request.
-        Object verifiedClaimsRequest =
-                Utils.fromJson(claimsRequest, Map.class).get("verified_claims");
 
-        if (verifiedClaimsRequest == null)
-        {
-            // No need to collect verified claims.
-            return claims;
-        }
+    private List<Map<String, Object>> collectVerifiedClaimsForTx(
+            String subject, String claimsRequest,
+            StringArray[] requestedVerifiedClaimsForTx)
+    {
+        // Collect values of verified claims referenced by transformed claims.
+        return createVerifiedClaimsCollector()
+                .collectForTx(subject, claimsRequest, requestedVerifiedClaimsForTx);
+    }
 
-        // Collect verified claims.
-        Object verifiedClaimsValue =
-                mSpi.getVerifiedClaims(subject, verifiedClaimsRequest);
 
-        // If the SPI implementation did not prepare a value for "verified_claims".
-        if (verifiedClaimsValue == null)
-        {
-            // "verified_claims" won't be included in the ID token.
-            return claims;
-        }
-
-        if (claims == null)
-        {
-            claims = new HashMap<>();
-        }
-
-        // Embed "verified_claims" in the ID token.
-        claims.put("verified_claims", verifiedClaimsValue);
-
-        return claims;
+    private VerifiedClaimsCollector createVerifiedClaimsCollector()
+    {
+        // Create a collector that collects verified claims by using the SPI
+        // implementation.
+        //
+        // The collector class implements the complex logic of how to call
+        // the method provided by the SPI implementation so that the SPI
+        // implementation can focus on building a new dataset that satisfies
+        // conditions of a "verified_claims" request without needing to know
+        // how to interact with Authlete APIs.
+        return new VerifiedClaimsCollector(
+                (sub, req) -> mSpi.getVerifiedClaims(sub, req));
     }
 
 
@@ -932,13 +1005,19 @@ public class AuthorizationDecisionHandler extends BaseHandler
      *         Pairs of claim key and claim value that will be referenced
      *         when Authlete computes values of transformed claims.
      *
+     * @param verifiedClaimsForTx
+     *         List of claim key-value pairs that will be referenced when
+     *         Authlete computes values of transformed claims under
+     *         {@code verified_claims/claims}.
+     *
      * @return
      *         A response that should be returned to the client application.
      */
     private Response authorize(
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
-            String sub, Map<String, Object> claimsForTx)
+            String sub, Map<String, Object> claimsForTx,
+            List<Map<String, Object>> verifiedClaimsForTx)
     {
         try
         {
@@ -948,7 +1027,7 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // the generated response, though.
             return getApiCaller().authorizationIssue(
                     ticket, subject, authTime, acr, claims, properties,
-                    scopes, sub, claimsForTx);
+                    scopes, sub, claimsForTx, verifiedClaimsForTx);
         }
         catch (WebApplicationException e)
         {

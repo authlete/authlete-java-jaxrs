@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Authlete, Inc.
+ * Copyright (C) 2014-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import com.authlete.common.dto.ClientAuthorizationDeleteRequest;
 import com.authlete.common.dto.ClientAuthorizationGetListRequest;
 import com.authlete.common.dto.ClientAuthorizationUpdateRequest;
 import com.authlete.common.dto.ClientListResponse;
+import com.authlete.common.dto.ClientLockFlagUpdateRequest;
 import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
@@ -190,6 +191,7 @@ public class AuthleteApiImpl implements AuthleteApi
     private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
     private static final String ECHO_API_PATH                                 = "/api/misc/echo";
     private static final String GM_API_PATH                                   = "/api/gm";
+    private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update";
 
 
     private final String mBaseUrl;
@@ -1789,5 +1791,19 @@ public class AuthleteApiImpl implements AuthleteApi
         return executeApiCall(
                 new ServicePostApiCaller<GMResponse>(
                         GMResponse.class, request, GM_API_PATH));
+    }
+
+
+    @Override
+    public void updateClientLockFlag(
+            String clientIdentifier, boolean clientLocked) throws AuthleteApiException
+    {
+        // Prepare a request body.
+        ClientLockFlagUpdateRequest request =
+                new ClientLockFlagUpdateRequest().setClientLocked(clientLocked);
+
+        executeApiCall(
+                new ServicePostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, CLIENT_LOCK_FLAG_UPDATE_API_PATH));
     }
 }

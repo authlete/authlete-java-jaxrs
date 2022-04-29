@@ -1,6 +1,31 @@
 変更点
 ======
 
+- `AuthleteApiCaller` クラス
+    * 引数 `verifiedClaimsForTx` を `authorizationIssue` メソッドに追加。
+    * 引数 `verifiedClaimsForTx` を `userInfoIssue` メソッドに追加。
+
+- `AuthleteApiImpl` クラス
+    * `updateClientLockFlag(String, boolean)` メソッドを実装。
+
+- `AuthorizationDecisionHandler` クラス
+    * `verified_claims/claims` 内の変換クレームをサポート。
+
+- `AuthorizationDecisionHandler.Params` クラス
+    * `getRequestedVerifiedClaimsForTx()` メソッドを追加。
+    * `setRequestedVerifiedClaimsForTx(StringArray[])` メソッドを追加。
+
+- `UserInfoRequestHandler` クラス
+    * `verified_claims/claims` 内の変換クレームをサポート。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.9 から 3.18 へ更新。
+    * `com.nimbusds:nimbus-jose-jwt` のバージョンを 8.14 から 9.22 へ更新。
+
+- 新しい型
+    * `VerifiedClaimsCollector` クラス
+
+
 2.42 (2022 年 03 月 23 日)
 --------------------------
 
