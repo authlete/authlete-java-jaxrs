@@ -49,6 +49,7 @@ import com.authlete.common.dto.ClientAuthorizationDeleteRequest;
 import com.authlete.common.dto.ClientAuthorizationGetListRequest;
 import com.authlete.common.dto.ClientAuthorizationUpdateRequest;
 import com.authlete.common.dto.ClientListResponse;
+import com.authlete.common.dto.ClientLockFlagUpdateRequest;
 import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
@@ -159,6 +160,7 @@ public class AuthleteApiImplV2 extends AuthleteApiJaxrsImpl
     private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
     private static final String ECHO_API_PATH                                 = "/api/misc/echo";
     private static final String GM_API_PATH                                   = "/api/gm";
+    private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update";
 
 
     private final String mServiceOwnerAuth;
@@ -1390,8 +1392,15 @@ public class AuthleteApiImplV2 extends AuthleteApiJaxrsImpl
 
 
     @Override
-    public void updateClientLockFlag(String clientIdentifier, boolean clientLocked) throws AuthleteApiException
+    public void updateClientLockFlag(
+            String clientIdentifier, boolean clientLocked) throws AuthleteApiException
     {
-        throw new NotSupportedException();
+        // Prepare a request body.
+        ClientLockFlagUpdateRequest request =
+                new ClientLockFlagUpdateRequest().setClientLocked(clientLocked);
+
+        executeApiCall(
+                new ServicePostApiCaller<ApiResponse>(
+                        ApiResponse.class, request, CLIENT_LOCK_FLAG_UPDATE_API_PATH));
     }
 }
