@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.44 (2022-06-09)
+-----------------
+
+- `pom.xml`
+    * PR #27 allow deployment to internal and external registries
+
+
 2.43 (2022-04-30)
 -----------------
 

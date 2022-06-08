@@ -1,6 +1,13 @@
 変更点
 ======
 
+2.44 (2022 年 06 月 09 日)
+--------------------------
+
+- `pom.xml`
+    * PR #27 allow deployment to internal and external registries
+
+
 2.43 (2022 年 04 月 30 日)
 --------------------------
 
