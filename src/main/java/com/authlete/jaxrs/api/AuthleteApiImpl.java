@@ -21,7 +21,6 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import com.authlete.common.api.AuthleteApi;
@@ -101,8 +100,10 @@ import com.authlete.common.web.BasicCredentials;
  * The implementation of {@link AuthleteApi} using JAX-RS 2.0 client API.
  *
  * @author Takahiko Kawasaki
+ * 
+ *         For Authlete 2.x
  */
-public class AuthleteApiImplV2 extends AuthleteApiJaxrsImpl
+public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
 {
     private static final String AUTH_AUTHORIZATION_API_PATH                   = "/api/auth/authorization";
     private static final String AUTH_AUTHORIZATION_FAIL_API_PATH              = "/api/auth/authorization/fail";
@@ -177,7 +178,7 @@ public class AuthleteApiImplV2 extends AuthleteApiJaxrsImpl
      * @param configuration
      *         An instance of {@link AuthleteConfiguration}.
      */
-    public AuthleteApiImplV2(AuthleteConfiguration configuration)
+    public AuthleteApiImpl(AuthleteConfiguration configuration)
     {
         super(configuration);
         if (configuration.getApiVersion() != ApiVersion.V2)
