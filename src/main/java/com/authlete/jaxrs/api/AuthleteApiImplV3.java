@@ -25,8 +25,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
+import com.authlete.common.conf.AuthleteApiVersion;
 import com.authlete.common.conf.AuthleteConfiguration;
-import com.authlete.common.conf.AuthleteConfiguration.ApiVersion;
 import com.authlete.common.dto.ApiResponse;
 import com.authlete.common.dto.AuthorizationFailRequest;
 import com.authlete.common.dto.AuthorizationFailResponse;
@@ -180,7 +180,12 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     public AuthleteApiImplV3(AuthleteConfiguration configuration)
     {
         super(configuration);
-        if (configuration.getApiVersion() != ApiVersion.V3)
+
+        // Authlete API version specified by the configuration.
+        AuthleteApiVersion version =
+                AuthleteApiVersion.parse(configuration.getApiVersion());
+
+        if (version != AuthleteApiVersion.V3)
         {
             throw new IllegalArgumentException("Configuration must be set to V3 for this implementation.");
         }
@@ -1283,6 +1288,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     }
 
 
+    @Override
     public GMResponse gm(GMRequest request) throws AuthleteApiException
     {
         return executeApiCall(

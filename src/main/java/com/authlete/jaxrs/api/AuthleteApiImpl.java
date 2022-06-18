@@ -25,8 +25,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
+import com.authlete.common.conf.AuthleteApiVersion;
 import com.authlete.common.conf.AuthleteConfiguration;
-import com.authlete.common.conf.AuthleteConfiguration.ApiVersion;
 import com.authlete.common.dto.ApiResponse;
 import com.authlete.common.dto.AuthorizationFailRequest;
 import com.authlete.common.dto.AuthorizationFailResponse;
@@ -100,7 +100,7 @@ import com.authlete.common.web.BasicCredentials;
  * The implementation of {@link AuthleteApi} using JAX-RS 2.0 client API.
  *
  * @author Takahiko Kawasaki
- * 
+ *
  *         For Authlete 2.x
  */
 public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
@@ -181,7 +181,12 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     public AuthleteApiImpl(AuthleteConfiguration configuration)
     {
         super(configuration);
-        if (configuration.getApiVersion() != ApiVersion.V2)
+
+        // Authlete API version specified by the configuration.
+        AuthleteApiVersion version =
+                AuthleteApiVersion.parse(configuration.getApiVersion());
+
+        if (version != null && version != AuthleteApiVersion.V2)
         {
             throw new IllegalArgumentException("Configuration must be set to V2 for this implementation.");
         }
@@ -1384,6 +1389,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     }
 
 
+    @Override
     public GMResponse gm(GMRequest request) throws AuthleteApiException
     {
         return executeApiCall(
