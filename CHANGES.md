@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+2.45 (2022-06-18)
+-----------------
+
+- `AuthleteApi` implementations
+    * Support Authlete API version 3
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.18 to 3.23.
+    * Updated the version of `com.google.code.gson:gson` from 2.8.6 to 2.8.9.
+
+
 2.44 (2022-06-09)
 -----------------
 
