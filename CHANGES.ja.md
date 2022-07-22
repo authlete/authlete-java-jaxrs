@@ -1,6 +1,13 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `tokenRevoke(TokenRevokeRequest)` メソッドを実装
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.23 から 3.26 へ更新。
+
+
 2.45 (2022 年 06 月 18 日)
 --------------------------
 

@@ -87,6 +87,8 @@ import com.authlete.common.dto.TokenIssueResponse;
 import com.authlete.common.dto.TokenListResponse;
 import com.authlete.common.dto.TokenRequest;
 import com.authlete.common.dto.TokenResponse;
+import com.authlete.common.dto.TokenRevokeRequest;
+import com.authlete.common.dto.TokenRevokeResponse;
 import com.authlete.common.dto.TokenUpdateRequest;
 import com.authlete.common.dto.TokenUpdateResponse;
 import com.authlete.common.dto.UserInfoIssueRequest;
@@ -113,6 +115,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String AUTH_TOKEN_FAIL_API_PATH                      = "/api/%d/auth/token/fail";
     private static final String AUTH_TOKEN_GET_LIST_API_PATH                  = "/api/%d/auth/token/get/list";
     private static final String AUTH_TOKEN_ISSUE_API_PATH                     = "/api/%d/auth/token/issue";
+    private static final String AUTH_TOKEN_REVOKE_API_PATH                    = "/api/%d/auth/token/revoke";
     private static final String AUTH_TOKEN_UPDATE_API_PATH                    = "/api/%d/auth/token/update";
     private static final String AUTH_REVOCATION_API_PATH                      = "/api/%d/auth/revocation";
     private static final String AUTH_USERINFO_API_PATH                        = "/api/%d/auth/userinfo";
@@ -434,6 +437,18 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
         return executeApiCall(
                 new PostApiCaller<TokenIssueResponse>(
                         TokenIssueResponse.class, request, AUTH_TOKEN_ISSUE_API_PATH, mServiceId));
+    }
+
+
+    /**
+     * Call {@code /api/{serviceId}/auth/token/revoke} API.
+     */
+    @Override
+    public TokenRevokeResponse tokenRevoke(TokenRevokeRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<TokenRevokeResponse>(
+                        TokenRevokeResponse.class, request, AUTH_TOKEN_REVOKE_API_PATH, mServiceId));
     }
 
 

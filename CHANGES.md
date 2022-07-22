@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `tokenRevoke(TokenRevokeRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.23 to 3.26.
+
+
 2.45 (2022-06-18)
 -----------------
 
