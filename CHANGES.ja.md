@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.47 (2022 年 07 月 24 日)
+--------------------------
+
 - `TokenRequestHandler` クラス
     * トークンリクエストがトークン交換リクエスト
       ([RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html))

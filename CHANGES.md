@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.47 (2022-07-24)
+-----------------
+
 - `TokenRequestHandler` class
     * Supported `TokenResponse.Action.TOKEN_EXCHANGE` which is returned from
       Authlete's `/auth/token` API when the token request is a token exchange
