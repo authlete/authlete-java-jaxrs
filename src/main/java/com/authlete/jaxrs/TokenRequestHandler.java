@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Authlete, Inc.
+ * Copyright (C) 2015-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ package com.authlete.jaxrs;
 import java.io.Serializable;
 import java.util.Arrays;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.TokenFailRequest.Reason;
@@ -508,6 +510,10 @@ public class TokenRequestHandler extends BaseHandler
                 // 200 OK
                 return ResponseUtil.ok(content);
 
+            case TOKEN_EXCHANGE:
+                // Process the token exchange request (RFC 8693)
+                return handleTokenExchange(response);
+
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/token", action);
@@ -543,5 +549,33 @@ public class TokenRequestHandler extends BaseHandler
             // The credentials are invalid. An access token is not issued.
             throw getApiCaller().tokenFail(ticket, Reason.INVALID_RESOURCE_OWNER_CREDENTIALS);
         }
+    }
+
+
+    private Response handleTokenExchange(TokenResponse tokenResponse)
+    {
+        // Let the SPI implementation handle the token exchange request.
+        Response response = mSpi.tokenExchange(tokenResponse);
+
+        // If the SPI implementation has prepared a token response.
+        if (response != null)
+        {
+            // Use the prepared token response.
+            return response;
+        }
+
+        // Generate a token response that indicates that the grant type
+        // ("urn:ietf:params:oauth:grant-type:token-exchange") is not
+        // supported.
+        //
+        //     400 Bad Request
+        //     Content-Type: application/json
+        //
+        //     {"error":"unsupported_grant_type"}
+        //
+        return Response.status(Status.BAD_REQUEST)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity("{\"error\":\"unsupported_grant_type\"}")
+                .build();
     }
 }

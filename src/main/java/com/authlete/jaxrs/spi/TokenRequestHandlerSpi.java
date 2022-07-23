@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Authlete, Inc.
+ * Copyright (C) 2015-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@
 package com.authlete.jaxrs.spi;
 
 
+import javax.ws.rs.core.Response;
 import com.authlete.common.dto.Property;
+import com.authlete.common.dto.TokenResponse;
+import com.authlete.jaxrs.TokenRequestHandler;
 
 
 /**
@@ -223,4 +226,65 @@ public interface TokenRequestHandlerSpi
      * @since 1.3
      */
     Property[] getProperties();
+
+
+    /**
+     * Handle a token exchange request.
+     *
+     * <p>
+     * This method is called when the grant type of the token request is
+     * {@code "urn:ietf:params:oauth:grant-type:token-exchange"}. The grant
+     * type is defined in <a href="https://www.rfc-editor.org/rfc/rfc8693.html"
+     * >RFC 8693: OAuth 2.0 Token Exchange</a>.
+     * </p>
+     *
+     * <p>
+     * RFC 8693 is very flexible. In other words, the specification does not
+     * define details that are necessary for secure token exchange. Therefore,
+     * implementations have to complement the specification with their own
+     * rules.
+     * </p>
+     *
+     * <p>
+     * The argument passed to this method is an instance of {@link TokenResponse}
+     * that represents a response from Authlete's {@code /auth/token} API. The
+     * instance contains information about the token exchange request such as
+     * the value of the {@code subject_token} request parameter. Implementations
+     * of this {@code tokenExchange} method are supposed to (1) validate the
+     * information based on their own rules, (2) generate a token (e.g. an access
+     * token) using the information, and (3) prepare a token response in the JSON
+     * format that conforms to <a href=
+     * "https://www.rfc-editor.org/rfc/rfc8693.html#section-2.2">Section 2.2</a>
+     * of RFC 8693.
+     * </p>
+     *
+     * <p>
+     * Authlete's {@code /auth/token} API performs validation of token exchange
+     * requests to some extent. Therefore, authorization server implementations
+     * don't have to repeat the same validation steps. See the <a href=
+     * "https://authlete.github.io/authlete-java-common/">JavaDoc</a> of the
+     * {@link TokenResponse} class for details about the validation steps.
+     * </p>
+     *
+     * <p>
+     * NOTE: Token Exchange is supported by Authlete 2.3 and newer versions. If
+     * the Authlete server of your system is older than version 2.3, the grant
+     * type ({@code "urn:ietf:params:oauth:grant-type:token-exchange"}) is not
+     * supported and so this method is never called.
+     * </p>
+     *
+     * @param tokenResponse
+     *         A response from Authlete's {@code /auth/token} API.
+     *
+     * @return
+     *         A response from the token endpoint. It must conform to <a href=
+     *         "https://www.rfc-editor.org/rfc/rfc8693.html#section-2.2">Section
+     *         2.2</a> of RFC 8693. If this method returns {@code null},
+     *         {@link TokenRequestHandler} will generate {@code 400 Bad Request}
+     *         with <code>{"error":"unsupported_grant_type"}</code>.
+     *
+     * @since 2.47
+     * @since Authlete 2.3
+     */
+    Response tokenExchange(TokenResponse tokenResponse);
 }

@@ -1,6 +1,20 @@
 変更点
 ======
 
+- `TokenRequestHandler` クラス
+    * トークンリクエストがトークン交換リクエスト
+      ([RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html))
+      である場合に Authlete の `/auth/token` API から返却される
+      `TokenResponse.Action.TOKEN_EXCHANGE` をサポート。
+
+- `TokenRequestHandlerSpi` インターフェース
+    * [RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html)
+      をサポートするため `tokenExchange(TokenResponse)` メソッドを追加。
+
+- `TokenRequestHandlerSpiAdapter` クラス
+    * `tokenExchange(TokenResponse)` メソッドを実装。
+
+
 2.46 (2022 年 07 月 23 日)
 --------------------------
 
