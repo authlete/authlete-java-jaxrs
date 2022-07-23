@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package com.authlete.jaxrs.spi;
 
 
+import javax.ws.rs.core.Response;
 import com.authlete.common.dto.Property;
+import com.authlete.common.dto.TokenResponse;
 
 
 /**
@@ -42,6 +44,13 @@ public class TokenRequestHandlerSpiAdapter implements TokenRequestHandlerSpi
 
     @Override
     public Property[] getProperties()
+    {
+        return null;
+    }
+
+
+    @Override
+    public Response tokenExchange(TokenResponse tokenResponse)
     {
         return null;
     }

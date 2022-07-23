@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+- `TokenRequestHandler` class
+    * Supported `TokenResponse.Action.TOKEN_EXCHANGE` which is returned from
+      Authlete's `/auth/token` API when the token request is a token exchange
+      request ([RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html)).
+
+- `TokenRequestHandlerSpi` interface
+    * Added `tokenExchange(TokenResponse)` method to support
+      [RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+
+- `TokenRequestHandlerSpiAdapter` class
+    * Implemented `tokenExchange(TokenResponse)` method.
+
+
 2.46 (2022-07-23)
 -----------------
 
