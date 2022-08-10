@@ -54,4 +54,11 @@ public class TokenRequestHandlerSpiAdapter implements TokenRequestHandlerSpi
     {
         return null;
     }
+
+
+    @Override
+    public Response jwtBearer(TokenResponse tokenResponse)
+    {
+        return null;
+    }
 }

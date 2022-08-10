@@ -1,6 +1,24 @@
 CHANGES
 =======
 
+- `TokenRequestHandler` class
+    * Supported `TokenResponse.Action.JWT_BEARER` which is returned from
+      Authlete's `/auth/token` API when the token request uses the grant
+      type `urn:ietf:params:oauth:grant-type:jwt-bearer` which is defined
+      in [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523.html).
+
+- `TokenRequestHandlerSpi` interface
+    * Added `jwtBearer(TokenResponse)` method to support the grant type
+      `urn:ietf:params:oauth:grant-type:jwt-bearer` which is defined in
+      [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523.html).
+
+- `TokenRequestHandlerSpiAdapter` class
+    * Implemented `jwtBearer(TokenResponse)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.26 to 3.30.
+
+
 2.47 (2022-07-24)
 -----------------
 
