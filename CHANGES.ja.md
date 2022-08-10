@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.48 (2022 年 08 月 10 日)
+--------------------------
+
 - `TokenRequestHandler` クラス
     * トークンリクエストが [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523.html)
       で定義されている認可種別 `urn:ietf:params:oauth:grant-type:jwt-bearer`

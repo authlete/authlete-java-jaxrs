@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.48 (2022-08-10)
+-----------------
+
 - `TokenRequestHandler` class
     * Supported `TokenResponse.Action.JWT_BEARER` which is returned from
       Authlete's `/auth/token` API when the token request uses the grant
