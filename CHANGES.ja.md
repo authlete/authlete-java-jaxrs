@@ -1,6 +1,24 @@
 変更点
 ======
 
+- `TokenRequestHandler` クラス
+    * トークンリクエストが [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523.html)
+      で定義されている認可種別 `urn:ietf:params:oauth:grant-type:jwt-bearer`
+      を利用している場合に Authlete の `/auth/token` API から返却される
+      `TokenResponse.Action.JWT_BEARER` をサポート。
+
+- `TokenRequestHandlerSpi` インターフェース
+    * [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523.html) で定義されている認可種別
+      `urn:ietf:params:oauth:grant-type:jwt-bearer` をサポートするため
+      `jwtBearer(TokenResponse)` メソッドを追加。
+
+- `TokenRequestHandlerSpiAdapter` クラス
+    * `jwtBearer(TokenResponse)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.26 から 3.30 へ更新。
+
+
 2.47 (2022 年 07 月 24 日)
 --------------------------
 

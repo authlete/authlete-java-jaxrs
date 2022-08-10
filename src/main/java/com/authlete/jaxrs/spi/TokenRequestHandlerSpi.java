@@ -285,6 +285,83 @@ public interface TokenRequestHandlerSpi
      *
      * @since 2.47
      * @since Authlete 2.3
+     *
+     * @see <a href="https://www.rfc-editor.org/rfc/rfc8693.html"
+     *      >RFC 8693 OAuth 2.0 Token Exchange</a>
      */
     Response tokenExchange(TokenResponse tokenResponse);
+
+
+    /**
+     * Handle a token request that uses the grant type
+     * {@code "urn:ietf:params:oauth:grant-type:jwt-bearer"} (<a href=
+     * "https://www.rfc-editor.org/rfc/rfc7523.html">RFC 7523</a>).
+     *
+     * <p>
+     * This method is called when the grant type of the token request is
+     * {@code "urn:ietf:params:oauth:grant-type:jwt-bearer"}. The grant type
+     * is defined in <a href="https://www.rfc-editor.org/rfc/rfc7523.html"
+     * >RFC 7523: JSON Web Token (JWT) Profile for OAuth 2.0 Client
+     * Authentication and Authorization Grants</a>.
+     * </p>
+     *
+     * <p>
+     * The grant type utilizes a JWT as an authorization grant, but the
+     * specification does not define details about how the JWT is generated
+     * by whom. As a result, it is not defined in the specification how to
+     * obtain the key whereby to verify the signature of the JWT. Therefore,
+     * each deployment has to define their own rules which are necessary to
+     * determine the key for signature verification.
+     * </p>
+     *
+     * <p>
+     * The argument passed to this method is an instance of {@link TokenResponse}
+     * that represents a response from Authlete's {@code /auth/token} API. The
+     * instance contains information about the token request such as the value
+     * of the {@code assertion} request parameter. Implementations of this
+     * {@code jwtBearer} method are supposed to (1) validate the authorization
+     * grant (= the JWT specified by the {@code assertion} request parameter),
+     * (2) generate an access token, and (3) prepare a token response in the
+     * JSON format that conforms to <a href=
+     * "https://www.rfc-editor.org/rfc/rfc6749.html">RFC 6749</a>.
+     * </p>
+     *
+     * <p>
+     * Authlete's {@code /auth/token} API performs validation of token requests
+     * to some extent. Therefore, authorization server implementations don't
+     * have to repeat the same validation steps. Basically, what implementations
+     * have to do is to verify the signature of the JWT. See the <a href=
+     * "https://authlete.github.io/authlete-java-common/">JavaDoc</a> of the
+     * {@link TokenResponse} class for details about the validation steps.
+     * </p>
+     *
+     * <p>
+     * NOTE: JWT Authorization Grant is supported by Authlete 2.3 and newer
+     * versions. If the Authlete server of your system is older than version
+     * 2.3, the grant type ({@code "urn:ietf:params:oauth:grant-type:jwt-bearer"})
+     * is not supported and so this method is never called.
+     * </p>
+     *
+     * @param tokenResponse
+     *         A response from Authlete's {@code /auth/token} API.
+     *
+     * @return
+     *         A response from the token endpoint. It must conform to <a href=
+     *         "https://www.rfc-editor.org/rfc/rfc6749.html">RFC 6749</a>. If
+     *         this method returns {@code null}, {@link TokenRequestHandler}
+     *         will generate {@code 400 Bad Request} with
+     *         <code>{"error":"unsupported_grant_type"}</code>.
+     *
+     * @since 2.48
+     * @since Authlete 2.3
+     *
+     * @see <a href="https://www.rfc-editor.org/rfc/rfc7521.html">RFC 7521
+     *      Assertion Framework for OAuth 2.0 Client Authentication and
+     *      Authorization Grants</a>
+     *
+     * @see <a href="https://www.rfc-editor.org/rfc/rfc7523.html">RFC 7523
+     *      JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication
+     *      and Authorization Grants</a>
+     */
+    Response jwtBearer(TokenResponse tokenResponse);
 }

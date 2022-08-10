@@ -20,10 +20,8 @@ package com.authlete.jaxrs;
 import java.io.Serializable;
 import java.util.Arrays;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.TokenFailRequest.Reason;
@@ -514,6 +512,11 @@ public class TokenRequestHandler extends BaseHandler
                 // Process the token exchange request (RFC 8693)
                 return handleTokenExchange(response);
 
+            case JWT_BEARER:
+                // Process the token request which uses the grant type
+                // urn:ietf:params:oauth:grant-type:jwt-bearer (RFC 7523).
+                return handleJwtBearer(response);
+
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/token", action);
@@ -557,7 +560,27 @@ public class TokenRequestHandler extends BaseHandler
         // Let the SPI implementation handle the token exchange request.
         Response response = mSpi.tokenExchange(tokenResponse);
 
-        // If the SPI implementation has prepared a token response.
+        // If the SPI implementation has prepared a token response, it is used.
+        // Otherwise, a token response with "error":"unsupported_grant_type" is
+        // returned.
+        return useOrUnsupported(response);
+    }
+
+
+    private Response handleJwtBearer(TokenResponse tokenResponse)
+    {
+        // Let the SPI implementation handle the token request.
+        Response response = mSpi.jwtBearer(tokenResponse);
+
+        // If the SPI implementation has prepared a token response, it is used.
+        // Otherwise, a token response with "error":"unsupported_grant_type" is
+        // returned.
+        return useOrUnsupported(response);
+    }
+
+
+    private Response useOrUnsupported(Response response)
+    {
         if (response != null)
         {
             // Use the prepared token response.
@@ -565,17 +588,13 @@ public class TokenRequestHandler extends BaseHandler
         }
 
         // Generate a token response that indicates that the grant type
-        // ("urn:ietf:params:oauth:grant-type:token-exchange") is not
-        // supported.
+        // is not supported.
         //
         //     400 Bad Request
         //     Content-Type: application/json
         //
         //     {"error":"unsupported_grant_type"}
         //
-        return Response.status(Status.BAD_REQUEST)
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity("{\"error\":\"unsupported_grant_type\"}")
-                .build();
+        return ResponseUtil.badRequest("{\"error\":\"unsupported_grant_type\"}");
     }
 }
