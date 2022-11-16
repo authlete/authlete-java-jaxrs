@@ -1,6 +1,22 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `federationConfiguration(FederationConfigurationRequest)` メソッドを実装。
+    * `gm(GMRequest)` メソッドの不具合を修正。
+    * `updateClientLockFlag(String, boolean)` メソッドの不具合を修正。
+
+- `ResponseUtil` クラス
+    * `entityStatement(String)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.30 から 3.41 へ更新。
+
+- 新しい型
+    * `BaseFederationConfigurationEndpoint` クラス
+    * `FederationConfigurationRequestHandler` クラス
+
+
 2.48 (2022 年 08 月 10 日)
 --------------------------
 
