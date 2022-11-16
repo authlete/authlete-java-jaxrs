@@ -1,6 +1,22 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `federationConfiguration(FederationConfigurationRequest)` method.
+    * Fixed a bug of the `gm(GMRequest)` method.
+    * Fixed a bug of the `updateClientLockFlag(String, boolean)` method.
+
+- `ResponseUtil` class
+    * Added `entityStatement(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.30 to 3.41.
+
+- New types
+    * `BaseFederationConfigurationEndpoint` class
+    * `FederationConfigurationRequestHandler` class
+
+
 2.48 (2022-08-10)
 -----------------
 

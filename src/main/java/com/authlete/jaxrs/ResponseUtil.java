@@ -58,6 +58,13 @@ class ResponseUtil
 
 
     /**
+     * {@code "application/entity-statement+jwt"}
+     */
+    private static final MediaType MEDIA_TYPE_ENTITY_STATEMENT =
+            new MediaType("application", "entity-statement+jwt");
+
+
+    /**
      * {@code "Cache-Control: no-store"}
      */
     private static final CacheControl CACHE_CONTROL;
@@ -111,6 +118,17 @@ class ResponseUtil
     public static Response javaScript(String entity)
     {
         return builder(Status.OK, entity, MEDIA_TYPE_JAVASCRIPT).build();
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/entity-statement+jwt"}.
+     */
+    public static Response entityStatement(String entity)
+    {
+        return builder(Status.OK, entity, MEDIA_TYPE_ENTITY_STATEMENT).build();
     }
 
 

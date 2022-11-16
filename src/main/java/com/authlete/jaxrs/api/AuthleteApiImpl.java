@@ -60,6 +60,8 @@ import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteResponse;
 import com.authlete.common.dto.DeviceVerificationRequest;
 import com.authlete.common.dto.DeviceVerificationResponse;
+import com.authlete.common.dto.FederationConfigurationRequest;
+import com.authlete.common.dto.FederationConfigurationResponse;
 import com.authlete.common.dto.GMRequest;
 import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.GrantedScopesGetResponse;
@@ -164,7 +166,8 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     private static final String HSK_GET_LIST_API_PATH                         = "/api/hsk/get/list";
     private static final String ECHO_API_PATH                                 = "/api/misc/echo";
     private static final String GM_API_PATH                                   = "/api/gm";
-    private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update";
+    private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update/%s";
+    private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/federation/configuration";
 
 
     private final String mServiceOwnerAuth;
@@ -1423,6 +1426,18 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
 
         executeApiCall(
                 new ServicePostApiCaller<ApiResponse>(
-                        ApiResponse.class, request, CLIENT_LOCK_FLAG_UPDATE_API_PATH));
+                        ApiResponse.class, request,
+                        CLIENT_LOCK_FLAG_UPDATE_API_PATH, clientIdentifier));
+    }
+
+
+    @Override
+    public FederationConfigurationResponse federationConfiguration(
+            FederationConfigurationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<FederationConfigurationResponse>(
+                        FederationConfigurationResponse.class, request,
+                        FEDERATION_CONFIGURATION_API_PATH));
     }
 }
