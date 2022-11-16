@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.49 (2022-11-16)
+-----------------
+
 - `AuthleteApi` implementations
     * Implemented the `federationConfiguration(FederationConfigurationRequest)` method.
     * Fixed a bug of the `gm(GMRequest)` method.

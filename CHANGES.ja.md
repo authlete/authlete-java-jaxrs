@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.49 (2022 年 11 月 16 日)
+--------------------------
+
 - `AuthleteApi` 実装
     * `federationConfiguration(FederationConfigurationRequest)` メソッドを実装。
     * `gm(GMRequest)` メソッドの不具合を修正。
