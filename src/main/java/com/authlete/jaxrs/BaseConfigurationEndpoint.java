@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.ServiceConfigurationRequest;
 
 
 /**
@@ -98,13 +99,54 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
      */
     public Response handle(AuthleteApi api)
     {
+        ServiceConfigurationRequest request =
+                new ServiceConfigurationRequest().setPretty(true);
+
+        return handle(api, request);
+    }
+
+
+    /**
+     * Handle a request for OpenID Provider configuration.
+     *
+     * <p>
+     * This method internally creates a {@link ConfigurationRequestHandler}
+     * instance and calls its
+     * {@link ConfigurationRequestHandler#handle(ServiceConfigurationRequest)
+     * handle}{@code (}{@link ServiceConfigurationRequest}{@code )} method.
+     * Then, this method uses the value returned from the method as a response
+     * from this method.
+     * </p>
+     *
+     * <p>
+     * When handler's method raises a {@link WebApplicationException}, this
+     * method calls {@link #onError(WebApplicationException) onError()} method
+     * with the exception. The default implementation of {@code onError()} does
+     * nothing. You can override the method as necessary. After calling
+     * {@code onError()} method, this method calls {@code getResponse()} method
+     * of the exception and uses the returned value as a response from this method.
+     * </p>
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param request
+     *         Request parameters for Authlete's {@code /service/configuration} API.
+     *
+     * @return
+     *         A response that should be returned from the discovery endpoint.
+     *
+     * @since 2.50
+     */
+    public Response handle(AuthleteApi api, ServiceConfigurationRequest request)
+    {
         try
         {
             // Create a handler.
             ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle();
+            return handler.handle(request);
         }
         catch (WebApplicationException e)
         {

@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `getServiceConfiguration(ServiceConfigurationRequest)` method.
+
+- `BaseConfigurationEndpoint` class
+    * Added `handle(AuthleteApi, ServiceConfigurationRequest)` method.
+
+- `ConfigurationRequestHandler` class
+    * Added `handle(ServiceConfigurationRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.41 to 3.44.
+
+
 2.49 (2022-11-16)
 -----------------
 

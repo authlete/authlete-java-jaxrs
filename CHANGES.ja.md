@@ -1,6 +1,19 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `getServiceConfiguration(ServiceConfigurationRequest)` メソッドを実装。
+
+- `BaseConfigurationEndpoint` クラス
+    * `handle(AuthleteApi, ServiceConfigurationRequest)` メソッドを追加。
+
+- `ConfigurationRequestHandler` クラス
+    * `handle(ServiceConfigurationRequest)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.41 から 3.44 へ更新。
+
+
 2.49 (2022 年 11 月 16 日)
 --------------------------
 

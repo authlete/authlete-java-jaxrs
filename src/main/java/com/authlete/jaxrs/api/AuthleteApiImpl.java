@@ -77,6 +77,7 @@ import com.authlete.common.dto.PushedAuthReqResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
 import com.authlete.common.dto.Service;
+import com.authlete.common.dto.ServiceConfigurationRequest;
 import com.authlete.common.dto.ServiceListResponse;
 import com.authlete.common.dto.StandardIntrospectionRequest;
 import com.authlete.common.dto.StandardIntrospectionResponse;
@@ -863,6 +864,18 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServiceGetApiCaller<String>(
                         String.class, SERVICE_CONFIGURATION_API_PATH)
                 .addParam("pretty", pretty));
+    }
+
+
+    /**
+     * Call {@code /api/service/configuration} API
+     */
+    @Override
+    public String getServiceConfiguration(ServiceConfigurationRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new ServicePostApiCaller<String>(
+                        String.class, request, SERVICE_CONFIGURATION_API_PATH));
     }
 
 

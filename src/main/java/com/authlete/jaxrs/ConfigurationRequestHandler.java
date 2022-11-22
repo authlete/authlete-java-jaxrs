@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Authlete, Inc.
+ * Copyright (C) 2016-2022 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.ServiceConfigurationRequest;
 
 
 /**
@@ -118,12 +119,34 @@ public class ConfigurationRequestHandler extends BaseHandler
      */
     public Response handle(boolean pretty) throws WebApplicationException
     {
+        return handle(new ServiceConfigurationRequest().setPretty(pretty));
+    }
+
+
+    /**
+     * Handle a request to an OpenID Provider configuration endpoint. This
+     * method internally calls Authlete's {@code /api/service/configuration}
+     * API.
+     *
+     * @param request
+     *         Request parameters to the Authlete API.
+     *
+     * @return
+     *         A response that should be returned from the discovery endpoint.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.50
+     */
+    public Response handle(ServiceConfigurationRequest request) throws WebApplicationException
+    {
         try
         {
             // Call Authlete's /api/service/configuration API.
             // The API returns a JSON that complies with
             // OpenID Connect Discovery 1.0.
-            String json = getApiCaller().callServiceConfiguration(pretty);
+            String json = getApiCaller().callServiceConfiguration(request);
 
             // Response as "application/json;charset=UTF-8" with 200 OK.
             return ResponseUtil.ok(json);

@@ -62,6 +62,7 @@ import com.authlete.common.dto.PushedAuthReqRequest;
 import com.authlete.common.dto.PushedAuthReqResponse;
 import com.authlete.common.dto.RevocationRequest;
 import com.authlete.common.dto.RevocationResponse;
+import com.authlete.common.dto.ServiceConfigurationRequest;
 import com.authlete.common.dto.StandardIntrospectionRequest;
 import com.authlete.common.dto.StandardIntrospectionResponse;
 import com.authlete.common.dto.TokenFailRequest;
@@ -590,6 +591,24 @@ class AuthleteApiCaller
         {
             // Call Authlete's /api/service/configuration API.
             return mApi.getServiceConfiguration(pretty);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/service/configuration", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/service/configuration} API.
+     */
+    public String callServiceConfiguration(ServiceConfigurationRequest request)
+    {
+        try
+        {
+            // Call Authlete's /api/service/configuration API.
+            return mApi.getServiceConfiguration(request);
         }
         catch (AuthleteApiException e)
         {
