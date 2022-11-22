@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.51 (2022-11-23)
+-----------------
+
 - `BaseConfigurationEndpoint` class
     * Reverted the implementation of the `handle(AuthleteApi)` method back to
       that of the version 2.49.
