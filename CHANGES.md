@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.50 (2022-11-23)
+-----------------
+
 - `AuthleteApi` implementations
     * Implemented the `getServiceConfiguration(ServiceConfigurationRequest)` method.
 
