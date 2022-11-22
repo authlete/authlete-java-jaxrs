@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+- `BaseConfigurationEndpoint` class
+    * Reverted the implementation of the `handle(AuthleteApi)` method back to
+      that of the version 2.49.
+
+- `ConfigurationRequestHandler` class
+    * Reverted the implementation of the `handle(boolean)` method back to
+      that of the version 2.49.
+
+
 2.50 (2022-11-23)
 -----------------
 

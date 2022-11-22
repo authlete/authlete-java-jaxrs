@@ -119,7 +119,26 @@ public class ConfigurationRequestHandler extends BaseHandler
      */
     public Response handle(boolean pretty) throws WebApplicationException
     {
-        return handle(new ServiceConfigurationRequest().setPretty(pretty));
+        try
+        {
+            // Call Authlete's /api/service/configuration API.
+            // The API returns a JSON that complies with
+            // OpenID Connect Discovery 1.0.
+            String json = getApiCaller().callServiceConfiguration(pretty);
+
+            // Response as "application/json;charset=UTF-8" with 200 OK.
+            return ResponseUtil.ok(json);
+        }
+        catch (WebApplicationException e)
+        {
+            // The API call raised an exception.
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            // Unexpected error.
+            throw unexpected("Unexpected error in ConfigurationRequestHandler", t);
+        }
     }
 
 

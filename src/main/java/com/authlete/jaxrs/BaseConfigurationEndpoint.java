@@ -99,10 +99,22 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
      */
     public Response handle(AuthleteApi api)
     {
-        ServiceConfigurationRequest request =
-                new ServiceConfigurationRequest().setPretty(true);
+        try
+        {
+            // Create a handler.
+            ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
 
-        return handle(api, request);
+            // Delegate the task to the handler.
+            return handler.handle();
+        }
+        catch (WebApplicationException e)
+        {
+            // An error occurred in the handler.
+            onError(e);
+
+            // Convert the error to a Response.
+            return e.getResponse();
+        }
     }
 
 

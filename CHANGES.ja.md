@@ -1,6 +1,13 @@
 変更点
 ======
 
+- `BaseConfigurationEndpoint` クラス
+    * `handle(AuthleteApi)` メソッドの実装をバージョン 2.49 のものへ戻す。
+
+- `ConfigurationRequestHandler` クラス
+    * `handle(boolean)` メソッドの実装をバージョン 2.49 のものへ戻す。
+
+
 2.50 (2022 年 11 月 23 日)
 --------------------------
 
