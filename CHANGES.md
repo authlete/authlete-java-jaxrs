@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `federationRegistration(FederationRegistrationRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.44 to 3.45.
+
+
 2.51 (2022-11-23)
 -----------------
 

@@ -1,6 +1,13 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `federationRegistration(FederationRegistrationRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.44 から 3.45 へ更新。
+
+
 2.51 (2022 年 11 月 23 日)
 --------------------------
 
