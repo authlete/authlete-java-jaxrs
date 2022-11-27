@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.52 (2022-11-28)
+-----------------
+
 - `AuthleteApi` implementations
     * Implemented the `federationRegistration(FederationRegistrationRequest)` method.
 

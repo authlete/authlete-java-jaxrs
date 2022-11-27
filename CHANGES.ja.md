@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.52 (2022 年 11 月 28 日)
+--------------------------
+
 - `AuthleteApi` 実装
     * `federationRegistration(FederationRegistrationRequest)` メソッドを実装。
 
