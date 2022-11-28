@@ -1,6 +1,20 @@
 CHANGES
 =======
 
+2.53 (2022-11-29)
+-----------------
+
+- `ResponseUtil` class
+    * Added `jose(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.45 to 3.46.
+
+- New types
+    * `BaseFederationRegistrationEndpoint` class
+    * `FederationRegistrationRequestHandler` class
+
+
 2.52 (2022-11-28)
 -----------------
 

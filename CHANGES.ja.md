@@ -1,6 +1,20 @@
 変更点
 ======
 
+2.53 (2022 年 11 月 29 日)
+--------------------------
+
+- `ResponseUtil` クラス
+    * `jose(String)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.45 から 3.46 へ更新。
+
+- 新しい型
+    * `BaseFederationRegistrationEndpoint` クラス
+    * `FederationRegistrationRequestHandler` クラス
+
+
 2.52 (2022 年 11 月 28 日)
 --------------------------
 
