@@ -53,6 +53,8 @@ import com.authlete.common.dto.DeviceVerificationRequest;
 import com.authlete.common.dto.DeviceVerificationResponse;
 import com.authlete.common.dto.FederationConfigurationRequest;
 import com.authlete.common.dto.FederationConfigurationResponse;
+import com.authlete.common.dto.FederationRegistrationRequest;
+import com.authlete.common.dto.FederationRegistrationResponse;
 import com.authlete.common.dto.GMRequest;
 import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.IntrospectionRequest;
@@ -1378,6 +1380,24 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/federation/configuration", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /api/federation/registration} API.
+     */
+    public FederationRegistrationResponse
+    callFederationRegistration(FederationRegistrationRequest request)
+    {
+        try
+        {
+            return mApi.federationRegistration(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/api/federation/registration", e);
         }
     }
 }

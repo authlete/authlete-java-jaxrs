@@ -65,6 +65,13 @@ class ResponseUtil
 
 
     /**
+     * {@code "application/jose"}
+     */
+    private static final MediaType MEDIA_TYPE_JOSE =
+            new MediaType("application", "jose");
+
+
+    /**
      * {@code "Cache-Control: no-store"}
      */
     private static final CacheControl CACHE_CONTROL;
@@ -129,6 +136,17 @@ class ResponseUtil
     public static Response entityStatement(String entity)
     {
         return builder(Status.OK, entity, MEDIA_TYPE_ENTITY_STATEMENT).build();
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/jose"}.
+     */
+    public static Response jose(String entity)
+    {
+        return builder(Status.OK, entity, MEDIA_TYPE_JOSE).build();
     }
 
 
