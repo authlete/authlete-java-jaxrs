@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.54 (2022-12-11)
+-----------------
+
+- `AuthorizationPageModel` class
+    * Updated to recognize dynamic scopes.
+
+
 2.53 (2022-11-29)
 -----------------
 
