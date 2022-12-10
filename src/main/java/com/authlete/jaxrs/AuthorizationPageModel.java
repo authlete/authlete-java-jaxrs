@@ -33,6 +33,7 @@ import com.authlete.common.dto.AuthzDetailsElement;
 import com.authlete.common.dto.AuthzDetailsElementSerializer;
 import com.authlete.common.dto.AuthzDetailsSerializer;
 import com.authlete.common.dto.Client;
+import com.authlete.common.dto.DynamicScope;
 import com.authlete.common.dto.Pair;
 import com.authlete.common.dto.Scope;
 import com.authlete.common.types.User;
@@ -226,7 +227,7 @@ public class AuthorizationPageModel implements Serializable
         clientUri            = toString(client.getClientUri());
         policyUri            = toString(client.getPolicyUri());
         tosUri               = toString(client.getTosUri());
-        scopes               = info.getScopes();
+        scopes               = computeScopes(info);
         loginId              = computeLoginId(info);
         loginIdReadOnly      = computeLoginIdReadOnly(info);
         authorizationDetails = toString(info.getAuthorizationDetails());
@@ -977,6 +978,44 @@ public class AuthorizationPageModel implements Serializable
     private static String toString(URI uri)
     {
         return (uri == null) ? null : uri.toString();
+    }
+
+
+    /**
+     * Build the list of scopes to display.
+     */
+    private static Scope[] computeScopes(AuthorizationResponse info)
+    {
+        Scope[]        scopes        = info.getScopes();
+        DynamicScope[] dynamicScopes = info.getDynamicScopes();
+
+        // If the authorization request does not contain dynamic scopes.
+        if (dynamicScopes == null)
+        {
+            // No need to convert dynamic scopes to scopes, so the value of
+            // the "scopes" response parameter are used without modification.
+            return scopes;
+        }
+
+        List<Scope> list = new ArrayList<Scope>();
+
+        if (scopes != null)
+        {
+            // Add all the scopes without modification.
+            for (Scope s : scopes)
+            {
+                list.add(s);
+            }
+        }
+
+        // For each dynamic scope.
+        for (DynamicScope ds : dynamicScopes)
+        {
+            // Use the value of the dynamic scope as a scope name.
+            list.add(new Scope().setName(ds.getValue()));
+        }
+
+        return list.toArray(new Scope[list.size()]);
     }
 
 
