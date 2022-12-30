@@ -1,6 +1,12 @@
 変更点
 ======
 
+- `FederationRegistrationRequestHandler` クラス
+    * 成功応答の Content-Type を `application/jose` から `application/entity-statement+jwt` に変更。
+      OpenID Connect Federation 1.0 仕様のドラフト 25 では Content-Type は `application/jose`
+      となっているが、将来のドラフトで修正される。
+
+
 2.54 (2022 年 12 月 11 日)
 --------------------------
 

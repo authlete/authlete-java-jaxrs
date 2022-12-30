@@ -82,8 +82,8 @@ public class FederationRegistrationRequestHandler extends BaseHandler
         switch (action)
         {
             case OK:
-                // 200 OK; application/jose
-                return ResponseUtil.jose(content);
+                // 200 OK; application/entity-statement+jwt
+                return ResponseUtil.entityStatement(content);
 
             case BAD_REQUEST:
                 // 400 Bad Request
