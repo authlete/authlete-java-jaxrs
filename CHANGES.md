@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.55 (2022-12-31)
+-----------------
+
 - `FederationRegistrationRequestHandler` class
     * Changed the Content-Type of successful responses from `application/jose`
       to `application/entity-statement+jwt`. The draft 25 of the OpenID Connect
