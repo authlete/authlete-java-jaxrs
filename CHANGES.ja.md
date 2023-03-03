@@ -1,6 +1,18 @@
 変更点
 ======
 
+- `AuthorizationPageModel` クラス
+    * `getClaimsForIdToken()` メソッドを追加。
+    * `setClaimsForIdToken(String[])` メソッドを追加。
+    * `getClaimsForUserInfo()` メソッドを追加。
+    * `setClaimsForUserInfo(String[])` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.46 から 3.52 へ更新。
+    * `gson` のバージョンを 2.8.9 から 2.10.1 へ更新。
+    * `nimbus-jose-jwt` のバージョンを 9.22 から 9.31 へ更新。
+
+
 2.55 (2022 年 12 月 31 日)
 --------------------------
 

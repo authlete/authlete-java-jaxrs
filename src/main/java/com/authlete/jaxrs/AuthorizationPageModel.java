@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import com.google.gson.GsonBuilder;
  */
 public class AuthorizationPageModel implements Serializable
 {
-    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 5L;
 
 
     /**
@@ -194,6 +194,24 @@ public class AuthorizationPageModel implements Serializable
 
 
     /**
+     * Claims that the client application requests to be embedded in
+     * the ID token.
+     *
+     * @since 2.56
+     */
+    private String[] claimsForIdToken;
+
+
+    /**
+     * Claims that the client application requests to be embedded in
+     * userinfo responses.
+     *
+     * @since 2.56
+     */
+    private String[] claimsForUserInfo;
+
+
+    /**
      * The default constructor with default values.
      */
     public AuthorizationPageModel()
@@ -235,6 +253,10 @@ public class AuthorizationPageModel implements Serializable
 
         // For "OpenID Connect for Identity Assurance 1.0"
         setupIdentityAssurance(info);
+
+        // Requested normal claims.
+        claimsForIdToken  = info.getClaims();
+        claimsForUserInfo = info.getClaimsAtUserInfo();
     }
 
 
@@ -962,6 +984,70 @@ public class AuthorizationPageModel implements Serializable
     public void setOldIdaFormatUsed(boolean used)
     {
         this.oldIdaFormatUsed = used;
+    }
+
+
+    /**
+     * Get the claims that the client application requests to be embedded in
+     * the ID token.
+     *
+     * @return
+     *         The claims that the client application requests to be embedded
+     *         in the ID token.
+     *
+     * @since 2.56
+     */
+    public String[] getClaimsForIdToken()
+    {
+        return claimsForIdToken;
+    }
+
+
+    /**
+     * Set the claims that the client application requests to be embedded in
+     * the ID token.
+     *
+     * @param claims
+     *         The claims that the client application requests to be embedded
+     *         in the ID token.
+     *
+     * @since 2.56
+     */
+    public void setClaimsForIdToken(String[] claims)
+    {
+        this.claimsForIdToken = claims;
+    }
+
+
+    /**
+     * Get the claims that the client application requests to be embedded in
+     * userinfo responses.
+     *
+     * @return
+     *         The claims that the client application requests to be embedded
+     *         in userinfo responses.
+     *
+     * @since 2.56
+     */
+    public String[] getClaimsForUserInfo()
+    {
+        return claimsForUserInfo;
+    }
+
+
+    /**
+     * Set the claims that the client application requests to be embedded in
+     * userinfo responses.
+     *
+     * @param claims
+     *         The claims that the client application requests to be embedded
+     *         in userinfo responses.
+     *
+     * @since 2.56
+     */
+    public void setClaimsForUserInfo(String[] claims)
+    {
+        this.claimsForUserInfo = claims;
     }
 
 

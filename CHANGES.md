@@ -1,6 +1,18 @@
 CHANGES
 =======
 
+- `AuthorizationPageModel` class
+    * Added `getClaimsForIdToken()` method.
+    * Added `setClaimsForIdToken(String[])` method.
+    * Added `getClaimsForUserInfo()` method.
+    * Added `setClaimsForUserInfo(String[])` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.46 to 3.52.
+    * Updated the version of `gson` from 2.8.9 to 2.10.1.
+    * Updated the version of `nimbus-jose-jwt` from 9.22 to 9.31.
+
+
 2.55 (2022-12-31)
 -----------------
 
