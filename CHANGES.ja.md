@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.56 (2023 年 03 月 03 日)
+--------------------------
+
 - `AuthorizationPageModel` クラス
     * `getClaimsForIdToken()` メソッドを追加。
     * `setClaimsForIdToken(String[])` メソッドを追加。

@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.56 (2023-03-03)
+-----------------
+
 - `AuthorizationPageModel` class
     * Added `getClaimsForIdToken()` method.
     * Added `setClaimsForIdToken(String[])` method.
