@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Authlete, Inc.
+ * Copyright (C) 2015-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,8 @@ import com.authlete.common.dto.BackchannelAuthenticationRequest;
 import com.authlete.common.dto.BackchannelAuthenticationResponse;
 import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
+import com.authlete.common.dto.CredentialIssuerMetadataRequest;
+import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceCompleteRequest;
@@ -1398,6 +1400,24 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/api/federation/registration", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /vci/metadata} API.
+     */
+    public CredentialIssuerMetadataResponse
+    callCredentialIssuerMetadata(CredentialIssuerMetadataRequest request)
+    {
+        try
+        {
+            return mApi.credentialIssuerMetadata(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/vci/metadata", e);
         }
     }
 }

@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `credentialIssuerMetadata(CredentialIssuerMetadataRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.52 to 3.56.
+
+- New types
+    * `BaseCredentialIssuerMetadataEndpoint` class
+    * `CredentialIssuerMetadataRequestHandler` class
+
+
 2.56 (2023-03-03)
 -----------------
 

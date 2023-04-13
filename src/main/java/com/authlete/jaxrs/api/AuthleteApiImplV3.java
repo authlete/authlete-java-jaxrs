@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Authlete, Inc.
+ * Copyright (C) 2014-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
 import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
+import com.authlete.common.dto.CredentialIssuerMetadataRequest;
+import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceCompleteRequest;
@@ -171,6 +173,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/%d/client/lock_flag/update/%s";
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
+    private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
 
 
     private final String mAuth;
@@ -1363,5 +1366,16 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<FederationRegistrationResponse>(
                         FederationRegistrationResponse.class, request,
                         FEDERATION_REGISTRATION_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialIssuerMetadataResponse credentialIssuerMetadata(
+            CredentialIssuerMetadataRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialIssuerMetadataResponse>(
+                        CredentialIssuerMetadataResponse.class, request,
+                        VCI_METADATA_API_PATH, mServiceId));
     }
 }

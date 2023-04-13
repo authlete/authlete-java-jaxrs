@@ -1,6 +1,17 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `credentialIssuerMetadata(CredentialIssuerMetadataRequest)` メソッドを実装
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.52 から 3.56 へ更新。
+
+- 新しい型
+    * `BaseCredentialIssuerMetadataEndpoint` クラス
+    * `CredentialIssuerMetadataRequestHandler` クラス
+
+
 2.56 (2023 年 03 月 03 日)
 --------------------------
 

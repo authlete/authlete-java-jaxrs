@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Authlete, Inc.
+ * Copyright (C) 2014-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
 import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
+import com.authlete.common.dto.CredentialIssuerMetadataRequest;
+import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceCompleteRequest;
@@ -172,6 +174,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update/%s";
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/federation/registration";
+    private static final String VCI_METADATA_API_PATH                         = "/api/vci/metadata";
 
 
     private final String mServiceOwnerAuth;
@@ -1466,5 +1469,19 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServicePostApiCaller<FederationRegistrationResponse>(
                         FederationRegistrationResponse.class, request,
                         FEDERATION_REGISTRATION_API_PATH));
+    }
+
+
+    @Override
+    public CredentialIssuerMetadataResponse credentialIssuerMetadata(
+            CredentialIssuerMetadataRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci/metadata API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialIssuerMetadataResponse>(
+                        CredentialIssuerMetadataResponse.class, request,
+                        VCI_METADATA_API_PATH));
     }
 }
