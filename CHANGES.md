@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.57 (2023-04-13)
+-----------------
+
 - `AuthleteApi` implementations
     * Implemented the `credentialIssuerMetadata(CredentialIssuerMetadataRequest)` method.
 
