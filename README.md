@@ -44,10 +44,12 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.57</version>
+    <version>${authlete-java-jaxrs.version}</version>
 </dependency>
 ```
 
+Please refer to the [CHANGES.md](CHANGES.md) file to know the latest version
+to write in place of `${authlete-java-jaxrs.version}`.
 
 Source Code
 -----------

@@ -1,11 +1,24 @@
 変更点
 ======
 
+2.58 (2023 年 06 月 28 日)
+--------------------------
+
+- `AuthleteApi` 実装
+  - `credentialOfferCreate(CredentialOfferCreateRequest)` メソッドを実装。
+  - `credentialOfferInfo(CredentialOfferInfoRequest)` メソッドを実装。
+  - `credentialSingleParse(CredentialSingleParseRequest)` メソッドを実装。
+  - `credentialSingleIssue(CredentialSingleIssueRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.56 から 3.67 へ更新。
+
+
 2.57 (2023 年 04 月 13 日)
 --------------------------
 
 - `AuthleteApi` 実装
-    * `credentialIssuerMetadata(CredentialIssuerMetadataRequest)` メソッドを実装
+    * `credentialIssuerMetadata(CredentialIssuerMetadataRequest)` メソッドを実装。
 
 - `pom.xml`
     * `authlete-java-common` のバージョンを 3.52 から 3.56 へ更新。

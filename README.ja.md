@@ -44,10 +44,12 @@ Maven
 <dependency>
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.57</version>
+    <version>${authlete-java-jaxrs.versin}</version>
 </dependency>
 ```
 
+`${authlete-java-jaxrs.version}` の箇所に書き込む最新バージョンについては
+[CHANGES.ja.md](CHANGES.ja.md) ファイルを参照してください。
 
 ソースコード
 ------------
