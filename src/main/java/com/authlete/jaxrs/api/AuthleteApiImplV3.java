@@ -56,6 +56,14 @@ import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
+import com.authlete.common.dto.CredentialOfferCreateRequest;
+import com.authlete.common.dto.CredentialOfferCreateResponse;
+import com.authlete.common.dto.CredentialOfferInfoRequest;
+import com.authlete.common.dto.CredentialOfferInfoResponse;
+import com.authlete.common.dto.CredentialSingleIssueRequest;
+import com.authlete.common.dto.CredentialSingleIssueResponse;
+import com.authlete.common.dto.CredentialSingleParseRequest;
+import com.authlete.common.dto.CredentialSingleParseResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceCompleteRequest;
@@ -174,6 +182,10 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
     private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
+    private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/vci/offer/create";
+    private static final String VCI_OFFER_INFO_API_PATH                       = "/api/vci/offer/info";
+    private static final String VCI_SINGLE_PARSE_API_PATH                     = "/api/vci/single/parse";
+    private static final String VCI_SINGLE_ISSUE_API_PATH                     = "/api/vci/single/issue";
 
 
     private final String mAuth;
@@ -1377,5 +1389,49 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<CredentialIssuerMetadataResponse>(
                         CredentialIssuerMetadataResponse.class, request,
                         VCI_METADATA_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialOfferCreateResponse credentialOfferCreate(
+            CredentialOfferCreateRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialOfferCreateResponse>(
+                        CredentialOfferCreateResponse.class, request,
+                        VCI_OFFER_CREATE_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialOfferInfoResponse credentialOfferInfo(
+            CredentialOfferInfoRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialOfferInfoResponse>(
+                        CredentialOfferInfoResponse.class, request,
+                        VCI_OFFER_INFO_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialSingleParseResponse credentialSingleParse(
+            CredentialSingleParseRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialSingleParseResponse>(
+                        CredentialSingleParseResponse.class, request,
+                        VCI_SINGLE_PARSE_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialSingleIssueResponse credentialSingleIssue(
+            CredentialSingleIssueRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialSingleIssueResponse>(
+                        CredentialSingleIssueResponse.class, request,
+                        VCI_SINGLE_ISSUE_API_PATH, mServiceId));
     }
 }
