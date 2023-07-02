@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+  - Implemented the `idTokenReissue(IDTokenReissueRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.67 to 3.68.
+
+
 2.58 (2023-06-28)
 -----------------
 

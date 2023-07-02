@@ -1,6 +1,13 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+  - `idTokenReissue(IDTokenReissueRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.67 から 3.68 へ更新。
+
+
 2.58 (2023 年 06 月 28 日)
 --------------------------
 

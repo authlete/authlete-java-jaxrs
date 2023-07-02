@@ -517,6 +517,11 @@ public class TokenRequestHandler extends BaseHandler
                 // urn:ietf:params:oauth:grant-type:jwt-bearer (RFC 7523).
                 return handleJwtBearer(response);
 
+            case ID_TOKEN_REISSUABLE:
+                // The flow of the token request is the refresh token flow
+                // and an ID token can be reissued.
+                return handleIdTokenReissuable(response);
+
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/token", action);
@@ -576,6 +581,17 @@ public class TokenRequestHandler extends BaseHandler
         // Otherwise, a token response with "error":"unsupported_grant_type" is
         // returned.
         return useOrUnsupported(response);
+    }
+
+
+    private Response handleIdTokenReissuable(TokenResponse tokenResponse)
+    {
+        // TODO: Support ID token reissuance.
+
+        // Note that calling ResponseUtil.ok() here will result in that
+        // the token endpoint behaves in the same way as before and no
+        // ID token is reissued.
+        return ResponseUtil.ok(tokenResponse.getResponseContent());
     }
 
 
