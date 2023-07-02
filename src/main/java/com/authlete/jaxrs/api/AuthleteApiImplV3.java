@@ -80,6 +80,8 @@ import com.authlete.common.dto.GrantedScopesGetResponse;
 import com.authlete.common.dto.HskCreateRequest;
 import com.authlete.common.dto.HskListResponse;
 import com.authlete.common.dto.HskResponse;
+import com.authlete.common.dto.IDTokenReissueRequest;
+import com.authlete.common.dto.IDTokenReissueResponse;
 import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.JoseVerifyRequest;
@@ -182,10 +184,11 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
     private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
-    private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/vci/offer/create";
-    private static final String VCI_OFFER_INFO_API_PATH                       = "/api/vci/offer/info";
-    private static final String VCI_SINGLE_PARSE_API_PATH                     = "/api/vci/single/parse";
-    private static final String VCI_SINGLE_ISSUE_API_PATH                     = "/api/vci/single/issue";
+    private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/%d/vci/offer/create";
+    private static final String VCI_OFFER_INFO_API_PATH                       = "/api/%d/vci/offer/info";
+    private static final String VCI_SINGLE_PARSE_API_PATH                     = "/api/%d/vci/single/parse";
+    private static final String VCI_SINGLE_ISSUE_API_PATH                     = "/api/%d/vci/single/issue";
+    private static final String ID_TOKEN_REISSUE_API_PATH                     = "/api/%d/idtoken/reissue";
 
 
     private final String mAuth;
@@ -1433,5 +1436,16 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<CredentialSingleIssueResponse>(
                         CredentialSingleIssueResponse.class, request,
                         VCI_SINGLE_ISSUE_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public IDTokenReissueResponse idTokenReissue(
+            IDTokenReissueRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<IDTokenReissueResponse>(
+                        IDTokenReissueResponse.class, request,
+                        ID_TOKEN_REISSUE_API_PATH, mServiceId));
     }
 }
