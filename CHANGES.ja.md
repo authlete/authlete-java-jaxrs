@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.59 (2023 年 07 月 03 日)
+--------------------------
+
 - `AuthleteApi` 実装
   - `idTokenReissue(IDTokenReissueRequest)` メソッドを実装。
 

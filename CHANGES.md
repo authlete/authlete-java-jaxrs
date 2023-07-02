@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.59 (2023-07-03)
+-----------------
+
 - `AuthleteApi` implementations
   - Implemented the `idTokenReissue(IDTokenReissueRequest)` method.
 
