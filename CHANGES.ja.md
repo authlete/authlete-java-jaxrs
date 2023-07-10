@@ -1,6 +1,16 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+  - `credentialBatchParse(CredentialBatchParseRequest)` メソッドを実装。
+  - `credentialBatchIssue(CredentialBatchIssueRequest)` メソッドを実装。
+  - `credentialDeferredParse(CredentialDeferredParseRequest)` メソッドを実装。
+  - `credentialDeferredIssue(CredentialDeferredIssueRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.68 から 3.71 へ更新。
+
+
 2.59 (2023 年 07 月 03 日)
 --------------------------
 

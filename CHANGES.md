@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+  - Implemented the `credentialBatchParse(CredentialBatchParseRequest)` method.
+  - Implemented the `credentialBatchIssue(CredentialBatchIssueRequest)` method.
+  - Implemented the `credentialDeferredParse(CredentialDeferredParseRequest)` method.
+  - Implemented the `credentialDeferredIssue(CredentialDeferredIssueRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.68 to 3.71.
+
+
 2.59 (2023-07-03)
 -----------------
 

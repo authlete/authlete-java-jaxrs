@@ -54,6 +54,14 @@ import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientSecretRefreshResponse;
 import com.authlete.common.dto.ClientSecretUpdateRequest;
 import com.authlete.common.dto.ClientSecretUpdateResponse;
+import com.authlete.common.dto.CredentialBatchIssueRequest;
+import com.authlete.common.dto.CredentialBatchIssueResponse;
+import com.authlete.common.dto.CredentialBatchParseRequest;
+import com.authlete.common.dto.CredentialBatchParseResponse;
+import com.authlete.common.dto.CredentialDeferredIssueRequest;
+import com.authlete.common.dto.CredentialDeferredIssueResponse;
+import com.authlete.common.dto.CredentialDeferredParseRequest;
+import com.authlete.common.dto.CredentialDeferredParseResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialOfferCreateRequest;
@@ -189,6 +197,10 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     private static final String VCI_OFFER_INFO_API_PATH                       = "/api/vci/offer/info";
     private static final String VCI_SINGLE_PARSE_API_PATH                     = "/api/vci/single/parse";
     private static final String VCI_SINGLE_ISSUE_API_PATH                     = "/api/vci/single/issue";
+    private static final String VCI_BATCH_PARSE_API_PATH                      = "/api/vci/batch/parse";
+    private static final String VCI_BATCH_ISSUE_API_PATH                      = "/api/vci/batch/issue";
+    private static final String VCI_DEFERRED_PARSE_API_PATH                   = "/api/vci/deferred/parse";
+    private static final String VCI_DEFERRED_ISSUE_API_PATH                   = "/api/vci/deferred/issue";
     private static final String ID_TOKEN_REISSUE_API_PATH                     = "/api/idtoken/reissue";
 
 
@@ -1554,6 +1566,62 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServicePostApiCaller<CredentialSingleIssueResponse>(
                         CredentialSingleIssueResponse.class, request,
                         VCI_SINGLE_ISSUE_API_PATH));
+    }
+
+
+    @Override
+    public CredentialBatchParseResponse credentialBatchParse(
+            CredentialBatchParseRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci/batch/parse API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialBatchParseResponse>(
+                        CredentialBatchParseResponse.class, request,
+                        VCI_BATCH_PARSE_API_PATH));
+    }
+
+
+    @Override
+    public CredentialBatchIssueResponse credentialBatchIssue(
+            CredentialBatchIssueRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci/batch/issue API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialBatchIssueResponse>(
+                        CredentialBatchIssueResponse.class, request,
+                        VCI_BATCH_ISSUE_API_PATH));
+    }
+
+
+    @Override
+    public CredentialDeferredParseResponse credentialDeferredParse(
+            CredentialDeferredParseRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci/deferred/parse API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialDeferredParseResponse>(
+                        CredentialDeferredParseResponse.class, request,
+                        VCI_DEFERRED_PARSE_API_PATH));
+    }
+
+
+    @Override
+    public CredentialDeferredIssueResponse credentialDeferredIssue(
+            CredentialDeferredIssueRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci/deferred/issue API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialDeferredIssueResponse>(
+                        CredentialDeferredIssueResponse.class, request,
+                        VCI_DEFERRED_ISSUE_API_PATH));
     }
 
 
