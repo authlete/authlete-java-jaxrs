@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.60 (2023-07-10)
+-----------------
+
 - `AuthleteApi` implementations
   - Implemented the `credentialBatchParse(CredentialBatchParseRequest)` method.
   - Implemented the `credentialBatchIssue(CredentialBatchIssueRequest)` method.
