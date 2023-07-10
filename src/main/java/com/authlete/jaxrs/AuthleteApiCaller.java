@@ -47,6 +47,8 @@ import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
+import com.authlete.common.dto.CredentialOfferInfoRequest;
+import com.authlete.common.dto.CredentialOfferInfoResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceCompleteRequest;
@@ -1418,6 +1420,23 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/vci/metadata", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /vci/offer/info} API.
+     */
+    public CredentialOfferInfoResponse callCredentialOfferInfo(CredentialOfferInfoRequest request)
+    {
+        try
+        {
+            return mApi.credentialOfferInfo(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/vci/offer/info", e);
         }
     }
 }
