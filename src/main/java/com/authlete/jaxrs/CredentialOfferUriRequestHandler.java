@@ -59,6 +59,11 @@ public class CredentialOfferUriRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResultMessage();
 
+        if(response.getInfo() != null)
+        {
+            content = response.getInfo().getCredentialOffer();
+        }
+
         // Dispatch according to the action.
         switch (action)
         {
