@@ -59,7 +59,7 @@ public class CredentialOfferUriRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResultMessage();
 
-        if(response.getInfo() != null)
+        if (response.getInfo() != null)
         {
             content = response.getInfo().getCredentialOffer();
         }
@@ -75,6 +75,10 @@ public class CredentialOfferUriRequestHandler extends BaseHandler
 
             case NOT_FOUND:
                 return ResponseUtil.notFound(content);
+
+            case CALLER_ERROR:
+            case AUTHLETE_ERROR:
+                return ResponseUtil.internalServerError(content);
 
             default:
                 throw getApiCaller().unknownAction("/vci/offer/info", action);
