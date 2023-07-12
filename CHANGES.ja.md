@@ -1,6 +1,17 @@
 変更点
 ======
 
+2.61 (2023 年 07 月 12 日)
+--------------------------
+
+- `AuthleteApiCaller` クラス
+    * `callCredentialOfferInfo` メソッドを追加。
+
+- 新しい型
+    * `BaseCredentialOfferUriEndpoint` クラス
+    * `CredentialOfferUriRequestHandler` クラス
+
+
 2.60 (2023 年 07 月 10 日)
 --------------------------
 
