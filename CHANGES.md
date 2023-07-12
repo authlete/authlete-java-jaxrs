@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Added `callCredentialOfferInfo` methods.
+
+- New types
+    * `BaseCredentialOfferUriEndpoint` class
+    * `CredentialOfferUriRequestHandler` class
+ 
 2.60 (2023-07-10)
 -----------------
 
