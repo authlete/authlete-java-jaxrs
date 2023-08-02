@@ -62,6 +62,8 @@ import com.authlete.common.dto.CredentialDeferredIssueRequest;
 import com.authlete.common.dto.CredentialDeferredIssueResponse;
 import com.authlete.common.dto.CredentialDeferredParseRequest;
 import com.authlete.common.dto.CredentialDeferredParseResponse;
+import com.authlete.common.dto.CredentialIssuerJwksRequest;
+import com.authlete.common.dto.CredentialIssuerJwksResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialOfferCreateRequest;
@@ -192,6 +194,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/client/lock_flag/update/%s";
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/federation/registration";
+    private static final String VCI_JWKS_API_PATH                                  = "/api/vci/jwks";
     private static final String VCI_METADATA_API_PATH                         = "/api/vci/metadata";
     private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/vci/offer/create";
     private static final String VCI_OFFER_INFO_API_PATH                       = "/api/vci/offer/info";
@@ -1510,6 +1513,20 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServicePostApiCaller<CredentialIssuerMetadataResponse>(
                         CredentialIssuerMetadataResponse.class, request,
                         VCI_METADATA_API_PATH));
+    }
+
+
+    @Override
+    public CredentialIssuerJwksResponse credentialIssuerJwks(
+            CredentialIssuerJwksRequest request) throws AuthleteApiException
+    {
+        // Note that the /vci API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<CredentialIssuerJwksResponse>(
+                        CredentialIssuerJwksResponse.class, request,
+                        VCI_JWKS_API_PATH));
     }
 
 

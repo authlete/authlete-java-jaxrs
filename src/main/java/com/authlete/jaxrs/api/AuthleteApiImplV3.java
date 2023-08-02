@@ -62,6 +62,8 @@ import com.authlete.common.dto.CredentialDeferredIssueRequest;
 import com.authlete.common.dto.CredentialDeferredIssueResponse;
 import com.authlete.common.dto.CredentialDeferredParseRequest;
 import com.authlete.common.dto.CredentialDeferredParseResponse;
+import com.authlete.common.dto.CredentialIssuerJwksRequest;
+import com.authlete.common.dto.CredentialIssuerJwksResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialOfferCreateRequest;
@@ -191,6 +193,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/%d/client/lock_flag/update/%s";
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
+    private static final String VCI_JWKS_API_PATH                                  = "/api/%d/vci/jwks";
     private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
     private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/%d/vci/offer/create";
     private static final String VCI_OFFER_INFO_API_PATH                       = "/api/%d/vci/offer/info";
@@ -1404,6 +1407,17 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<CredentialIssuerMetadataResponse>(
                         CredentialIssuerMetadataResponse.class, request,
                         VCI_METADATA_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialIssuerJwksResponse credentialIssuerJwks(
+            CredentialIssuerJwksRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialIssuerJwksResponse>(
+                        CredentialIssuerJwksResponse.class, request,
+                        VCI_JWKS_API_PATH, mServiceId));
     }
 
 
