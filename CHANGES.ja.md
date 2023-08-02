@@ -1,6 +1,16 @@
 変更点
 ======
 
+2.62 (2023 年 08 月 02 日)
+--------------------------
+
+- `AuthleteApi` 実装
+  - `credentialIssuerJwks(CredentialIssuerJwksRequest)` メソッドを実装。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.71 から 3.75 へ更新。
+
+
 2.61 (2023 年 07 月 12 日)
 --------------------------
 

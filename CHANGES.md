@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+2.62 (2023-08-02)
+-----------------
+
+- `AuthleteApi` implementations
+    - Implemented the `credentialIssuerJwks(CredentialIssuerJwksRequest)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.71 to 3.75.
+
+
 2.61 (2023-07-12)
 -----------------
 
