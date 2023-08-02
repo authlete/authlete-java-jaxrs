@@ -193,7 +193,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String CLIENT_LOCK_FLAG_UPDATE_API_PATH              = "/api/%d/client/lock_flag/update/%s";
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
-    private static final String VCI_JWKS_API_PATH                                  = "/api/%d/vci/jwks";
+    private static final String VCI_JWKS_API_PATH                             = "/api/%d/vci/jwks";
     private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
     private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/%d/vci/offer/create";
     private static final String VCI_OFFER_INFO_API_PATH                       = "/api/%d/vci/offer/info";
