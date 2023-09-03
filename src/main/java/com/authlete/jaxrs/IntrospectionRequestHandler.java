@@ -258,9 +258,6 @@ public class IntrospectionRequestHandler extends BaseHandler
          *         The JWE {@code alg} algorithm for encrypting the
          *         introspection response.
          *
-         * @since 3.76
-         * @since Authlete 3.0
-         *
          * @see <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response"
          *      >JWT Response for OAuth Token Introspection</a>
          */
