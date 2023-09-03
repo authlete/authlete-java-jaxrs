@@ -1,6 +1,27 @@
 CHANGES
 =======
 
+2.63 (2023-09-03)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Updated `callStandardIntrospection` method to support
+      [JWT Response for OAuth Token Introspection](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response).
+
+- `BaseIntrospectionEndpoint` class
+    * Added `handle(AuthleteApi, Params)` method.
+
+- `IntrospectionRequestHandler` class
+    * Added `Params` inner class.
+    * Updated `process` method to support `JWT` action.
+
+- `ResponseUtil` class
+    * Added `tokenIntrospection(String)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.75 to 3.76.
+
+
 2.62 (2023-08-02)
 -----------------
 

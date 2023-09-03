@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Authlete, Inc.
+ * Copyright (C) 2017-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.IntrospectionRequestHandler.Params;
 
 
 /**
@@ -40,23 +41,8 @@ public class BaseIntrospectionEndpoint extends BaseEndpoint
     /**
      * Handle an introspection request.
      *
-     * <p>
-     * This method internally creates an {@link IntrospectionRequestHandler}
-     * instance and calls its {@link IntrospectionRequestHandler#handle(MultivaluedMap)
-     * handle()} method with the {@code parameters} argument. Then, this
-     * method uses the value returned from the {@code handle()} method as a
-     * response from this method.
-     * </p>
-     *
-     * <p>
-     * When {@code IntrospectionRequestHandler.handle()} method raises a
-     * {@link WebApplicationException}, this method calls {@link
-     * #onError(WebApplicationException) onError()} method with the exception.
-     * The default implementation of {@code onError()} does nothing. You can
-     * override the method as necessary. After calling {@code onError()}
-     * method, this method calls {@code getResponse()} method of the
-     * exception and uses the returned value as a response from this method.
-     * </p>
+     * This method is an alias of the {@link #handle(AuthleteApi,
+     * IntrospectionRequestHandler.Params)} method.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -65,9 +51,52 @@ public class BaseIntrospectionEndpoint extends BaseEndpoint
      *         Request parameters of an introspection request.
      *
      * @return
-     *         A response that should be returned to the client application.
+     *         A response that should be returned to the resource server.
      */
     public Response handle(AuthleteApi api, MultivaluedMap<String, String> parameters)
+    {
+        Params params = new Params()
+                .setParameters(parameters)
+                ;
+
+        return handle(api, params);
+    }
+
+
+    /**
+     * Handle an introspection request.
+     *
+     * <p>
+     * This method internally creates an {@link IntrospectionRequestHandler}
+     * instance and calls its {@link IntrospectionRequestHandler#handle(IntrospectionRequestHandler.Params)
+     * handle()} method with the {@code params} argument. Then, this
+     * method uses the value returned from the {@code handle()} method
+     * as a response from this method.
+     * </p>
+     *
+     * <p>
+     * When {@code IntrospectionRequestHandler.handle()} method raises a
+     * {@link WebApplicationException}, this method calls {@link
+     * #onError(WebApplicationException) onError()} method with the exception.
+     * The default implementation of {@code onError()} does nothing.
+     * You can override the method as necessary. After calling {@code
+     * onError()} method, this method calls {@code getResponse()} method
+     * of the exception and uses the returned value as a response from
+     * this method.
+     * </p>
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param params
+     *         Parameters needed to handle the introspection request.
+     *
+     * @return
+     *         A response that should be returned to the resource server.
+     *
+     * @since 2.63
+     */
+    public Response handle(AuthleteApi api, Params params)
     {
         try
         {
@@ -75,7 +104,7 @@ public class BaseIntrospectionEndpoint extends BaseEndpoint
             IntrospectionRequestHandler handler = new IntrospectionRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {
