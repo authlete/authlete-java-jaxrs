@@ -81,6 +81,9 @@ import com.authlete.common.dto.UserInfoIssueRequest;
 import com.authlete.common.dto.UserInfoIssueResponse;
 import com.authlete.common.dto.UserInfoRequest;
 import com.authlete.common.dto.UserInfoResponse;
+import com.authlete.common.types.JWEAlg;
+import com.authlete.common.types.JWEEnc;
+import com.authlete.common.types.JWSAlg;
 import com.authlete.common.web.URLCoder;
 
 
@@ -878,30 +881,51 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/introspection/standard} API.
      */
-    public StandardIntrospectionResponse callStandardIntrospection(MultivaluedMap<String, String> parameters)
+    public StandardIntrospectionResponse callStandardIntrospection(
+            MultivaluedMap<String, String> parameters, boolean withHiddenProperties, String httpAcceptHeader,
+            URI rsUri, JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
+            String introspectionSignKeyId)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callStandardIntrospection(params);
+        return callStandardIntrospection(
+                params, withHiddenProperties, httpAcceptHeader, rsUri, introspectionSignAlg, introspectionEncAlg,
+                introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption, publicKeyForEncryption,
+                introspectionSignKeyId);
     }
 
 
     /**
      * Call Authlete's {@code /api/auth/introspection/standard} API.
      */
-    private StandardIntrospectionResponse callStandardIntrospection(String parameters)
+    private StandardIntrospectionResponse callStandardIntrospection(
+            String parameters, boolean withHiddenProperties, String httpAcceptHeader, URI rsUri,
+            JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
+            String introspectionSignKeyId)
     {
         if (parameters == null)
         {
             // Authlete returns different error codes for null and an empty string.
             // 'null' is regarded as a caller's error. An empty string is regarded
-            // as a client application's error.
+            // as a resource server's error.
             parameters = "";
         }
 
         // Create a request for Authlete's /api/auth/introspection/standard API.
         StandardIntrospectionRequest request = new StandardIntrospectionRequest()
-            .setParameters(parameters);
+            .setParameters(parameters)
+            .setWithHiddenProperties(withHiddenProperties)
+            .setHttpAcceptHeader(httpAcceptHeader)
+            .setRsUri(rsUri)
+            .setIntrospectionSignAlg(introspectionSignAlg)
+            .setIntrospectionEncryptionAlg(introspectionEncAlg)
+            .setIntrospectionEncryptionEnc(introspectionEncEnc)
+            .setSharedKeyForSign(sharedKeyForSign)
+            .setSharedKeyForEncryption(sharedKeyForEncryption)
+            .setPublicKeyForEncryption(publicKeyForEncryption)
+            .setIntrospectionSignatureKeyId(introspectionSignKeyId);
 
         try
         {

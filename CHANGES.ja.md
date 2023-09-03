@@ -1,6 +1,27 @@
 変更点
 ======
 
+2.63 (2023 年 09 月 03 日)
+-----------------
+
+- `AuthleteApiCaller` クラス
+    * [JWT Response for OAuth Token Introspection](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response) を
+    サポートするため、`callStandardIntrospection` メソッドを更新。
+
+- `BaseIntrospectionEndpoint` クラス
+    * `handle(AuthleteApi, Params)` メソッドを追加。
+
+- `IntrospectionRequestHandler` クラス
+    * 内部クラス `Params` を追加。
+    * `JWT` アクションをサポートするため、`process` メソッドを更新。
+
+- `ResponseUtil` クラス
+    * `tokenIntrospection(String)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.75 から 3.76 へ更新。
+
+
 2.62 (2023 年 08 月 02 日)
 --------------------------
 

@@ -65,6 +65,13 @@ class ResponseUtil
 
 
     /**
+     * {@code "application/token-introspection+jwt"}
+     */
+    private static final MediaType MEDIA_TYPE_TOKEN_INTROSPECTION =
+            new MediaType("application", "token-introspection+jwt");
+
+
+    /**
      * {@code "application/jose"}
      */
     private static final MediaType MEDIA_TYPE_JOSE =
@@ -136,6 +143,17 @@ class ResponseUtil
     public static Response entityStatement(String entity)
     {
         return builder(Status.OK, entity, MEDIA_TYPE_ENTITY_STATEMENT).build();
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/token-introspection+jwt"}.
+     */
+    public static Response tokenIntrospection(String entity)
+    {
+        return builder(Status.OK, entity, MEDIA_TYPE_TOKEN_INTROSPECTION).build();
     }
 
 

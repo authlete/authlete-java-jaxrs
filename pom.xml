@@ -35,7 +35,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <authlete-java-common.version>3.75</authlete-java-common.version>
+        <authlete-java-common.version>3.76</authlete-java-common.version>
         <gson.version>2.10.1</gson.version>
         <nimbus.version>9.31</nimbus.version>
     </properties>
@@ -157,7 +157,7 @@
                     <id>authlete</id>
                     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
                 </snapshotRepository>
-        
+
                 <repository>
                     <id>authlete</id>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
