@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+2.64 (2023-09-04)
+-----------------
+
+- `AuthleteApiCaller` class
+    * Removed `introspectionSignKeyId` from the arguments of `callStandardIntrospection` method.
+
+- `IntrospectionRequestHandler` class
+    * Removed `introspectionSignKeyId` property from `Params` inner class.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.76 to 3.77.
+
+
 2.63 (2023-09-03)
 -----------------
 

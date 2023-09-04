@@ -452,42 +452,6 @@ public class IntrospectionRequestHandler extends BaseHandler
 
             return this;
         }
-
-
-        /**
-         * Get the key ID of the key for signing the introspection response.
-         *
-         * @return
-         *         The key ID of the key for signing the introspection
-         *         response.
-         *
-         * @see <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response"
-         *      >JWT Response for OAuth Token Introspection</a>
-         */
-        public String getIntrospectionSignatureKeyId()
-        {
-            return introspectionSignatureKeyId;
-        }
-
-
-        /**
-         * Set the key ID of the key for signing the introspection response.
-         *
-         * @param keyId
-         *         The key ID of the key for signing the introspection response.
-         *
-         * @return
-         *         {@code this} object.
-         *
-         * @see <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response"
-         *      >JWT Response for OAuth Token Introspection</a>
-         */
-        public Params setIntrospectionSignatureKeyId(String keyId)
-        {
-            this.introspectionSignatureKeyId = keyId;
-
-            return this;
-        }
     }
 
 
@@ -561,8 +525,7 @@ public class IntrospectionRequestHandler extends BaseHandler
                 params.getIntrospectionEncryptionEnc(),
                 params.getSharedKeyForSign(),
                 params.getSharedKeyForEncryption(),
-                params.getPublicKeyForEncryption(),
-                params.getIntrospectionSignatureKeyId()
+                params.getPublicKeyForEncryption()
             );
         }
         catch (WebApplicationException e)
@@ -583,14 +546,13 @@ public class IntrospectionRequestHandler extends BaseHandler
     private Response process(
             MultivaluedMap<String, String> parameters, boolean withHiddenProperties, String httpAcceptHeader,
             URI rsUri, JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
-            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
-            String introspectionSignKeyId)
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption)
     {
         // Call Authlete's /api/auth/introspection/standard API.
         StandardIntrospectionResponse response = getApiCaller().callStandardIntrospection(
                 parameters, withHiddenProperties, httpAcceptHeader, rsUri, introspectionSignAlg,
                 introspectionEncAlg, introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption,
-                publicKeyForEncryption, introspectionSignKeyId);
+                publicKeyForEncryption);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

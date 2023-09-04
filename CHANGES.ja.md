@@ -1,8 +1,21 @@
 変更点
 ======
 
+2.64 (2023 年 09 月 04 日)
+--------------------------
+
+- `AuthleteApiCaller` クラス
+    * `introspectionSignKeyId` を `callStandardIntrospection` メソッドの引数から削除.
+
+- `IntrospectionRequestHandler` クラス
+    * 内部クラス `Params` から `introspectionSignKeyId` プロパティを削除。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.76 から 3.77 へ更新。
+
+
 2.63 (2023 年 09 月 03 日)
------------------
+--------------------------
 
 - `AuthleteApiCaller` クラス
     * [JWT Response for OAuth Token Introspection](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-jwt-introspection-response) を
