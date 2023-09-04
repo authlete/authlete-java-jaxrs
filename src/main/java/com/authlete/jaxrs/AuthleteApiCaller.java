@@ -884,15 +884,13 @@ class AuthleteApiCaller
     public StandardIntrospectionResponse callStandardIntrospection(
             MultivaluedMap<String, String> parameters, boolean withHiddenProperties, String httpAcceptHeader,
             URI rsUri, JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
-            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
-            String introspectionSignKeyId)
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callStandardIntrospection(
                 params, withHiddenProperties, httpAcceptHeader, rsUri, introspectionSignAlg, introspectionEncAlg,
-                introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption, publicKeyForEncryption,
-                introspectionSignKeyId);
+                introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption, publicKeyForEncryption);
     }
 
 
@@ -902,8 +900,7 @@ class AuthleteApiCaller
     private StandardIntrospectionResponse callStandardIntrospection(
             String parameters, boolean withHiddenProperties, String httpAcceptHeader, URI rsUri,
             JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
-            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
-            String introspectionSignKeyId)
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption)
     {
         if (parameters == null)
         {
@@ -924,8 +921,7 @@ class AuthleteApiCaller
             .setIntrospectionEncryptionEnc(introspectionEncEnc)
             .setSharedKeyForSign(sharedKeyForSign)
             .setSharedKeyForEncryption(sharedKeyForEncryption)
-            .setPublicKeyForEncryption(publicKeyForEncryption)
-            .setIntrospectionSignatureKeyId(introspectionSignKeyId);
+            .setPublicKeyForEncryption(publicKeyForEncryption);
 
         try
         {
