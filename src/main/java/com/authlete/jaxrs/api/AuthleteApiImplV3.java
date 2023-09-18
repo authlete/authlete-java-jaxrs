@@ -66,6 +66,8 @@ import com.authlete.common.dto.CredentialIssuerJwksRequest;
 import com.authlete.common.dto.CredentialIssuerJwksResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
+import com.authlete.common.dto.CredentialJwtIssuerMetadataRequest;
+import com.authlete.common.dto.CredentialJwtIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialOfferCreateRequest;
 import com.authlete.common.dto.CredentialOfferCreateResponse;
 import com.authlete.common.dto.CredentialOfferInfoRequest;
@@ -194,6 +196,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String FEDERATION_CONFIGURATION_API_PATH             = "/api/%d/federation/configuration";
     private static final String FEDERATION_REGISTRATION_API_PATH              = "/api/%d/federation/registration";
     private static final String VCI_JWKS_API_PATH                             = "/api/%d/vci/jwks";
+    private static final String VCI_JWT_ISSUER_API_PATH                       = "/api/%d/vci/jwtissuer";
     private static final String VCI_METADATA_API_PATH                         = "/api/%d/vci/metadata";
     private static final String VCI_OFFER_CREATE_API_PATH                     = "/api/%d/vci/offer/create";
     private static final String VCI_OFFER_INFO_API_PATH                       = "/api/%d/vci/offer/info";
@@ -1407,6 +1410,17 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<CredentialIssuerMetadataResponse>(
                         CredentialIssuerMetadataResponse.class, request,
                         VCI_METADATA_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public CredentialJwtIssuerMetadataResponse credentialJwtIssuerMetadata(
+            CredentialJwtIssuerMetadataRequest request) throws AuthleteApiException
+    {
+        return executeApiCall(
+                new PostApiCaller<CredentialJwtIssuerMetadataResponse>(
+                        CredentialJwtIssuerMetadataResponse.class, request,
+                        VCI_JWT_ISSUER_API_PATH, mServiceId));
     }
 
 
