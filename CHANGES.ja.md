@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.65 (2023 年 09 月 18 日)
+--------------------------
+
 - `AuthleteApi` 実装
     * `credentialJwtIssuerMetadata(CredentialJwtIssuerMetadataRequest)` メソッドを実装。
 
