@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.authlete.jaxrs"},{"l":"com.authlete.jaxrs.api"},{"l":"com.authlete.jaxrs.spi"},{"l":"com.authlete.jaxrs.util"}]
