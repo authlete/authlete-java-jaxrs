@@ -47,6 +47,8 @@ import com.authlete.common.dto.ClientRegistrationRequest;
 import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
+import com.authlete.common.dto.CredentialJwtIssuerMetadataRequest;
+import com.authlete.common.dto.CredentialJwtIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialOfferInfoRequest;
 import com.authlete.common.dto.CredentialOfferInfoResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
@@ -1440,6 +1442,24 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/vci/metadata", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /vci/jwtissuer} API.
+     */
+    public CredentialJwtIssuerMetadataResponse
+    callCredentialJwtIssuerMetadata(CredentialJwtIssuerMetadataRequest request)
+    {
+        try
+        {
+            return mApi.credentialJwtIssuerMetadata(request);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/vci/jwtissuer", e);
         }
     }
 
