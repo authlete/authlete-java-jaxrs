@@ -67,8 +67,11 @@ jobs:
         uses: fregante/setup-git-user@v1
 
       - name: Push to jakarta repository
+        env:
+          SSH_PUSH_KEY: ${{ secrets.SSH_PUSH_KEY }}
         run: |
-          git remote add jakarta git@github.com:authlete/authlete-java-jakarta.git
+          echo "${SSH_PUSH_KEY}" > ~/.ssh/id_rsa
+          git remote add jakarta https://github.com/authlete/authlete-java-jakarta.git
           git remote -v
           git add src
           git add pom.xml
