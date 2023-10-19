@@ -62,3 +62,15 @@ jobs:
           sed -i -e "s/<jakarta\.servlet\.version>${JAXRS_SERVLET//./\\.}<\/jakarta\.servlet\.version>/<jakarta\.servlet\.version>${JAKARTA_SERVLET//./\\.}<\/jakarta\.servlet\.version>/" pom.xml;
           sed -i -e "s/<jakarta\.annotation\.version>${JAXRS_ANNOTATION//./\\.}<\/jakarta\.annotation\.version>/<jakarta\.annotation\.version>${JAKARTA_ANNOTATION//./\\.}<\/jakarta\.annotation\.version>/" pom.xml;
           sed -i -e "s/<jakarta\.xml\.version>${JAXRS_XML//./\\.}<\/jakarta\.xml\.version>/<jakarta\.xml\.version>${JAKARTA_XML//./\\.}<\/jakarta\.xml\.version>/" pom.xml;
+
+      - name: Setup git user
+        uses: fregante/setup-git-user@v1
+
+      - name: Push to jakarta repository
+        run: |
+          git remote add jakarta git@github.com:authlete/authlete-java-jakarta.git
+          git remote -v
+          git add src
+          git add pom.xml
+          git commit -m "Jakarta $(date)"
+          git push -f jakarta ${GITHUB_REF}
