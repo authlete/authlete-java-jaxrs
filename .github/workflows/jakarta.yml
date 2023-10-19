@@ -70,6 +70,7 @@ jobs:
         env:
           SSH_PUSH_KEY: ${{ secrets.SSH_PUSH_KEY }}
         run: |
+          mkdir ~/.ssh
           echo "${SSH_PUSH_KEY}" > ~/.ssh/id_rsa
           git remote add jakarta https://github.com/authlete/authlete-java-jakarta.git
           git remote -v
