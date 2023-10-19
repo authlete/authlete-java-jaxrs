@@ -1,0 +1,64 @@
+name: Publish jakarta
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Transform
+        run: |
+          JAXRS_API="2.1"
+          JAXRS_SERVLET="3.1.0"
+          JAXRS_ANNOTATION="1.3.1"
+          JAXRS_XML="2.3.1"
+
+          JAKARTA_API="3.1.0"
+          JAKARTA_SERVLET="6.0.0"
+          JAKARTA_ANNOTATION="2.1.1"
+          JAKARTA_XML="4.0.1"
+
+          if ! grep -q "<javax.api.version>${JAXRS_API}" pom.xml; then
+          	echo "Unable to find javax.api.version ${JAXRS_API}"
+          	exit 1
+          fi
+
+          if ! grep -q "<javax.servlet.version>${JAXRS_SERVLET}" pom.xml; then
+          	echo "Unable to find javax.servlet.version ${JAXRS_SERVLET}"
+          	exit 1
+          fi
+
+          if ! grep -q "<javax.annotation.version>${JAXRS_ANNOTATION}" pom.xml; then
+          	echo "Unable to find javax.annotation.version ${JAXRS_ANNOTATION}"
+          	exit 1
+          fi
+
+          if ! grep -q "<javax.xml.version>${JAXRS_XML}" pom.xml; then
+          	echo "Unable to find javax.xml.version ${JAXRS_XML}"
+          	exit 1
+          fi
+
+          for f in $(find src -name '*.java'); do
+          	sed -i -e 's/javax\./jakarta\./' $f;
+          	sed -i -e 's/com\.authlete\.jaxrs/com\.authlete\.jakarta/' $f;
+          done
+
+          mv src/main/java/com/authlete/jaxrs src/main/java/com/authlete/jakarta
+          mv src/test/java/com/authlete/jaxrs src/test/java/com/authlete/jakarta
+
+          sed -i -e 's/javax\./jakarta\./' pom.xml;
+          sed -i -e 's/javax\./jakarta\./' pom.xml;
+          sed -i -e 's/jaxb-api/jakarta\.xml\.bind-api/' pom.xml;
+          sed -i -e 's/authlete-java-jaxrs/authlete-java-jakarta/' pom.xml;
+          sed -i -e "s/<jakarta\.api\.version>${JAXRS_API//./\\.}<\/jakarta\.api\.version>/<jakarta\.api\.version>${JAKARTA_API//./\\.}<\/jakarta\.api\.version>/" pom.xml;
+          sed -i -e "s/<jakarta\.servlet\.version>${JAXRS_SERVLET//./\\.}<\/jakarta\.servlet\.version>/<jakarta\.servlet\.version>${JAKARTA_SERVLET//./\\.}<\/jakarta\.servlet\.version>/" pom.xml;
+          sed -i -e "s/<jakarta\.annotation\.version>${JAXRS_ANNOTATION//./\\.}<\/jakarta\.annotation\.version>/<jakarta\.annotation\.version>${JAKARTA_ANNOTATION//./\\.}<\/jakarta\.annotation\.version>/" pom.xml;
+          sed -i -e "s/<jakarta\.xml\.version>${JAXRS_XML//./\\.}<\/jakarta\.xml\.version>/<jakarta\.xml\.version>${JAKARTA_XML//./\\.}<\/jakarta\.xml\.version>/" pom.xml;
