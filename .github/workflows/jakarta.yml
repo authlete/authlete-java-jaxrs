@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir ~/.ssh
           echo "${SSH_PUSH_KEY}" > ~/.ssh/id_rsa
-          git remote add jakarta https://github.com/authlete/authlete-java-jakarta.git
+          git remote add jakarta git@github.com:authlete/authlete-java-jakarta.git
           git remote -v
           git add src
           git add pom.xml
