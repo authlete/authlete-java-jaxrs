@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - *
+      - pom-update
   workflow_dispatch:
 
 jobs:
