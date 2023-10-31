@@ -68,12 +68,9 @@ jobs:
 
       - name: Push to jakarta repository
         env:
-          SSH_PUSH_KEY: ${{ secrets.SSH_PUSH_KEY }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
-          mkdir ~/.ssh
-          echo "${SSH_PUSH_KEY}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          git remote add jakarta git@github.com:authlete/authlete-java-jakarta.git
+          git remote add jakarta https://AuthleteOPS:${ACCESS_TOKEN}@github.com/authlete/authlete-java-jakarta.git
           git remote -v
           git add src
           git add pom.xml
