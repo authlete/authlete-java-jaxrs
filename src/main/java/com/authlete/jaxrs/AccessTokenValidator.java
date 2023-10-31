@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,13 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.IntrospectionRequest;
 import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.dto.IntrospectionResponse.Action;
 
@@ -485,12 +488,47 @@ public class AccessTokenValidator extends BaseHandler
         if (params == null || params.getAccessToken() == null)
         {
             // Return "400 Bad Request".
-            throw toException(Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
+            throw toException(Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN, null);
         }
 
         try
         {
             return process(params);
+        }
+        catch (WebApplicationException e)
+        {
+            throw e;
+        }
+        catch (Throwable t)
+        {
+            // Unexpected error.
+            throw unexpected("Unexpected error in AccessTokenValidator", t);
+        }
+    }
+
+
+    /**
+     * Validate an access token.
+     *
+     * @param request
+     *         The request parameters to Authlete's {@code /auth/introspection} API.
+     *
+     * @return
+     *         The response from the Authlete's {@code /auth/introspection} API.
+     *
+     * @throws WebApplicationException
+     *         The access token is invalid or something unexpected happened.
+     *         This exception is raised when the {@code action} response parameter
+     *         in the response from the {@code /auth/introspection} API is not
+     *         {@link IntrospectionResponse.Action#OK OK}.
+     *
+     * @since 2.66
+     */
+    public IntrospectionResponse validate(IntrospectionRequest request) throws WebApplicationException
+    {
+        try
+        {
+            return process(request);
         }
         catch (WebApplicationException e)
         {
@@ -517,6 +555,28 @@ public class AccessTokenValidator extends BaseHandler
                 params.getHtu()
         );
 
+        // Handle the response from the /auth/introspection API.
+        handleIntrospectionResponse(response);
+
+        // Simplify the introspection response to an AccessTokenInfo instance.
+        return new AccessTokenInfo(params.getAccessToken(), response);
+    }
+
+
+    private IntrospectionResponse process(IntrospectionRequest request) throws WebApplicationException
+    {
+        // Call Authlete's /api/auth/introspection API.
+        IntrospectionResponse response = getApiCaller().callIntrospection(request);
+
+        // Handle the response from the /auth/introspection API.
+        handleIntrospectionResponse(response);
+
+        return response;
+    }
+
+
+    private void handleIntrospectionResponse(IntrospectionResponse response)
+    {
         // 'action' in the response denotes the next action which
         // this service implementation should take.
         Action action = response.getAction();
@@ -524,28 +584,30 @@ public class AccessTokenValidator extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                throw toException(Status.INTERNAL_SERVER_ERROR, content);
+                throw toException(Status.INTERNAL_SERVER_ERROR, content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                throw toException(Status.BAD_REQUEST, content);
+                throw toException(Status.BAD_REQUEST, content, headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                throw toException(Status.UNAUTHORIZED, content);
+                throw toException(Status.UNAUTHORIZED, content, headers);
 
             case FORBIDDEN:
                 // 403 Forbidden
-                throw toException(Status.FORBIDDEN, content);
+                throw toException(Status.FORBIDDEN, content, headers);
 
             case OK:
-                // Return access token information.
-                return new AccessTokenInfo(params.getAccessToken(), response);
+                return;
 
             default:
                 // This never happens.
@@ -554,9 +616,25 @@ public class AccessTokenValidator extends BaseHandler
     }
 
 
-    private WebApplicationException toException(Status status, String challenge)
+    private static Map<String, Object> prepareHeaders(IntrospectionResponse response)
     {
-        Response response = ResponseUtil.bearerError(status, challenge);
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // DPoP-Nonce
+        String dpopNonce = response.getDpopNonce();
+        if (dpopNonce != null)
+        {
+            headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        return headers;
+    }
+
+
+    private WebApplicationException toException(
+            Status status, String challenge, Map<String, Object> headers)
+    {
+        Response response = ResponseUtil.bearerError(status, challenge, headers);
 
         return new WebApplicationException(response);
     }

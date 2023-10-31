@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -501,28 +501,31 @@ public class UserInfoRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.bearerError(Status.INTERNAL_SERVER_ERROR, content);
+                return ResponseUtil.bearerError(Status.INTERNAL_SERVER_ERROR, content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.bearerError(Status.BAD_REQUEST, content);
+                return ResponseUtil.bearerError(Status.BAD_REQUEST, content, headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                return ResponseUtil.bearerError(Status.UNAUTHORIZED, content);
+                return ResponseUtil.bearerError(Status.UNAUTHORIZED, content, headers);
 
             case FORBIDDEN:
                 // 403 Forbidden
-                return ResponseUtil.bearerError(Status.FORBIDDEN, content);
+                return ResponseUtil.bearerError(Status.FORBIDDEN, content, headers);
 
             case OK:
                 // Return the user information.
-                return getUserInfo(params, response);
+                return getUserInfo(params, response, headers);
 
             default:
                 // This never happens.
@@ -531,11 +534,27 @@ public class UserInfoRequestHandler extends BaseHandler
     }
 
 
+    private static Map<String, Object> prepareHeaders(UserInfoResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // DPoP-Nonce
+        String dpopNonce = response.getDpopNonce();
+        if (dpopNonce != null)
+        {
+            headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        return headers;
+    }
+
+
     /**
      * Generate a JSON or a JWT containing user information by calling
      * Authlete's {@code /api/auth/userinfo/issue} API.
      */
-    private Response getUserInfo(Params params, UserInfoResponse response)
+    private Response getUserInfo(
+            Params params, UserInfoResponse response, Map<String, Object> headers)
     {
         String subject = response.getSubject();
 
@@ -573,7 +592,7 @@ public class UserInfoRequestHandler extends BaseHandler
             // Generate a JSON or a JWT containing user information
             // by calling Authlete's /api/auth/userinfo/issue API.
             return getApiCaller().userInfoIssue(
-                    response.getToken(), claims, claimsForTx, verifiedClaimsForTx);
+                    response.getToken(), claims, claimsForTx, verifiedClaimsForTx, headers);
         }
         catch (WebApplicationException e)
         {

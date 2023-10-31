@@ -1,6 +1,36 @@
 変更点
 ======
 
+- `AccessTokenValidator` クラス
+    * `validate(IntrospectionRequest)` メソッドを追加。
+
+- `AuthleteApiCaller` クラス
+    * 引数 `headers` を `tokenFailResponse` メソッドに追加。
+    * 引数 `headers` を `tokenIssue` メソッドに追加。
+    * 引数 `headers` を `userInfoIssue` メソッドに追加。
+    * `callIntrospection(IntrospectionRequest)` メソッドを追加。
+
+- `BaseResourceEndpoint` クラス
+    * `validateAccessToken(AuthleteApi, IntrospectionRequest)` メソッドを追加。
+
+- `ResponseUtil` クラス
+    * `ok(String, Map<String, Object>)` メソッドを追加。
+    * `ok(String, MediaType, Map<String, Object>)` メソッドを追加。
+    * `noContent(Map<String, Object>)` メソッドを追加。
+    * `badRequest(String, Map<String, Object>)` メソッドを追加。
+    * `unauthorized(String, String, Map<String, Object>)` メソッドを追加。
+    * `forbidden(String, Map<String, Object>)` メソッドを追加。
+    * `notFound(String, Map<String, Object>)` メソッドを追加。
+    * `internalServerError(String, Map<String, Object>)` メソッドを追加。
+    * `created(String, Map<String, Object>)` メソッドを追加。
+    * `internalServerError(String, MediaType, Map<String, Object>)` メソッドを追加。
+    * `bearerError(Status, String, Map<String, Object>)` メソッドを追加。
+    * `tooLarge(String, Map<String, Object>)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.79 から 3.82 へ更新。
+
+
 2.65 (2023 年 09 月 18 日)
 --------------------------
 

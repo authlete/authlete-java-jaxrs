@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Authlete, Inc.
+ * Copyright (C) 2021-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.authlete.jaxrs;
 
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
@@ -75,37 +77,55 @@ public class GMRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case OK:
                 // 200 OK
-                return ResponseUtil.ok(content);
+                return ResponseUtil.ok(content, headers);
 
             case NO_CONTENT:
                 // 204 No Content
-                return ResponseUtil.noContent();
+                return ResponseUtil.noContent(headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                return ResponseUtil.unauthorized(content, null);
+                return ResponseUtil.unauthorized(content, null, headers);
 
             case FORBIDDEN:
                 // 403 Forbidden
-                return ResponseUtil.forbidden(content);
+                return ResponseUtil.forbidden(content, headers);
 
             case NOT_FOUND:
                 // 404 Not Found
-                return ResponseUtil.notFound(content);
+                return ResponseUtil.notFound(content, headers);
 
             case CALLER_ERROR:
             case AUTHLETE_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             default:
                 // This should not happen.
                 throw getApiCaller().unknownAction("/api/gm", action);
         }
+    }
+
+
+    private static Map<String, Object> prepareHeaders(GMResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // DPoP-Nonce
+        String dpopNonce = response.getDpopNonce();
+        if (dpopNonce != null)
+        {
+            headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        return headers;
     }
 }

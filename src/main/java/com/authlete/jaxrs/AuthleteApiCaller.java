@@ -488,7 +488,9 @@ class AuthleteApiCaller
      * Create a response that describes the failure. This method
      * calls Authlete's {@code /api/auth/token/fail} API.
      */
-    private Response createTokenFailResponse(String ticket, TokenFailRequest.Reason reason)
+    private Response createTokenFailResponse(
+            String ticket, TokenFailRequest.Reason reason,
+            Map<String, Object> headers)
     {
         // Call Authlete's /api/auth/token/fail API.
         TokenFailResponse response = callTokenFail(ticket, reason);
@@ -505,11 +507,11 @@ class AuthleteApiCaller
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.badRequest(content);
+                return ResponseUtil.badRequest(content, headers);
 
             default:
                 // This never happens.
@@ -522,11 +524,13 @@ class AuthleteApiCaller
      * Create an exception that describes the failure. This method
      * calls Authlete's {@code /api/auth/token/fail} API.
      */
-    public WebApplicationException tokenFail(String ticket, TokenFailRequest.Reason reason)
+    public WebApplicationException tokenFail(
+            String ticket, TokenFailRequest.Reason reason,
+            Map<String, Object> headers)
     {
         // Create a response to the client application with the help of
         // Authlete's /api/auth/token/fail API.
-        Response response = createTokenFailResponse(ticket, reason);
+        Response response = createTokenFailResponse(ticket, reason, headers);
 
         // Create an exception containing the response.
         return new WebApplicationException(response);
@@ -563,7 +567,9 @@ class AuthleteApiCaller
      * Issue an access token and optionally an ID token.
      * This method calls Authlete's {@code /api/auth/token/issue} API.
      */
-    public Response tokenIssue(String ticket, String subject, Property[] properties)
+    public Response tokenIssue(
+            String ticket, String subject, Property[] properties,
+            Map<String, Object> headers)
     {
         // Call Authlete's /api/auth/token/issue API.
         TokenIssueResponse response = callTokenIssue(ticket, subject, properties);
@@ -580,11 +586,11 @@ class AuthleteApiCaller
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case OK:
                 // 200 OK
-                return ResponseUtil.ok(content);
+                return ResponseUtil.ok(content, headers);
 
             default:
                 // This never happens.
@@ -801,7 +807,8 @@ class AuthleteApiCaller
      */
     public Response userInfoIssue(String accessToken,
             Map<String, Object> claims, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx)
+            List<Map<String, Object>> verifiedClaimsForTx,
+            Map<String, Object> headers)
     {
         // Call Authlete's /api/auth/userinfo/issue API.
         UserInfoIssueResponse response = callUserInfoIssue(
@@ -820,27 +827,27 @@ class AuthleteApiCaller
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.bearerError(Status.INTERNAL_SERVER_ERROR, content);
+                return ResponseUtil.bearerError(Status.INTERNAL_SERVER_ERROR, content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.bearerError(Status.BAD_REQUEST, content);
+                return ResponseUtil.bearerError(Status.BAD_REQUEST, content, headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                return ResponseUtil.bearerError(Status.UNAUTHORIZED, content);
+                return ResponseUtil.bearerError(Status.UNAUTHORIZED, content, headers);
 
             case FORBIDDEN:
                 // 403 Forbidden
-                return ResponseUtil.bearerError(Status.FORBIDDEN, content);
+                return ResponseUtil.bearerError(Status.FORBIDDEN, content, headers);
 
             case JSON:
                 // 200 OK, application/json;charset=UTF-8
-                return ResponseUtil.ok(content);
+                return ResponseUtil.ok(content, headers);
 
             case JWT:
                 // 200 OK, application/jwt
-                return ResponseUtil.ok(content, ResponseUtil.MEDIA_TYPE_JWT);
+                return ResponseUtil.ok(content, ResponseUtil.MEDIA_TYPE_JWT, headers);
 
             default:
                 // This never happens.
@@ -867,6 +874,12 @@ class AuthleteApiCaller
             .setHtu(htu)
             ;
 
+        return callIntrospection(request);
+    }
+
+
+    public IntrospectionResponse callIntrospection(IntrospectionRequest request)
+    {
         try
         {
             // Call Authlete's /api/auth/introspection API.

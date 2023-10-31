@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Authlete, Inc.
+ * Copyright (C) 2015-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.authlete.jaxrs;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -485,42 +487,45 @@ public class TokenRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case INVALID_CLIENT:
                 // 401 Unauthorized
-                return ResponseUtil.unauthorized(content, CHALLENGE);
+                return ResponseUtil.unauthorized(content, CHALLENGE, headers);
 
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.badRequest(content);
+                return ResponseUtil.badRequest(content, headers);
 
             case PASSWORD:
                 // Process the token request whose flow is "Resource Owner Password Credentials".
-                return handlePassword(response);
+                return handlePassword(response, headers);
 
             case OK:
                 // 200 OK
-                return ResponseUtil.ok(content);
+                return ResponseUtil.ok(content, headers);
 
             case TOKEN_EXCHANGE:
                 // Process the token exchange request (RFC 8693)
-                return handleTokenExchange(response);
+                return handleTokenExchange(response, headers);
 
             case JWT_BEARER:
                 // Process the token request which uses the grant type
                 // urn:ietf:params:oauth:grant-type:jwt-bearer (RFC 7523).
-                return handleJwtBearer(response);
+                return handleJwtBearer(response, headers);
 
             case ID_TOKEN_REISSUABLE:
                 // The flow of the token request is the refresh token flow
                 // and an ID token can be reissued.
-                return handleIdTokenReissuable(response);
+                return handleIdTokenReissuable(response, headers);
 
             default:
                 // This never happens.
@@ -529,10 +534,25 @@ public class TokenRequestHandler extends BaseHandler
     }
 
 
+    private static Map<String, Object> prepareHeaders(TokenResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // DPoP-Nonce
+        String dpopNonce = response.getDpopNonce();
+        if (dpopNonce != null)
+        {
+            headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        return headers;
+    }
+
+
     /**
      * Process the token request whose flow is "Resource Owner Password Credentials".
      */
-    private Response handlePassword(TokenResponse response)
+    private Response handlePassword(TokenResponse response, Map<String, Object> headers)
     {
         // The credentials of the resource owner.
         String username = response.getUsername();
@@ -550,17 +570,20 @@ public class TokenRequestHandler extends BaseHandler
         if (subject != null)
         {
             // Issue an access token and optionally an ID token.
-            return getApiCaller().tokenIssue(ticket, subject, properties);
+            return getApiCaller().tokenIssue(
+                    ticket, subject, properties, headers);
         }
         else
         {
             // The credentials are invalid. An access token is not issued.
-            throw getApiCaller().tokenFail(ticket, Reason.INVALID_RESOURCE_OWNER_CREDENTIALS);
+            throw getApiCaller().tokenFail(
+                    ticket, Reason.INVALID_RESOURCE_OWNER_CREDENTIALS, headers);
         }
     }
 
 
-    private Response handleTokenExchange(TokenResponse tokenResponse)
+    private Response handleTokenExchange(
+            TokenResponse tokenResponse, Map<String, Object> headers)
     {
         // Let the SPI implementation handle the token exchange request.
         Response response = mSpi.tokenExchange(tokenResponse);
@@ -572,7 +595,8 @@ public class TokenRequestHandler extends BaseHandler
     }
 
 
-    private Response handleJwtBearer(TokenResponse tokenResponse)
+    private Response handleJwtBearer(
+            TokenResponse tokenResponse, Map<String, Object> headers)
     {
         // Let the SPI implementation handle the token request.
         Response response = mSpi.jwtBearer(tokenResponse);
@@ -584,14 +608,15 @@ public class TokenRequestHandler extends BaseHandler
     }
 
 
-    private Response handleIdTokenReissuable(TokenResponse tokenResponse)
+    private Response handleIdTokenReissuable(
+            TokenResponse tokenResponse, Map<String, Object> headers)
     {
         // TODO: Support ID token reissuance.
 
         // Note that calling ResponseUtil.ok() here will result in that
         // the token endpoint behaves in the same way as before and no
         // ID token is reissued.
-        return ResponseUtil.ok(tokenResponse.getResponseContent());
+        return ResponseUtil.ok(tokenResponse.getResponseContent(), headers);
     }
 
 

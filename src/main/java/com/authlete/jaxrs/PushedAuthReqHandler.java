@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Authlete, Inc.
+ * Copyright (C) 2019-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.authlete.jaxrs;
 
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -146,36 +148,54 @@ public class PushedAuthReqHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.badRequest(content);
+                return ResponseUtil.badRequest(content, headers);
 
             case CREATED:
                 // 201 Created
-                return ResponseUtil.created(content);
+                return ResponseUtil.created(content, headers);
 
             case FORBIDDEN:
                 // 403 forbidden
-                return ResponseUtil.forbidden(content);
+                return ResponseUtil.forbidden(content, headers);
 
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case PAYLOAD_TOO_LARGE:
                 // 413 Too Large
-                return ResponseUtil.tooLarge(content);
+                return ResponseUtil.tooLarge(content, headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                return ResponseUtil.unauthorized(content, null);
+                return ResponseUtil.unauthorized(content, null, headers);
 
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/pushed_auth_req", action);
         }
+    }
+
+
+    private static Map<String, Object> prepareHeaders(PushedAuthReqResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // DPoP-Nonce
+        String dpopNonce = response.getDpopNonce();
+        if (dpopNonce != null)
+        {
+            headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        return headers;
     }
 }
