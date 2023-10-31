@@ -73,8 +73,8 @@ jobs:
           git clone https://AuthleteOPS:${ACCESS_TOKEN}@github.com/authlete/authlete-java-jakarta.git
           git config --global user.email "ops@authlete.com"
           git config --global user.name "Authlete OPS"
-          cp -r src authlete-java-jakarta/src
-          cp pom.xml authlete-java-jakarta/pom.xml
+          cp -r src authlete-java-jakarta
+          cp pom.xml authlete-java-jakarta
           cd authlete-java-jakarta
           git add src
           git add pom.xml
