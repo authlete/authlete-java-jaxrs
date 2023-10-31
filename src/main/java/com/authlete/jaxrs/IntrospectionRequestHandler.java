@@ -72,7 +72,6 @@ public class IntrospectionRequestHandler extends BaseHandler
         private String sharedKeyForSign;
         private String sharedKeyForEncryption;
         private String publicKeyForEncryption;
-        private String introspectionSignatureKeyId;
 
 
         /**
