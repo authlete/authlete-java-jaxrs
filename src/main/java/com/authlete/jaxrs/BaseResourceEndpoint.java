@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.authlete.jaxrs;
 
 import javax.ws.rs.WebApplicationException;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.dto.IntrospectionRequest;
+import com.authlete.common.dto.IntrospectionResponse;
 import com.authlete.common.web.BearerToken;
 import com.authlete.common.web.DpopToken;
 import com.authlete.jaxrs.AccessTokenValidator.Params;
@@ -291,6 +293,24 @@ public class BaseResourceEndpoint extends BaseEndpoint
         {
             // Validate the access token and obtain the information about it.
             return new AccessTokenValidator(api).validate(params);
+        }
+        catch (WebApplicationException e)
+        {
+            // The access token is invalid. (Or an network error, or some others.)
+            onError(e);
+
+            throw e;
+        }
+    }
+
+
+    public IntrospectionResponse validateAccessToken(
+            AuthleteApi api, IntrospectionRequest request) throws WebApplicationException
+    {
+        try
+        {
+            // Validate the access token and obtain the information about it.
+            return new AccessTokenValidator(api).validate(request);
         }
         catch (WebApplicationException e)
         {

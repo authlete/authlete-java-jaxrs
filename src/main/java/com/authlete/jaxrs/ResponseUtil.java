@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Authlete, Inc.
+ * Copyright (C) 2015-2023 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.util.Map;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -99,7 +100,21 @@ class ResponseUtil
      */
     public static Response ok(String entity)
     {
-        return ok(entity, MEDIA_TYPE_JSON);
+        return ok(entity, /* headers */ (Map<String, Object>)null);
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response ok(
+            String entity, Map<String, Object> headers)
+    {
+        return ok(entity, MEDIA_TYPE_JSON, headers);
     }
 
 
@@ -109,7 +124,20 @@ class ResponseUtil
      */
     public static Response ok(String entity, MediaType mediaType)
     {
-        return builder(Status.OK, entity, mediaType).build();
+        return ok(entity, mediaType, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"} with the given entity
+     * with the given media format.
+     *
+     * @since 2.66
+     */
+    public static Response ok(
+            String entity, MediaType mediaType, Map<String, Object> headers)
+    {
+        return builder(Status.OK, entity, mediaType, headers).build();
     }
 
 
@@ -173,7 +201,18 @@ class ResponseUtil
      */
     public static Response noContent()
     {
-        return builder(Status.NO_CONTENT).build();
+        return noContent(/* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "204 No Content"}.
+     *
+     * @since 2.66
+     */
+    public static Response noContent(Map<String, Object> headers)
+    {
+        return builder(Status.NO_CONTENT, headers).build();
     }
 
 
@@ -196,7 +235,21 @@ class ResponseUtil
      */
     public static Response badRequest(String entity)
     {
-        return builder(Status.BAD_REQUEST, entity, MEDIA_TYPE_JSON).build();
+        return badRequest(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "400 Bad Request"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response badRequest(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.BAD_REQUEST, entity, MEDIA_TYPE_JSON, headers).build();
     }
 
 
@@ -209,8 +262,24 @@ class ResponseUtil
      */
     public static Response unauthorized(String entity, String challenge)
     {
+        return unauthorized(entity, challenge, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "401 Unauthorized"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"} and
+     * with {@code WWW-Authenticate} header having the
+     * value specified by {@code challenge}.
+     *
+     * @since 2.66
+     */
+    public static Response unauthorized(
+            String entity, String challenge, Map<String, Object> headers)
+    {
         ResponseBuilder builder =
-                builder(Status.UNAUTHORIZED, entity, MEDIA_TYPE_JSON);
+                builder(Status.UNAUTHORIZED, entity, MEDIA_TYPE_JSON, headers);
 
         if (challenge != null)
         {
@@ -228,7 +297,21 @@ class ResponseUtil
      */
     public static Response forbidden(String entity)
     {
-        return builder(Status.FORBIDDEN, entity, MEDIA_TYPE_JSON).build();
+        return forbidden(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "403 Forbidden"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response forbidden(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.FORBIDDEN, entity, MEDIA_TYPE_JSON, headers).build();
     }
 
 
@@ -239,7 +322,21 @@ class ResponseUtil
      */
     public static Response notFound(String entity)
     {
-        return builder(Status.NOT_FOUND, entity, MEDIA_TYPE_JSON).build();
+        return notFound(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "404 Not Found"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response notFound(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.NOT_FOUND, entity, MEDIA_TYPE_JSON, headers).build();
     }
 
 
@@ -250,7 +347,21 @@ class ResponseUtil
      */
     public static Response internalServerError(String entity)
     {
-        return internalServerError(entity, MEDIA_TYPE_JSON);
+        return internalServerError(entity, /* header */ (Map<String, Object>)null);
+    }
+
+
+    /**
+     * Create a response of {@code "500 Internal Server Error"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response internalServerError(
+            String entity, Map<String, Object> headers)
+    {
+        return internalServerError(entity, MEDIA_TYPE_JSON, headers);
     }
 
 
@@ -261,7 +372,21 @@ class ResponseUtil
      */
     public static Response created(String entity)
     {
-        return builder(Status.CREATED, entity, MEDIA_TYPE_JSON).build();
+        return created(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "201 Created"}
+     * with the given entity formatted in
+     * {@code "application/json;charset=UTF-8"}.
+     *
+     * @since 2.66
+     */
+    public static Response created(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.CREATED, entity, MEDIA_TYPE_JSON, headers).build();
     }
 
 
@@ -271,7 +396,20 @@ class ResponseUtil
      */
     public static Response internalServerError(String entity, MediaType mediaType)
     {
-        return builder(Status.INTERNAL_SERVER_ERROR, entity, mediaType).build();
+        return internalServerError(entity, mediaType, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "500 Internal Server Error"}
+     * with the given entity.
+     *
+     * @since 2.66
+     */
+    public static Response internalServerError(
+            String entity, MediaType mediaType, Map<String, Object> headers)
+    {
+        return builder(Status.INTERNAL_SERVER_ERROR, entity, mediaType, headers).build();
     }
 
 
@@ -281,10 +419,30 @@ class ResponseUtil
      */
     private static ResponseBuilder builder(Status status)
     {
-        return Response
+        return builder(status, /* headers */ null);
+    }
+
+
+    private static ResponseBuilder builder(
+            Status status, Map<String, Object> headers)
+    {
+        ResponseBuilder builder = Response
                 .status(status)
                 .cacheControl(CACHE_CONTROL)
                 .header("Pragma", "no-cache");
+
+        // If additional headers are given.
+        if (headers != null)
+        {
+            // For each additional header.
+            for (Map.Entry<String, Object> header : headers.entrySet())
+            {
+                // Add the header to the builder.
+                builder.header(header.getKey(), header.getValue());
+            }
+        }
+
+        return builder;
     }
 
 
@@ -293,9 +451,14 @@ class ResponseUtil
      */
     private static ResponseBuilder builder(Status status, String entity, MediaType type)
     {
-        return builder(status)
-                .entity(entity)
-                .type(type);
+        return builder(status, entity, type, /* headers */ null);
+    }
+
+
+    private static ResponseBuilder builder(
+            Status status, String entity, MediaType type, Map<String, Object> headers)
+    {
+        return builder(status, headers).entity(entity).type(type);
     }
 
 
@@ -305,7 +468,20 @@ class ResponseUtil
      */
     public static Response bearerError(Status status, String challenge)
     {
-        return builder(status).header("WWW-Authenticate", challenge).build();
+        return bearerError(status, challenge, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response with the given status and {@code WWW-Authenticate}
+     * header having the given challenge as its value.
+     *
+     * @since 2.66
+     */
+    public static Response bearerError(
+            Status status, String challenge, Map<String, Object> headers)
+    {
+        return builder(status, headers).header("WWW-Authenticate", challenge).build();
     }
 
 
@@ -317,6 +493,19 @@ class ResponseUtil
      */
     public static Response tooLarge(String entity)
     {
-        return builder(Status.REQUEST_ENTITY_TOO_LARGE, entity, MEDIA_TYPE_JSON).build();
+        return tooLarge(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code 413 Request Entity Too Large} with
+     * the given entity.
+     *
+     * @since 2.66
+     */
+    public static Response tooLarge(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.REQUEST_ENTITY_TOO_LARGE, entity, MEDIA_TYPE_JSON, headers).build();
     }
 }

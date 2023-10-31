@@ -1,6 +1,36 @@
 CHANGES
 =======
 
+- `AccessTokenValidator` class
+    * Added the `validate(IntrospectionRequest)` method.
+
+- `AuthleteApiCaller` class
+    * Added the `headers` argument to the `tokenFailResponse` method.
+    * Added the `headers` argument to the `tokenIssue` method.
+    * Added the `headers` argument to the `userInfoIssue` method.
+    * Added the `callIntrospection(IntrospectionRequest)` method.
+
+- `BaseResourceEndpoint` class
+    * Added the `validateAccessToken(AuthleteApi, IntrospectionRequest)` method.
+
+- `ResponseUtil` class
+    * Added the `ok(String, Map<String, Object>)` method.
+    * Added the `ok(String, MediaType, Map<String, Object>)` method.
+    * Added the `noContent(Map<String, Object>)` method.
+    * Added the `badRequest(String, Map<String, Object>)` method.
+    * Added the `unauthorized(String, String, Map<String, Object>)` method.
+    * Added the `forbidden(String, Map<String, Object>)` method.
+    * Added the `notFound(String, Map<String, Object>)` method.
+    * Added the `internalServerError(String, Map<String, Object>)` method.
+    * Added the `created(String, Map<String, Object>)` method.
+    * Added the `internalServerError(String, MediaType, Map<String, Object>)` method.
+    * Added the `bearerError(Status, String, Map<String, Object>)` method.
+    * Added the `tooLarge(String, Map<String, Object>)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.79 to 3.82.
+
+
 2.65 (2023-09-18)
 -----------------
 
