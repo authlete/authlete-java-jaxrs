@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.66 (2023-10-31)
+-----------------
+
 - `AccessTokenValidator` class
     * Added the `validate(IntrospectionRequest)` method.
 

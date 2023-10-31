@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.66 (2023 年 10 月 31 日)
+--------------------------
+
 - `AccessTokenValidator` クラス
     * `validate(IntrospectionRequest)` メソッドを追加。
 
