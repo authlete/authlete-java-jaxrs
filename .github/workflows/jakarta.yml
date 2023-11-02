@@ -80,3 +80,27 @@ jobs:
           git add pom.xml
           git commit -m "Jakarta $(date)"
           git push
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+          gpg-private-key: ${{ secrets.ADMIN_AT_AUTHLETE_SEC }}
+
+      - name: Clone jakarta repository
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          git clone https://AuthleteOPS:${ACCESS_TOKEN}@github.com/authlete/authlete-java-jakarta.git
+          cd authlete-java-jakarta
+
+      - name: Prepare artifacts
+        run: mvn -P external release:prepare
