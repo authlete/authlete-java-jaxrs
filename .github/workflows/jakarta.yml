@@ -88,18 +88,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Test
-        run: |
-          echo "$ADMIN_AT_AUTHLETE_SEC" > test.key
-          gpg --batch --import-options import-show --import test.key
+      # - name: Import GPG key
+      #   run: |
+      #     echo "${{ secrets.ADMIN_AT_AUTHLETE_SEC }}" > ~/test.key
+      #     gpg --batch --import-options import-show --passphrase "${{ secrets.ADMIN_AT_AUTHLETE_SEC_PASS }}" --import ~/test.key || true
+      #     gpg --list-secret-keys
 
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
-          # gpg-private-key: |
-          #   ${{ secrets.ADMIN_AT_AUTHLETE_SEC }}
+          # gpg-private-key: ${{ secrets.ADMIN_AT_AUTHLETE_SEC }}
+          # gpg-passphrase: ${{ secrets.ADMIN_AT_AUTHLETE_SEC_PASS }}
 
       - name: Clone jakarta repository
         env:
@@ -109,4 +110,10 @@ jobs:
           cd authlete-java-jakarta
 
       - name: Prepare artifacts
-        run: mvn -P external release:prepare
+        run: |
+          echo "${{ secrets.ADMIN_AT_AUTHLETE_SEC }}" > ~/test.key
+          gpg --batch --import-options import-show --passphrase "${{ secrets.ADMIN_AT_AUTHLETE_SEC_PASS }}" --import ~/test.key || true
+          gpg --list-secret-keys
+          mvn -P external release:prepare
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.ADMIN_AT_AUTHLETE_SEC_PASS }}

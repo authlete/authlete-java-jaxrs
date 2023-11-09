@@ -280,6 +280,10 @@
                         </goals>
                         <configuration>
                             <keyname>E834481D</keyname>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
                         </configuration>
                     </execution>
                 </executions>
