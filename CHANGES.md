@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.68 (2023-11-16)
+-----------------
+
+- Synchronized `Authlete Java JAX-RS` with `Authlete Java Jakarta` project.
+
 2.66 (2023-10-31)
 -----------------
 
