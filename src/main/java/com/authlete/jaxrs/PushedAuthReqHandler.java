@@ -17,6 +17,7 @@
 package com.authlete.jaxrs;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,6 +51,252 @@ import com.authlete.common.web.BasicCredentials;
  */
 public class PushedAuthReqHandler extends BaseHandler
 {
+    /**
+     * Parameters passed to the {@link PushedAuthReqHandler#handle(Params)}
+     * method.
+     *
+     * @since 2.69
+     */
+    public static class Params implements Serializable
+    {
+        private static final long serialVersionUID = 1L;
+
+
+        private MultivaluedMap<String, String> parameters;
+        private String authorization;
+        private String[] clientCertificatePath;
+        private String dpop;
+        private String htm;
+        private String htu;
+
+
+        /**
+         * Get the request parameters of the PAR request.
+         *
+         * @return
+         *         The request parameters of the PAR request.
+         */
+        public MultivaluedMap<String, String> getParameters()
+        {
+            return parameters;
+        }
+
+
+        /**
+         * Set the request parameters of the PAR request.
+         *
+         * @param parameters
+         *         The request parameters of the PAR request.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setParameters(MultivaluedMap<String, String> parameters)
+        {
+            this.parameters = parameters;
+
+            return this;
+        }
+
+
+        /**
+         * Get the value of the {@code Authorization} header in the PAR request.
+         * A pair of client ID and client secret is embedded there when the
+         * client authentication method is {@code client_secret_basic}.
+         *
+         * @return
+         *         The value of the {@code Authorization} header.
+         */
+        public String getAuthorization()
+        {
+            return authorization;
+        }
+
+
+        /**
+         * Set the value of the {@code Authorization} header in the PAR request.
+         * A pair of client ID and client secret is embedded there when the
+         * client authentication method is {@code client_secret_basic}.
+         *
+         * @param authorization
+         *         The value of the {@code Authorization} header.
+         *
+         * @return
+         *         {@code this} object.
+         */
+        public Params setAuthorization(String authorization)
+        {
+            this.authorization = authorization;
+
+            return this;
+        }
+
+
+        /**
+         * Get the path of the client's certificate, each in PEM format.
+         * The first item in the array is the client's certificate itself.
+         *
+         * @return
+         *         The path of the client's certificate.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and
+         *       Certificate-Bound Access Tokens</a>
+         */
+        public String[] getClientCertificatePath()
+        {
+            return clientCertificatePath;
+        }
+
+
+        /**
+         * Set the path of the client's certificate, each in PEM format.
+         * The first item in the array is the client's certificate itself.
+         *
+         * @param path
+         *         The path of the client's certificate.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc8705.html"
+         *      >RFC 8705 : OAuth 2.0 Mutual-TLS Client Authentication and
+         *       Certificate-Bound Access Tokens</a>
+         */
+        public Params setClientCertificatePath(String[] path)
+        {
+            this.clientCertificatePath = path;
+
+            return this;
+        }
+
+
+        /**
+         * Get the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * @return
+         *         The DPoP proof JWT.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public String getDpop()
+        {
+            return dpop;
+        }
+
+
+        /**
+         * Set the DPoP proof JWT (the value of the {@code DPoP} HTTP header).
+         *
+         * @param dpop
+         *         The DPoP proof JWT.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public Params setDpop(String dpop)
+        {
+            this.dpop = dpop;
+
+            return this;
+        }
+
+
+        /**
+         * Get the HTTP method of the PAR request.
+         *
+         * @return
+         *         The HTTP method of the PAR request.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public String getHtm()
+        {
+            return htm;
+        }
+
+
+        /**
+         * Set the HTTP method of the PAR request.
+         *
+         * <p>
+         * The value should be {@code "POST"} unless new specifications
+         * allowing other HTTP methods at the PAR endpoint are developed.
+         * If this parameter is omitted, {@code "POST"} is used as the
+         * default value.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * </p>
+         *
+         * @param htm
+         *         The HTTP method of the PAR request.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public Params setHtm(String htm)
+        {
+            this.htm = htm;
+
+            return this;
+        }
+
+
+        /**
+         * Get the URL of the PAR endpoint.
+         *
+         * @return
+         *         The URL of the PAR endpoint.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public String getHtu()
+        {
+            return htu;
+        }
+
+
+        /**
+         * Set the URL of the PAR endpoint.
+         *
+         * <p>
+         * If this parameter is omitted, the {@code pushedAuthReqEndpoint}
+         * property of {@link Service} will be used as the default value.
+         * </p>
+         *
+         * <p>
+         * The value passed here will be used to validate the DPoP proof JWT.
+         * </p>
+         *
+         * @param htu
+         *         The URL of the PAR endpoint.
+         *
+         * @return
+         *         {@code this} object.
+         *
+         * @see <a href="https://www.rfc-editor.org/rfc/rfc9449.html"
+         *      >RFC 9449: OAuth 2.0 Demonstrating Proof of Possession (DPoP)</a>
+         */
+        public Params setHtu(String htu)
+        {
+            this.htu = htu;
+
+            return this;
+        }
+    }
+
+
     /**
      * Constructor with an implementation of {@link AuthleteApi} interface.
      *
@@ -91,10 +338,37 @@ public class PushedAuthReqHandler extends BaseHandler
             MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath) throws WebApplicationException
     {
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                .setClientCertificatePath(clientCertificatePath)
+                ;
 
+        return handle(params);
+    }
+
+
+    /**
+     * Handle a PAR request.
+     *
+     * @param params
+     *         Parameters needed to handle the PAR request.
+     *         Must not be {@code null}.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.69
+     */
+    public Response handle(Params params)
+    {
         // Convert the value of Authorization header (credentials of
         // the client application), if any, into BasicCredentials.
-        BasicCredentials credentials = BasicCredentials.parse(authorization);
+        BasicCredentials credentials = BasicCredentials.parse(params.getAuthorization());
 
         // The credentials of the client application extracted from
         // 'Authorization' header. These may be null.
@@ -104,7 +378,15 @@ public class PushedAuthReqHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(parameters, clientId, clientSecret, clientCertificatePath);
+            return process(
+                    params.getParameters(),
+                    clientId,
+                    clientSecret,
+                    params.getClientCertificatePath(),
+                    params.getDpop(),
+                    params.getHtm(),
+                    params.getHtu()
+                    );
         }
         catch (WebApplicationException e)
         {
@@ -121,7 +403,10 @@ public class PushedAuthReqHandler extends BaseHandler
     /**
      * Process the parameters of the pushed authorization request.
      */
-    private Response process(MultivaluedMap<String, String> parameters, String clientId, String clientSecret, String[] clientCertificatePath)
+    private Response process(
+            MultivaluedMap<String, String> parameters, String clientId,
+            String clientSecret, String[] clientCertificatePath,
+            String dpop, String htm, String htu)
     {
         String clientCertificate = null;
         if (clientCertificatePath != null && clientCertificatePath.length > 0)
@@ -139,7 +424,7 @@ public class PushedAuthReqHandler extends BaseHandler
 
         PushedAuthReqResponse response = getApiCaller().callPushedAuthReq(
                 parameters, clientId, clientSecret,
-                clientCertificate, clientCertificatePath);
+                clientCertificate, clientCertificatePath, dpop, htm, htu);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

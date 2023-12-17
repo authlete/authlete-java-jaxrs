@@ -1356,25 +1356,37 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/pushed_auth_req} API.
      */
-    public PushedAuthReqResponse callPushedAuthReq(MultivaluedMap<String, String> parameters, String clientId, String clientSecret, String clientCertificate, String[] clientCertificatePath)
+    public PushedAuthReqResponse callPushedAuthReq(
+            MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath,
+            String dpop, String htm, String htu)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callPushedAuthReq(params, clientId, clientSecret, clientCertificate, clientCertificatePath);
+        return callPushedAuthReq(
+                params, clientId, clientSecret, clientCertificate, clientCertificatePath,
+                dpop, htm, htu);
     }
 
 
     /**
      * Call Authlete's {@code /api/pushed_auth_req} API.
      */
-    public PushedAuthReqResponse callPushedAuthReq(String parameters, String clientId, String clientSecret, String clientCertificate, String[] clientCertificatePath)
+    public PushedAuthReqResponse callPushedAuthReq(
+            String parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath,
+            String dpop, String htm, String htu)
     {
         PushedAuthReqRequest request = new PushedAuthReqRequest()
                 .setParameters(parameters)
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)
                 .setClientCertificate(clientCertificate)
-                .setClientCertificatePath(clientCertificatePath);
+                .setClientCertificatePath(clientCertificatePath)
+                .setDpop(dpop)
+                .setHtm(htm)
+                .setHtu(htu)
+                ;
 
         try
         {

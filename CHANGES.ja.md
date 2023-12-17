@@ -1,10 +1,21 @@
 変更点
 ======
 
+- `AuthleteApiCaller` クラス
+    * `dpop`, `htm`, `htu` 引数を `callPushedAuthReq` メソッドに追加。
+
+- `PushedAuthReqHandler` クラス
+    * `handle(Params)` メソッドを追加。
+
+- 新しい型
+    * `PushedAuthReqHandler.Params` クラス
+
+
 2.68 (2023-11-16)
 -----------------
 
 - `Authlete Java JAX-RS` と `Authlete Java Jakarta` プロジェクトを同期。
+
 
 2.66 (2023 年 10 月 31 日)
 --------------------------
