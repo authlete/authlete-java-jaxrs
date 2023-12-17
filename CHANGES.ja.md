@@ -1,6 +1,10 @@
 変更点
 ======
 
+- `BasePushedAuthReqEndpoint` クラス
+    * `handle(AuthleteApi, Params)` メソッドを追加。
+
+
 2.69 (2023-12-17)
 -----------------
 

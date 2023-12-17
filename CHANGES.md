@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+- `BasePushedAuthReqEndpoint` class
+    * Added the `handle(AuthleteApi, Params)` method.
+
+
 2.69 (2023-12-17)
 -----------------
 
