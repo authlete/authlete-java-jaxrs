@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.69 (2023-12-17)
+-----------------
+
 - `AuthleteApi` implementations
     * Implemented the `authorizationTicketInfo(AuthorizationTicketInfoRequest)` method.
     * Implemented the `authorizationTicketUpdate(AuthorizationTicketUpdateRequest)` method.

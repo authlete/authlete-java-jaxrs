@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.69 (2023-12-17)
+-----------------
+
 - `AuthleteApi` 実装
     * `authorizationTicketInfo(AuthorizationTicketInfoRequest)` メソッドを実装。
     * `authorizationTicketUpdate(AuthorizationTicketUpdateRequest)` メソッドを実装。
