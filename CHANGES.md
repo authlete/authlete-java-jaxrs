@@ -1,10 +1,21 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Added the `dpop`, `htm` and `htu` arguments to the `callPushedAuthReq` methods.
+
+- `PushedAuthReqHandler` class
+    * Added the `handle(Params)` method.
+
+- New types
+    * `PushedAuthReqHandler.Params` class
+
+
 2.68 (2023-11-16)
 -----------------
 
 - Synchronized `Authlete Java JAX-RS` with `Authlete Java Jakarta` project.
+
 
 2.66 (2023-10-31)
 -----------------
