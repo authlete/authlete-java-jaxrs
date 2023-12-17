@@ -1,11 +1,18 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `authorizationTicketInfo(AuthorizationTicketInfoRequest)` メソッドを実装。
+    * `authorizationTicketUpdate(AuthorizationTicketUpdateRequest)` メソッドを実装。
+
 - `AuthleteApiCaller` クラス
     * `dpop`, `htm`, `htu` 引数を `callPushedAuthReq` メソッドに追加。
 
 - `PushedAuthReqHandler` クラス
     * `handle(Params)` メソッドを追加。
+
+- `pom.xml`
+    * `authlete-java-common` のバージョンを 3.82 から 3.88 へ更新。
 
 - 新しい型
     * `PushedAuthReqHandler.Params` クラス

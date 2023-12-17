@@ -1,11 +1,19 @@
 CHANGES
 =======
 
+- `AuthleteApi` implementations
+    * Implemented the `authorizationTicketInfo(AuthorizationTicketInfoRequest)` method.
+    * Implemented the `authorizationTicketUpdate(AuthorizationTicketUpdateRequest)` method.
+
 - `AuthleteApiCaller` class
     * Added the `dpop`, `htm` and `htu` arguments to the `callPushedAuthReq` methods.
 
 - `PushedAuthReqHandler` class
     * Added the `handle(Params)` method.
+
+- `pom.xml`
+    * Updated the version of `authlete-java-common` from 3.82 to 3.88.
+
 
 - New types
     * `PushedAuthReqHandler.Params` class
