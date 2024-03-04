@@ -524,48 +524,76 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     @Override
     public TokenListResponse getTokenList() throws AuthleteApiException
     {
-        return getTokenList(null, null, 0, 0, false);
+        return getTokenList(null, null, 0, 0, false, TokenStatus.ALL);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(TokenStatus tokenStatus) throws AuthleteApiException
+    {
+        return getTokenList(null, null, 0, 0, false, tokenStatus);
     }
 
 
     @Override
     public TokenListResponse getTokenList(String clientIdentifier, String subject) throws AuthleteApiException
     {
-        return getTokenList(clientIdentifier, subject, 0, 0, false);
+        return getTokenList(clientIdentifier, subject, 0, 0, false, TokenStatus.ALL);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(String clientIdentifier, String subject, TokenStatus tokenStatus) throws AuthleteApiException
+    {
+        return getTokenList(clientIdentifier, subject, 0, 0, false, tokenStatus);
     }
 
 
     @Override
     public TokenListResponse getTokenList(int start, int end) throws AuthleteApiException
     {
-        return getTokenList(null, null, start, end, true);
+        return getTokenList(null, null, start, end, true, TokenStatus.ALL);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(int start, int end, TokenStatus tokenStatus) throws AuthleteApiException
+    {
+        return getTokenList(null, null, start, end, true, tokenStatus);
     }
 
 
     @Override
     public TokenListResponse getTokenList(String clientIdentifier, String subject, int start, int end) throws AuthleteApiException
     {
-        return getTokenList(clientIdentifier, subject, start, end, true);
+        return getTokenList(clientIdentifier, subject, start, end, true, TokenStatus.ALL);
+    }
+
+
+    @Override
+    public TokenListResponse getTokenList(String clientIdentifier, String subject, int start, int end, TokenStatus tokenStatus) throws AuthleteApiException
+    {
+        return getTokenList(clientIdentifier, subject, start, end, true, tokenStatus);
     }
 
 
     private TokenListResponse getTokenList(
             final String clientIdentifier, final String subject,
-            final int start, final int end, final boolean rangeGiven) throws AuthleteApiException
+            final int start, final int end, final boolean rangeGiven, TokenStatus tokenStatus) throws AuthleteApiException
     {
         return executeApiCall(new AuthleteApiCall<TokenListResponse>()
         {
             @Override
             public TokenListResponse call()
             {
-                return callGetTokenList(clientIdentifier, subject, start, end, rangeGiven);
+                return callGetTokenList(clientIdentifier, subject, start, end, rangeGiven, tokenStatus);
             }
         });
     }
 
 
     private TokenListResponse callGetTokenList(
-            String clientIdentifier, String subject, int start, int end, boolean rangeGiven)
+            String clientIdentifier, String subject, int start, int end, boolean rangeGiven, TokenStatus tokenStatus)
     {
         WebTarget target = getTarget().path(AUTH_TOKEN_GET_LIST_API_PATH);
 
@@ -583,6 +611,8 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
         {
             target = target.queryParam("start", start).queryParam("end", end);
         }
+
+        target = target.queryParam("tokenStatus", tokenStatus.toString());
 
         return wrapWithDpop(target
                 .request(APPLICATION_JSON_TYPE), AUTH_TOKEN_GET_LIST_API_PATH, "GET")
