@@ -28,6 +28,7 @@ import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.conf.AuthleteApiVersion;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.dto.*;
+import com.authlete.common.types.TokenStatus;
 import com.authlete.common.web.BasicCredentials;
 
 
@@ -1631,5 +1632,23 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServicePostApiCaller<AuthorizationTicketUpdateResponse>(
                         AuthorizationTicketUpdateResponse.class, request,
                         AUTH_AUTHORIZATION_TICKET_UPDATE_API_PATH));
+    }
+
+
+    @Override
+    public TokenCreateBatchResponse tokenCreateBatch(
+            TokenCreateRequest[] tokenCreateRequests, boolean b) throws AuthleteApiException
+    {
+        throw new AuthleteApiException(
+                "This method can't be invoked since the corresponding API is not supported.");
+    }
+
+
+    @Override
+    public TokenCreateBatchStatusResponse getTokenCreateBatchStatus(
+            TokenCreateBatchStatusRequest tokenCreateBatchStatusRequest) throws AuthleteApiException
+    {
+        throw new AuthleteApiException(
+                "This method can't be invoked since the corresponding API is not supported.");
     }
 }

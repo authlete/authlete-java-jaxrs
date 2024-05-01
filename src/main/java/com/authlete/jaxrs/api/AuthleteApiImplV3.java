@@ -28,11 +28,11 @@ import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.conf.AuthleteApiVersion;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.dto.*;
+import com.authlete.common.types.TokenStatus;
 
 
 /**
  * The implementation of {@link AuthleteApi} using JAX-RS 2.0 client API.
- *
  * Supports Authlete API V3.
  *
  * @author Justin Richer
@@ -1489,5 +1489,23 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
                 new PostApiCaller<AuthorizationTicketUpdateResponse>(
                         AuthorizationTicketUpdateResponse.class, request,
                         AUTH_AUTHORIZATION_TICKET_UPDATE_API_PATH, mServiceId));
+    }
+
+
+    @Override
+    public TokenCreateBatchResponse tokenCreateBatch(
+            TokenCreateRequest[] tokenCreateRequests, boolean b) throws AuthleteApiException
+    {
+        throw new AuthleteApiException(
+                "This method can't be invoked since the corresponding API is not supported.");
+    }
+
+
+    @Override
+    public TokenCreateBatchStatusResponse getTokenCreateBatchStatus(
+            TokenCreateBatchStatusRequest tokenCreateBatchStatusRequest) throws AuthleteApiException
+    {
+        throw new AuthleteApiException(
+                "This method can't be invoked since the corresponding API is not supported.");
     }
 }
