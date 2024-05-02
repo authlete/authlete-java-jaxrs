@@ -1,6 +1,17 @@
 変更点
 ======
 
+- `AuthleteApi` 実装
+    * `getTokenList()` メソッドを変更。
+    * `getTokenList(String clientIdentifier, String subject)` メソッドを変更。
+    * `getTokenList(int start, int end)` メソッドを変更。
+    * `getTokenList(String clientIdentifier, String subject, int start, int end)` メソッドを変更。
+    * `getTokenList(TokenStatus)` メソッドを実装。
+    * `getTokenList(int start, int end, TokenStatus tokenStatus)` メソッドを実装。
+    * `getTokenList(String clientIdentifier, String subject, TokenStatus tokenStatus)` メソッドを実装。
+    * `getTokenList(String clientIdentifier, String subject, int start, int end, TokenStatus tokenStatus)` メソッドを実装。
+
+
 2.70 (2023-12-17)
 -----------------
 
