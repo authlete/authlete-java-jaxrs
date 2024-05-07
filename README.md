@@ -62,7 +62,6 @@ JavaDoc
 
   <code>https://authlete.github.io/authlete-java-jaxrs</code>
 
-  <code>https://authlete.github.io/authlete-java-jaxrs/index.html?overview-summary.html</code> [FRAMES]
 
 Description
 -----------
