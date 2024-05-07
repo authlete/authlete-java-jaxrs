@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.71 (2024-05-07)
+-----------------
+
 - `AuthleteApi` 実装
     * `getTokenList()` メソッドを変更。
     * `getTokenList(String clientIdentifier, String subject)` メソッドを変更。

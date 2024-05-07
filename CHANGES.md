@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.71 (2024-05-07)
+-----------------
+
 - `AuthleteApi` implementations
     * Changed the `getTokenList()` method.
     * Changed the `getTokenList(String clientIdentifier, String subject)` method.
