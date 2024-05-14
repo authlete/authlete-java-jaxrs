@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.73 (2024-05-14)
+-----------------
+
+- `AuthleteApiImplV3` implementations
+    * Fixed some API paths.
+
+
 2.72 (2024-05-14)
 -----------------
 
