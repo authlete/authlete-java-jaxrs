@@ -429,14 +429,15 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
         wrapWithDpop(getTarget()
                 .path(path)
                 .request(), path, "DELETE")
-                        .header(AUTHORIZATION, auth)
-                        .delete();
+                .header(AUTHORIZATION, auth)
+                .delete();
 
         return null;
     }
 
 
-    protected <TResponse> TResponse callPostApi(String auth, String path, Object request, Class<TResponse> responseClass)
+    protected <TResponse> TResponse callPostApi(
+            String auth, String path, Object request, Class<TResponse> responseClass)
     {
         return wrapWithDpop(getTarget()
                 .path(path)
@@ -458,6 +459,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
     }
 
 
+    @Override
     public Settings getSettings()
     {
         return mSettings;

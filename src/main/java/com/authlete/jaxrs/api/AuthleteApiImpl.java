@@ -1637,7 +1637,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
 
     @Override
     public TokenCreateBatchResponse tokenCreateBatch(
-            TokenCreateRequest[] tokenCreateRequests, boolean b) throws AuthleteApiException
+            TokenCreateRequest[] tokenCreateRequests, boolean dryRun) throws AuthleteApiException
     {
         throw new AuthleteApiException(
                 "This method can't be invoked since the corresponding API is not supported.");
@@ -1646,7 +1646,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
 
     @Override
     public TokenCreateBatchStatusResponse getTokenCreateBatchStatus(
-            TokenCreateBatchStatusRequest tokenCreateBatchStatusRequest) throws AuthleteApiException
+            String requestId) throws AuthleteApiException
     {
         throw new AuthleteApiException(
                 "This method can't be invoked since the corresponding API is not supported.");
