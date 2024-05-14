@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.74 (2024-05-14)
+-----------------
+
+- `AuthleteApiImplV3` implementations
+    * Fixed token create batch status API path.
+
+
 2.73 (2024-05-14)
 -----------------
 
