@@ -114,7 +114,7 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String VCI_DEFERRED_ISSUE_API_PATH                   = "/api/%d/vci/deferred/issue";
     private static final String ID_TOKEN_REISSUE_API_PATH                     = "/api/%d/idtoken/reissue";
     private static final String TOKEN_CREATE_BATCH_API_PATH                   = "/api/%d/auth/token/create/batch";
-    private static final String TOKEN_CREATE_BATCH_STATUS_API_PATH            = "/api/%d/auth/token/create/batch/status";
+    private static final String TOKEN_CREATE_BATCH_STATUS_API_PATH            = "/api/%d/auth/token/create/batch/status/%s";
 
 
     private final String mAuth;
