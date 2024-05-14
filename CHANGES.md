@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.72 (2024-05-14)
+-----------------
+
+- `AuthleteApiImplV3` implementations
+    * Implemented `tokenCreateBatch(TokenCreateRequest[] request, boolean dryRun)` method.
+    * Implemented `getTokenCreateBatchStatus(String requestId)` method.
+
+
 2.71 (2024-05-07)
 -----------------
 

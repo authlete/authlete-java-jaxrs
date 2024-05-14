@@ -1,6 +1,14 @@
 変更点
 ======
 
+2.72 (2024-05-14)
+-----------------
+
+- `AuthleteApiImplV3` 実装
+    * `tokenCreateBatch(TokenCreateRequest[] request, boolean dryRun)` メソッドを実装。
+    * `getTokenCreateBatchStatus(String requestId)` メソッドを実装。
+
+
 2.71 (2024-05-07)
 -----------------
 
