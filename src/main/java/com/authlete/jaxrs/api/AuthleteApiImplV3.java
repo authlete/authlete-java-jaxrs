@@ -113,10 +113,13 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
     private static final String VCI_DEFERRED_PARSE_API_PATH                   = "/api/%d/vci/deferred/parse";
     private static final String VCI_DEFERRED_ISSUE_API_PATH                   = "/api/%d/vci/deferred/issue";
     private static final String ID_TOKEN_REISSUE_API_PATH                     = "/api/%d/idtoken/reissue";
+    private static final String TOKEN_CREATE_BATCH_API_PATH                   = "/api/%d/token/create/batch";
+    private static final String TOKEN_CREATE_BATCH_STATUS_API_PATH            = "/api/%d/token/create/batch/status";
 
 
     private final String mAuth;
     private final Long mServiceId;
+
 
     /**
      * The constructor with an instance of {@link AuthleteConfiguration}.
@@ -1494,18 +1497,23 @@ public class AuthleteApiImplV3 extends AuthleteApiJaxrsImpl
 
     @Override
     public TokenCreateBatchResponse tokenCreateBatch(
-            TokenCreateRequest[] tokenCreateRequests, boolean b) throws AuthleteApiException
+            TokenCreateRequest[] request, boolean dryRun) throws AuthleteApiException
     {
-        throw new AuthleteApiException(
-                "This method can't be invoked since the corresponding API is not supported.");
+        return executeApiCall(
+                new PostApiCaller<TokenCreateBatchResponse>(
+                        TokenCreateBatchResponse.class, request,
+                        TOKEN_CREATE_BATCH_API_PATH, mServiceId)
+                .addParam("dryRun", dryRun));
     }
 
 
     @Override
     public TokenCreateBatchStatusResponse getTokenCreateBatchStatus(
-            TokenCreateBatchStatusRequest tokenCreateBatchStatusRequest) throws AuthleteApiException
+            String requestId) throws AuthleteApiException
     {
-        throw new AuthleteApiException(
-                "This method can't be invoked since the corresponding API is not supported.");
+        return executeApiCall(
+                new GetApiCaller<TokenCreateBatchStatusResponse>(
+                        TokenCreateBatchStatusResponse.class,
+                        TOKEN_CREATE_BATCH_STATUS_API_PATH, mServiceId, requestId));
     }
 }
