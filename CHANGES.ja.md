@@ -1,6 +1,43 @@
 変更点
 ======
 
+- `BackchannelAuthenticationRequestHandler` クラス
+    * `handle(Params)` メソッドを追加。
+
+- `BaseBackchannelAuthenticationEndpoint` クラス
+    * `handle(AuthleteApi, BackchannelAuthenticationRequestHandlerSpi, Params)` メソッドを追加。
+
+- `BaseDeviceAuthorizationEndpoint` クラス
+    * `handle(AuthleteApi, Params)` メソッドを追加。
+
+- `BaseRevocationEndpoint` クラス
+    * `handle(AuthleteApi, Params)` メソッドを追加。
+
+- `DeviceAuthorizationRequestHandler` クラス
+    * `handle(Params)` メソッドを追加。
+
+- `PushedAuthReqHandler.Params` クラス
+    * `getClientAttestation()` メソッドを追加。
+    * `setClientAttestation(String)` メソッドを追加。
+    * `getClientAttestationPop()` メソッドを追加。
+    * `setClientAttestationPop(String)` メソッドを追加。
+
+- `RevocationRequestHandler` クラス
+    * `handle(Params)` メソッドを追加。
+
+- `TokenRequestHandler.Params` クラス
+    * `getClientAttestation()` メソッドを追加。
+    * `setClientAttestation(String)` メソッドを追加。
+    * `getClientAttestationPop()` メソッドを追加。
+    * `setClientAttestationPop(String)` メソッドを追加。
+
+- 新しい型
+    * `BackchannelAuthenticationRequestHandler.Params` クラス
+    * `DeviceAuthorizationRequestHandler.Params` クラス
+    * `HandlerUtility` クラス
+    * `RevocationRequestHandler.Params` クラス
+
+
 2.74 (2024-05-14)
 -----------------
 

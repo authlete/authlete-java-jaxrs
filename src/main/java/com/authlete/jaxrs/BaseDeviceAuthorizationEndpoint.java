@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.DeviceAuthorizationRequestHandler.Params;
 
 
 /**
@@ -77,13 +78,25 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
             AuthleteApi api, MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath)
     {
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                .setClientCertificatePath(clientCertificatePath)
+                ;
+
+        return handle(api, params);
+    }
+
+
+    public Response handle(AuthleteApi api, Params params)
+    {
         try
         {
             // Create a handler.
             DeviceAuthorizationRequestHandler handler = new DeviceAuthorizationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization, clientCertificatePath);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {

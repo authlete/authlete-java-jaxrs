@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Authlete, Inc.
+ * Copyright (C) 2015-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -409,13 +409,14 @@ class AuthleteApiCaller
     public TokenResponse callToken(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
-            String dpop, String htm, String htu)
+            String dpop, String htm, String htu,
+            String clientAttestation, String clientAttestationPop)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callToken(params, clientId, clientSecret,
                 properties, clientCertificate, clientCertificatePath,
-                dpop, htm, htu);
+                dpop, htm, htu, clientAttestation, clientAttestationPop);
     }
 
 
@@ -425,7 +426,8 @@ class AuthleteApiCaller
     public TokenResponse callToken(
             String parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
-            String dpop, String htm, String htu)
+            String dpop, String htm, String htu,
+            String clientAttestation, String clientAttestationPop)
     {
         if (parameters == null)
         {
@@ -446,6 +448,8 @@ class AuthleteApiCaller
             .setDpop(dpop)
             .setHtm(htm)
             .setHtu(htu)
+            .setOauthClientAttestation(clientAttestation)
+            .setOauthClientAttestationPop(clientAttestationPop)
             ;
 
         try
@@ -695,18 +699,27 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/revocation} API.
      */
-    public RevocationResponse callRevocation(MultivaluedMap<String, String> parameters, String clientId, String clientSecret)
+    public RevocationResponse callRevocation(
+            MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callRevocation(params, clientId, clientSecret);
+        return callRevocation(
+                params, clientId, clientSecret,
+                clientCertificate, clientCertificatePath,
+                clientAttestation, clientAttestationPop);
     }
 
 
     /**
      * Call Authlete's {@code /api/auth/revocation} API.
      */
-    private RevocationResponse callRevocation(String parameters, String clientId, String clientSecret)
+    private RevocationResponse callRevocation(
+            String parameters, String clientId, String clientSecret,
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         if (parameters == null)
         {
@@ -720,7 +733,12 @@ class AuthleteApiCaller
         RevocationRequest request = new RevocationRequest()
             .setParameters(parameters)
             .setClientId(clientId)
-            .setClientSecret(clientSecret);
+            .setClientSecret(clientSecret)
+            .setClientCertificate(clientCertificate)
+            .setClientCertificatePath(clientCertificatePath)
+            .setOauthClientAttestation(clientAttestation)
+            .setOauthClientAttestationPop(clientAttestationPop)
+            ;
 
         try
         {
@@ -956,11 +974,14 @@ class AuthleteApiCaller
      */
     public BackchannelAuthenticationResponse callBackchannelAuthentication(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
-            String clientCertificate, String[] clientCertificatePath)
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callBackchannelAuthentication(params, clientId, clientSecret, clientCertificate, clientCertificatePath);
+        return callBackchannelAuthentication(
+                params, clientId, clientSecret, clientCertificate, clientCertificatePath,
+                clientAttestation, clientAttestationPop);
     }
 
 
@@ -969,7 +990,8 @@ class AuthleteApiCaller
      */
     private BackchannelAuthenticationResponse callBackchannelAuthentication(
             String parameters, String clientId, String clientSecret,
-            String clientCertificate, String[] clientCertificatePath)
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         if (parameters == null)
         {
@@ -986,6 +1008,8 @@ class AuthleteApiCaller
             .setClientSecret(clientSecret)
             .setClientCertificate(clientCertificate)
             .setClientCertificatePath(clientCertificatePath)
+            .setOauthClientAttestation(clientAttestation)
+            .setOauthClientAttestationPop(clientAttestationPop)
             ;
 
         try
@@ -1244,13 +1268,15 @@ class AuthleteApiCaller
     public DeviceAuthorizationResponse callDeviceAuthorization(
             MultivaluedMap<String, String> parameters,
             String clientId, String clientSecret,
-            String clientCertificate, String[] clientCertificatePath)
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callDeviceAuthorization(
                 params, clientId, clientSecret,
-                clientCertificate, clientCertificatePath);
+                clientCertificate, clientCertificatePath,
+                clientAttestation, clientAttestationPop);
     }
 
 
@@ -1259,7 +1285,8 @@ class AuthleteApiCaller
      */
     private DeviceAuthorizationResponse callDeviceAuthorization(
             String parameters, String clientId, String clientSecret,
-            String clientCertificate, String[] clientCertificatePath)
+            String clientCertificate, String[] clientCertificatePath,
+            String clientAttestation, String clientAttestationPop)
     {
         if (parameters == null)
         {
@@ -1276,6 +1303,8 @@ class AuthleteApiCaller
             .setClientSecret(clientSecret)
             .setClientCertificate(clientCertificate)
             .setClientCertificatePath(clientCertificatePath)
+            .setOauthClientAttestation(clientAttestation)
+            .setOauthClientAttestationPop(clientAttestationPop)
             ;
 
         try
@@ -1359,13 +1388,14 @@ class AuthleteApiCaller
     public PushedAuthReqResponse callPushedAuthReq(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String dpop, String htm, String htu)
+            String dpop, String htm, String htu,
+            String clientAttestation, String clientAttestationPop)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callPushedAuthReq(
                 params, clientId, clientSecret, clientCertificate, clientCertificatePath,
-                dpop, htm, htu);
+                dpop, htm, htu, clientAttestation, clientAttestationPop);
     }
 
 
@@ -1375,7 +1405,8 @@ class AuthleteApiCaller
     public PushedAuthReqResponse callPushedAuthReq(
             String parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String dpop, String htm, String htu)
+            String dpop, String htm, String htu,
+            String clientAttestation, String clientAttestationPop)
     {
         PushedAuthReqRequest request = new PushedAuthReqRequest()
                 .setParameters(parameters)
@@ -1386,6 +1417,8 @@ class AuthleteApiCaller
                 .setDpop(dpop)
                 .setHtm(htm)
                 .setHtu(htu)
+                .setOauthClientAttestation(clientAttestation)
+                .setOauthClientAttestationPop(clientAttestationPop)
                 ;
 
         try

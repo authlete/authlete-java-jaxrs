@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.BackchannelAuthenticationRequestHandler.Params;
 import com.authlete.jaxrs.spi.BackchannelAuthenticationRequestHandlerSpi;
 
 
@@ -78,13 +79,44 @@ public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
             AuthleteApi api, BackchannelAuthenticationRequestHandlerSpi spi,
             MultivaluedMap<String, String> parameters, String authorization, String[] clientCertificatePath)
     {
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                .setClientCertificatePath(clientCertificatePath)
+                ;
+
+        return handle(api, spi, params);
+    }
+
+
+    /**
+     * Handle a backchannel authentication request.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link BackchannelAuthenticationRequestHandlerSpi}.
+     *
+     * @param params
+     *         Parameters for Authlete's {@code /backchannel/authentication} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.78
+     */
+    public Response handle(
+            AuthleteApi api, BackchannelAuthenticationRequestHandlerSpi spi, Params params)
+    {
         try
         {
             // Create a handler.
-            BackchannelAuthenticationRequestHandler handler = new BackchannelAuthenticationRequestHandler(api, spi);
+            BackchannelAuthenticationRequestHandler handler =
+                    new BackchannelAuthenticationRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization, clientCertificatePath);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {

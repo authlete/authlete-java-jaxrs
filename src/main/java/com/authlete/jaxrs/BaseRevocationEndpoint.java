@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Authlete, Inc.
+ * Copyright (C) 2016-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.jaxrs.RevocationRequestHandler.Params;
 
 
 /**
@@ -72,13 +73,24 @@ public class BaseRevocationEndpoint extends BaseEndpoint
      */
     public Response handle(AuthleteApi api, MultivaluedMap<String, String> parameters, String authorization)
     {
+        Params params = new Params()
+                .setParameters(parameters)
+                .setAuthorization(authorization)
+                ;
+
+        return handle(api, params);
+    }
+
+
+    public Response handle(AuthleteApi api, Params params)
+    {
         try
         {
             // Create a handler.
             RevocationRequestHandler handler = new RevocationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(parameters, authorization);
+            return handler.handle(params);
         }
         catch (WebApplicationException e)
         {
