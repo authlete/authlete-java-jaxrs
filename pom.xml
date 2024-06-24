@@ -4,7 +4,7 @@
 
     <groupId>com.authlete</groupId>
     <artifactId>authlete-java-jaxrs</artifactId>
-    <version>2.79-SNAPSHOT</version>
+    <version>2.79</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Authlete library for JAX-RS (Java)</description>
@@ -43,7 +43,7 @@
         <connection>${git.connection}</connection>
         <developerConnection>${git.connection}</developerConnection>
         <url>${git.url}</url>
-        <tag>authlete-java-jaxrs-2.71</tag>
+        <tag>authlete-java-jaxrs-2.79</tag>
     </scm>
 
     <dependencies>
