@@ -299,7 +299,7 @@ public class TokenRequestHandler extends BaseHandler
          * @return
          *         The value of the {@code OAuth-Client-Attestation} HTTP header.
          *
-         * @since 2.78
+         * @since 2.79
          * @since Authlete 3.0
          *
          * @see <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/"
@@ -320,7 +320,7 @@ public class TokenRequestHandler extends BaseHandler
          * @return
          *         {@code this} object.
          *
-         * @since 2.78
+         * @since 2.79
          * @since Authlete 3.0
          *
          * @see <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/"
@@ -340,7 +340,7 @@ public class TokenRequestHandler extends BaseHandler
          * @return
          *         The value of the {@code OAuth-Client-Attestation-PoP} HTTP header.
          *
-         * @since 2.78
+         * @since 2.79
          * @since Authlete 3.0
          *
          * @see <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/"
@@ -361,7 +361,7 @@ public class TokenRequestHandler extends BaseHandler
          * @return
          *         {@code this} object.
          *
-         * @since 2.78
+         * @since 2.79
          * @since Authlete 3.0
          *
          * @see <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-attestation-based-client-auth/"
