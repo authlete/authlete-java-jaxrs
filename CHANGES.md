@@ -1,6 +1,43 @@
 CHANGES
 =======
 
+- `BackchannelAuthenticationRequestHandler` class
+    * Added the `handle(Params)` method.
+
+- `BaseBackchannelAuthenticationEndpoint` class
+    * Added the `handle(AuthleteApi, BackchannelAuthenticationRequestHandlerSpi, Params)` method.
+
+- `BaseDeviceAuthorizationEndpoint` class
+    * Added the `handle(AuthleteApi, Params)` method.
+
+- `BaseRevocationEndpoint` class
+    * Added the `handle(AuthleteApi, Params)` method.
+
+- `DeviceAuthorizationRequestHandler` class
+    * Added the `handle(Params)` method.
+
+- `PushedAuthReqHandler.Params` class
+    * Added the `getClientAttestation()` method.
+    * Added the `setClientAttestation(String)` method.
+    * Added the `getClientAttestationPop()` method.
+    * Added the `setClientAttestationPop(String)` method.
+
+- `RevocationRequestHandler` class
+    * Added the `handle(Params)` method.
+
+- `TokenRequestHandler.Params` class
+    * Added the `getClientAttestation()` method.
+    * Added the `setClientAttestation(String)` method.
+    * Added the `getClientAttestationPop()` method.
+    * Added the `setClientAttestationPop(String)` method.
+
+- New types
+    * `BackchannelAuthenticationRequestHandler.Params` class
+    * `DeviceAuthorizationRequestHandler.Params` class
+    * `HandlerUtility` class
+    * `RevocationRequestHandler.Params` class
+
+
 2.74 (2024-05-14)
 -----------------
 
