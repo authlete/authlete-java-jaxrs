@@ -38,7 +38,7 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link DeviceAuthorizationRequestHandler}
-     * instance and calls its {@link DeviceAuthorizationRequestHandler#handle(MultivaluedMap, String, String[])}
+     * instance and calls its {@link DeviceAuthorizationRequestHandler#handle(Params)}
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
@@ -88,12 +88,27 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
     }
 
 
+    /**
+     * Handle a device authorization request.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param params
+     *         Parameters for Authlete's {@code /device/authorization} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.79
+     */
     public Response handle(AuthleteApi api, Params params)
     {
         try
         {
             // Create a handler.
-            DeviceAuthorizationRequestHandler handler = new DeviceAuthorizationRequestHandler(api);
+            DeviceAuthorizationRequestHandler handler =
+                    new DeviceAuthorizationRequestHandler(api);
 
             // Delegate the task to the handler.
             return handler.handle(params);

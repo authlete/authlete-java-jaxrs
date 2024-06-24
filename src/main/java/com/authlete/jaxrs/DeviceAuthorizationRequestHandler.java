@@ -53,7 +53,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      * {@link DeviceAuthorizationRequestHandler#handle(Params)}
      * method.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public static class Params implements Serializable
     {
@@ -318,7 +318,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      *         A response that should be returned from the endpoint to the
      *         client application.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public Response handle(Params params)
     {

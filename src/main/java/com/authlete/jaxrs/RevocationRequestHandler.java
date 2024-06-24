@@ -51,7 +51,7 @@ public class RevocationRequestHandler extends BaseHandler
      * Parameters passed to the {@link RevocationRequestHandler#handle(Params)}
      * method.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public static class Params implements Serializable
     {
@@ -308,7 +308,7 @@ public class RevocationRequestHandler extends BaseHandler
      * @throws WebApplicationException
      *         An error occurred.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public Response handle(Params params) throws WebApplicationException
     {

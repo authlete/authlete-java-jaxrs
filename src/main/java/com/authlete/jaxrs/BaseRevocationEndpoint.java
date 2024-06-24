@@ -43,10 +43,9 @@ public class BaseRevocationEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link RevocationRequestHandler} instance
-     * and calls its {@link RevocationRequestHandler#handle(MultivaluedMap, String)
-     * handle()} method with the {@code parameters} argument and the {@code authorization}
-     * argument. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
+     * and calls its {@link RevocationRequestHandler#handle(Params)} method. Then,
+     * this method uses the value returned from the {@code handle()} method as a
+     * response from this method.
      * </p>
      *
      * <p>
@@ -82,6 +81,20 @@ public class BaseRevocationEndpoint extends BaseEndpoint
     }
 
 
+    /**
+     * Handle a revocation request.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param params
+     *         Parameters for Authlete's {@code /auth/revocation} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.79
+     */
     public Response handle(AuthleteApi api, Params params)
     {
         try

@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.79 (2024-06-24)
+-----------------
+
 - `BackchannelAuthenticationRequestHandler` クラス
     * `handle(Params)` メソッドを追加。
 

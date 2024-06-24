@@ -54,7 +54,7 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
      * {@link BackchannelAuthenticationRequestHandler#handle(Params)}
      * method.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public static class Params implements Serializable
     {
@@ -331,7 +331,7 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
      *         A response that should be returned from the endpoint to the
      *         client application.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public Response handle(Params params)
     {

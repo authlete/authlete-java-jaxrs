@@ -24,7 +24,7 @@ import com.authlete.common.web.BasicCredentials;
 /**
  * Utility for handlers.
  *
- * @since 2.78
+ * @since 2.79
  */
 class HandlerUtility
 {

@@ -41,7 +41,7 @@ public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
      *
      * <p>
      * This method internally creates a {@link BackchannelAuthenticationRequestHandler}
-     * instance and calls its {@link BackchannelAuthenticationRequestHandler#handle(MultivaluedMap, String, String[])}
+     * instance and calls its {@link BackchannelAuthenticationRequestHandler#handle(Params)}
      * method. Then, this method uses the value returned from the {@code handle()}
      * method as a response from this method.
      * </p>
@@ -104,7 +104,7 @@ public class BaseBackchannelAuthenticationEndpoint extends BaseEndpoint
      * @return
      *         A response that should be returned to the client application.
      *
-     * @since 2.78
+     * @since 2.79
      */
     public Response handle(
             AuthleteApi api, BackchannelAuthenticationRequestHandlerSpi spi, Params params)

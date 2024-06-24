@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.79 (2024-06-24)
+-----------------
+
 - `BackchannelAuthenticationRequestHandler` class
     * Added the `handle(Params)` method.
 
