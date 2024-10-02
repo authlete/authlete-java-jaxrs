@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.80 (2024-10-02)
+-----------------
+
 - `AuthleteApiCaller` クラス
     * `callUserInfo(String, String, String, String, String)` メソッドを
       `callUserInfo(UserInfoRequestHandler.Params)` へ変更。

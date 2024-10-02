@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.80 (2024-10-02)
+-----------------
+
 - `AuthleteApiCaller` class
     * Change the `callUserInfo(String, String, String, String, String)`
       method to `callUserInfo(UserInfoRequestHandler.Params)`.
