@@ -756,16 +756,19 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/userinfo} API.
      */
-    public UserInfoResponse callUserInfo(
-            String accessToken, String clientCertificate, String dpop, String htm, String htu)
+    public UserInfoResponse callUserInfo(UserInfoRequestHandler.Params params)
     {
         // Create a request for Authlete's /api/auth/userinfo API.
         UserInfoRequest request = new UserInfoRequest()
-            .setToken(accessToken)
-            .setClientCertificate(clientCertificate)
-            .setDpop(dpop)
-            .setHtm(htm)
-            .setHtu(htu)
+            .setToken(params.getAccessToken())
+            .setClientCertificate(params.getClientCertificate())
+            .setDpop(params.getDpop())
+            .setHtm(params.getHtm())
+            .setHtu(params.getHtu())
+            .setTargetUri(params.getTargetUri())
+            .setHeaders(params.getHeaders())
+            .setRequestBodyContained(params.isRequestBodyContained())
+            .setDpopNonceRequired(params.isDpopNonceRequired())
             ;
 
         try

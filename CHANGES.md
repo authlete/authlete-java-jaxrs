@@ -1,6 +1,24 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Change the `callUserInfo(String, String, String, String, String)`
+      method to `callUserInfo(UserInfoRequestHandler.Params)`.
+
+- `BaseEndpoint` class
+    * Added the `extractHeadersAsPairs(HttpServletRequest)` method.
+
+- `UserInfoRequestHandler.Params` class
+    * Added the `getTargetUri()` method.
+    * Added the `setTargetUri(URI)` method.
+    * Added the `getHeaders()` method.
+    * Added the `setHeaders(Pair[])` method.
+    * Added the `isRequestBodyContained()` method.
+    * Added the `setRequestBodyContained(boolean)` method.
+    * Added the `isDpopNonceRequired()` method.
+    * Added the `setDpopNonceRequired(boolean)` method.
+
+
 2.79 (2024-06-24)
 -----------------
 

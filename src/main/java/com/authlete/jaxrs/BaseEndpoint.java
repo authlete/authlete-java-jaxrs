@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Authlete, Inc.
+ * Copyright (C) 2016-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,14 @@
 package com.authlete.jaxrs;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
+import com.authlete.common.dto.Pair;
 
 
 /**
@@ -138,5 +141,54 @@ public class BaseEndpoint
 
         // Return the value of the attribute.
         return value;
+    }
+
+
+    /**
+     * Extract headers in the HTTP request as a {@link Pair} array.
+     *
+     * @param request
+     *         An HTTP request.
+     *
+     * @return
+     *         A {@link Pair} array where each element represents
+     *         a pair of header name and header value. If the given
+     *         HTTP request contains no headers, an empty array is
+     *         returned.
+     *
+     * @since 2.80
+     */
+    protected Pair[] extractHeadersAsPairs(HttpServletRequest request)
+    {
+        List<Pair> headerList = new ArrayList<>();
+
+        // The names of the headers in the HTTP request.
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        // For each header name.
+        while (headerNames.hasMoreElements())
+        {
+            // Header name.
+            String headerName = headerNames.nextElement();
+
+            // The values of the header.
+            Enumeration<String> headerValues = request.getHeaders(headerName);
+
+            // For each header value.
+            while (headerValues.hasMoreElements())
+            {
+                // Header value.
+                String headerValue = headerValues.nextElement();
+
+                // Construct a pair of header name and header value.
+                Pair header = new Pair(headerName, headerValue);
+
+                // Add the pair to the list.
+                headerList.add(header);
+            }
+        }
+
+        // Convert the List instance to an array.
+        return headerList.toArray(new Pair[headerList.size()]);
     }
 }

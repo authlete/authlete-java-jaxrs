@@ -1,6 +1,24 @@
 変更点
 ======
 
+- `AuthleteApiCaller` クラス
+    * `callUserInfo(String, String, String, String, String)` メソッドを
+      `callUserInfo(UserInfoRequestHandler.Params)` へ変更。
+
+- `BaseEndpoint` クラス
+    * `extractHeadersAsPairs(HttpServletRequest)` メソッドを追加。
+
+- `UserInfoRequestHandler.Params` クラス
+    * `getTargetUri()` メソッドを追加。
+    * `setTargetUri(URI)` メソッドを追加。
+    * `getHeaders()` メソッドを追加。
+    * `setHeaders(Pair[])` メソッドを追加。
+    * `isRequestBodyContained()` メソッドを追加。
+    * `setRequestBodyContained(boolean)` メソッドを追加。
+    * `isDpopNonceRequired()` メソッドを追加。
+    * `setDpopNonceRequired(boolean)` メソッドを追加。
+
+
 2.79 (2024-06-24)
 -----------------
 
