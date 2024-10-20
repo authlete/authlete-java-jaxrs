@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.81 (2024-10-20)
+-----------------
+
 - New types
     * `RequestUrlResolver` class
 
