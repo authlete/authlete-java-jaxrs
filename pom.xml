@@ -37,6 +37,7 @@
         <javax.xml.version>2.3.1</javax.xml.version>
         <git.connection>scm:git:git@github.com:authlete/authlete-java-jakarta.git</git.connection>
         <git.url>git@github.com:authlete/authlete-java-jakarta.git</git.url>
+        <http-field-parser.version>1.0</http-field-parser.version>
     </properties>
 
     <scm>
@@ -78,10 +79,17 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.authlete.http</groupId>
+            <artifactId>http-field-parser</artifactId>
+            <version>${http-field-parser.version}</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -91,6 +99,7 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -219,17 +228,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

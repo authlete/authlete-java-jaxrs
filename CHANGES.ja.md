@@ -1,6 +1,14 @@
 変更点
 ======
 
+- 新しい型
+    * `RequestUrlResolver` クラス
+
+- `pom.xml`
+    * `com.authlete.http:http-field-parser:1.0` を追加。
+    * 重複していた `org.apache.maven.plugins:maven-compiler-plugin` を削除。
+
+
 2.80 (2024-10-02)
 -----------------
 

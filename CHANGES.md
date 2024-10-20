@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+- New types
+    * `RequestUrlResolver` class
+
+- `pom.xml`
+    * Added a new dependency, `com.authlete.http:http-field-parser:1.0`.
+    * Removed the duplicate `org.apache.maven.plugins:maven-compiler-plugin` dependency.
+
+
 2.80 (2024-10-02)
 -----------------
 
