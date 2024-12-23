@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Authlete, Inc.
+ * Copyright (C) 2014-2024 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,21 @@
 package com.authlete.jaxrs.api;
 
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +39,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
+import com.authlete.common.api.Options;
 import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.nimbusds.jose.JOSEException;
@@ -406,7 +411,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
 
     protected <TResponse> TResponse callGetApi(
-            String auth, String path, Class<TResponse> responseClass, Map<String, Object[]> params)
+            String auth, String path, Class<TResponse> responseClass, Map<String, Object[]> params, Options options)
     {
         WebTarget webTarget = getTarget().path(path);
 
@@ -418,32 +423,41 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
             }
         }
 
-        return wrapWithDpop(webTarget.request(APPLICATION_JSON_TYPE), path, "GET")
-                .header(AUTHORIZATION, auth)
-                .get(responseClass);
+        Builder builder = wrapWithDpop(webTarget.request(APPLICATION_JSON_TYPE), path, "GET")
+                .header(AUTHORIZATION, auth);
+
+        setCustomRequestHeaders(builder, options);
+
+        return builder.get(responseClass);
     }
 
 
-    protected Void callDeleteApi(String auth, String path)
+    protected Void callDeleteApi(String auth, String path, Options options)
     {
-        wrapWithDpop(getTarget()
+        Builder builder = wrapWithDpop(getTarget()
                 .path(path)
                 .request(), path, "DELETE")
-                .header(AUTHORIZATION, auth)
-                .delete();
+                .header(AUTHORIZATION, auth);
+
+        setCustomRequestHeaders(builder, options);
+
+        builder.delete();
 
         return null;
     }
 
 
     protected <TResponse> TResponse callPostApi(
-            String auth, String path, Object request, Class<TResponse> responseClass)
+            String auth, String path, Object request, Class<TResponse> responseClass, Options options)
     {
-        return wrapWithDpop(getTarget()
+        Builder builder = wrapWithDpop(getTarget()
                 .path(path)
                 .request(APPLICATION_JSON_TYPE), path, "POST")
-                .header(AUTHORIZATION, auth)
-                .post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
+                .header(AUTHORIZATION, auth);
+
+        setCustomRequestHeaders(builder, options);
+
+        return builder.post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
     }
 
 
@@ -469,5 +483,46 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
     protected boolean isDpopEnabled()
     {
         return mDpopJwk != null;
+    }
+
+
+    protected void setCustomRequestHeaders(Builder builder, Options options)
+    {
+        if (options == null)
+        {
+            return;
+        }
+
+        // Custom request headers.
+        Map<String, String> headers = options.getHeaders();
+
+        if (headers == null)
+        {
+            // No custom request header is specified.
+            return;
+        }
+
+        // Add each custom request header to the builder.
+        for (Entry<String, String> e : headers.entrySet())
+        {
+            // The key of the header.
+            String key = e.getKey();
+
+            // Some header keys are reserved.
+            if (isReservedRequestHeader(key))
+            {
+                continue;
+            }
+
+            builder.header(key, e.getValue());
+        }
+    }
+
+
+    private static boolean isReservedRequestHeader(String key)
+    {
+        return key.equalsIgnoreCase(ACCEPT) ||
+               key.equalsIgnoreCase(AUTHORIZATION) ||
+               key.equalsIgnoreCase(CONTENT_TYPE);
     }
 }
