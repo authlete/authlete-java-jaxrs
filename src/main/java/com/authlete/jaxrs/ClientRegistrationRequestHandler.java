@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.ClientRegistrationResponse;
 import com.authlete.common.dto.ClientRegistrationResponse.Action;
 import com.authlete.common.web.BearerToken;
@@ -89,7 +90,9 @@ public class ClientRegistrationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a dynamic client registration request.
+     * Handle a dynamic client registration request. This method is an alias of
+     * {@link #handleRegister(String, String, Options) handleRegister}{@code
+     * (json, authorization, null)}.
      *
      * @param json
      *         The serialized JSON body of the client registration request.
@@ -106,12 +109,39 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      */
     public Response handleRegister(String json, String authorization)
     {
+        return handleRegister(json, authorization, null);
+    }
+
+
+    /**
+     * Handle a dynamic client registration request.
+     *
+     * @param json
+     *         The serialized JSON body of the client registration request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header of the token request.
+     *         This is optional.
+     *
+     * @param options
+     *         The request options for the {@code /api/client/registration} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @throws WebApplicationException
+     *          An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handleRegister(String json, String authorization, Options options)
+    {
         String initialAccessToken = BearerToken.parse(authorization);
 
         try
         {
             ClientRegistrationResponse response = getApiCaller().callClientRegistration(
-                    json, initialAccessToken);
+                    json, initialAccessToken, options);
             return process(response);
         }
         catch (WebApplicationException e)
@@ -126,7 +156,8 @@ public class ClientRegistrationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a dynamic client management GET request.
+     * Handle a dynamic client management GET request. This method is an alias of
+     * the {@link #handleGet(String, String, Options) handleGet}{@code (clientId, authorization, null)}.
      *
      * @param clientId
      *         The client ID as determined by the incoming request.
@@ -143,12 +174,39 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      */
     public Response handleGet(String clientId, String authorization)
     {
+        return handleGet(clientId, authorization, null);
+    }
+
+
+    /**
+     * Handle a dynamic client management GET request.
+     *
+     * @param clientId
+     *         The client ID as determined by the incoming request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
+     *
+     * @param options
+     *         The request options for the {@code /api/client/registration} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @throws WebApplicationException
+     *          An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handleGet(String clientId, String authorization, Options options)
+    {
         String registrationAccessToken = BearerToken.parse(authorization);
 
         try
         {
             ClientRegistrationResponse response = getApiCaller().callClientRegistrationGet(
-                    clientId, registrationAccessToken);
+                    clientId, registrationAccessToken, options);
             return process(response);
         }
         catch (WebApplicationException e)
@@ -163,7 +221,9 @@ public class ClientRegistrationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a dynamic client management PUT request.
+     * Handle a dynamic client management PUT request. This method is an alias of
+     * {@link #handleUpdate(String, String, String, Options) handleUpdate}{@code
+     * (clientId, json, authorization, null)}.
      *
      * @param clientId
      *         The client ID as determined by the incoming request.
@@ -183,12 +243,43 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      */
     public Response handleUpdate(String clientId, String json, String authorization)
     {
+        return handleUpdate(clientId, json, authorization, null);
+    }
+
+
+    /**
+     * Handle a dynamic client management PUT request.
+     *
+     * @param clientId
+     *         The client ID as determined by the incoming request.
+     *
+     * @param json
+     *         The serialized JSON body of the client update request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
+     *
+     * @param options
+     *         The request options for the {@code /api/client/registration} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @throws WebApplicationException
+     *          An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handleUpdate(
+            String clientId, String json, String authorization, Options options)
+    {
         String registrationAccessToken = BearerToken.parse(authorization);
 
         try
         {
             ClientRegistrationResponse response = getApiCaller().callClientRegistrationUpdate(
-                    clientId, json, registrationAccessToken);
+                    clientId, json, registrationAccessToken, options);
             return process(response);
         }
         catch (WebApplicationException e)
@@ -203,7 +294,8 @@ public class ClientRegistrationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a dynamic client management DELETE request.
+     * Handle a dynamic client management DELETE request. This method is an alias
+     * of {@link #handleDelete(String, String, Options) handleDelete}{@code (clientId, authorization, null)}.
      *
      * @param clientId
      *         The client ID as determined by the incoming request.
@@ -220,12 +312,39 @@ public class ClientRegistrationRequestHandler extends BaseHandler
      */
     public Response handleDelete(String clientId, String authorization)
     {
+        return handleDelete(clientId, authorization, null);
+    }
+
+
+    /**
+     * Handle a dynamic client management DELETE request.
+     *
+     * @param clientId
+     *         The client ID as determined by the incoming request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header of the registration request.
+     *         This is optional.
+     *
+     * @param options
+     *         The request options for the {@code /api/client/registration} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @throws WebApplicationException
+     *          An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handleDelete(String clientId, String authorization, Options options)
+    {
         String registrationAccessToken = BearerToken.parse(authorization);
 
         try
         {
             ClientRegistrationResponse response = getApiCaller().callClientRegistrationDelete(
-                    clientId, registrationAccessToken);
+                    clientId, registrationAccessToken, options);
             return process(response);
         }
         catch (WebApplicationException e)

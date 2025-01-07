@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.DeviceCompleteRequest;
 import com.authlete.common.dto.DeviceCompleteRequest.Result;
 import com.authlete.common.dto.DeviceCompleteResponse;
@@ -76,7 +77,8 @@ public class DeviceCompleteRequestHandler extends BaseHandler
 
     /**
      * Handle the result of end-user authentication and authorization in OAuth
-     * 2.0 Device Authorization Grant (Device Flow).
+     * 2.0 Device Authorization Grant (Device Flow). This method is an alias of
+     * {@link #handle(String, String[], Options) handle}{@code (userCode, claimNames, null)}.
      *
      * @param userCode
      *         The user code that the end-user input.
@@ -94,10 +96,40 @@ public class DeviceCompleteRequestHandler extends BaseHandler
      */
     public Response handle(String userCode, String[] claimNames) throws WebApplicationException
     {
+        return handle(userCode, claimNames, null);
+    }
+
+
+    /**
+     * Handle the result of end-user authentication and authorization in OAuth
+     * 2.0 Device Authorization Grant (Device Flow).
+     *
+     * @param userCode
+     *         The user code that the end-user input.
+     *
+     * @param claimNames
+     *         Names of requested claims. Use the value of the {@code claimNames}
+     *         parameter in a response from Authlete's {@code /api/device/verification}
+     *         API.
+     *
+     * @param options
+     *         The request options for the {@code /api/client/registration} API.
+     *
+     * @return
+     *         A response that should be returned to the end-user.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            String userCode, String[] claimNames, Options options) throws WebApplicationException
+    {
         try
         {
             // Process the given parameters.
-            return process(userCode, claimNames);
+            return process(userCode, claimNames, options);
         }
         catch (WebApplicationException e)
         {
@@ -111,10 +143,10 @@ public class DeviceCompleteRequestHandler extends BaseHandler
     }
 
 
-    private Response process(String userCode, String[] claimNames)
+    private Response process(String userCode, String[] claimNames, Options options)
     {
         // Call Authlete's /api/device/complete API.
-        DeviceCompleteResponse response = complete(userCode, claimNames);
+        DeviceCompleteResponse response = complete(userCode, claimNames, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -150,7 +182,7 @@ public class DeviceCompleteRequestHandler extends BaseHandler
     }
 
 
-    private DeviceCompleteResponse complete(String userCode, String[] claimNames)
+    private DeviceCompleteResponse complete(String userCode, String[] claimNames, Options options)
     {
         // Get the result of end-user authentication and authorization.
         Result result = mSpi.getResult();
@@ -165,7 +197,7 @@ public class DeviceCompleteRequestHandler extends BaseHandler
 
             // The end-user has not successfully authorized the client.
             // Then, complete the process with failure.
-            return fail(userCode, result, errorDescription, errorUri);
+            return fail(userCode, result, errorDescription, errorUri, options);
         }
 
         // OK. The end-user has successfully authorized the client.
@@ -192,7 +224,8 @@ public class DeviceCompleteRequestHandler extends BaseHandler
         Property[] properties = mSpi.getProperties();
 
         // Complete the process with successful authorization.
-        return authorize(userCode, subject, authTime, acr, claims, properties, scopes);
+        return authorize(
+                userCode, subject, authTime, acr, claims, properties, scopes, options);
     }
 
 
@@ -236,30 +269,31 @@ public class DeviceCompleteRequestHandler extends BaseHandler
 
     private DeviceCompleteResponse authorize(
             String userCode, String subject, long authTime, String acr, Map<String, Object> claims,
-            Property[] properties, String[] scopes)
+            Property[] properties, String[] scopes, Options options)
     {
         return callDeviceComlete(
                 userCode, subject, Result.AUTHORIZED, authTime, acr, claims,
-                properties, scopes, null, null);
+                properties, scopes, null, null, options);
     }
 
 
     private DeviceCompleteResponse fail(
-            String userCode, Result result, String errorDescription, URI errorUri)
+            String userCode, Result result, String errorDescription, URI errorUri,
+            Options options)
     {
         return callDeviceComlete(
                 userCode, null, result, 0, null, null, null, null, errorDescription,
-                errorUri);
+                errorUri, options);
     }
 
 
     private DeviceCompleteResponse callDeviceComlete(
             String userCode, String subject, DeviceCompleteRequest.Result result,
             long authTime, String acr, Map<String, Object> claims, Property[] properties,
-            String[] scopes, String errorDescription, URI errorUri)
+            String[] scopes, String errorDescription, URI errorUri, Options options)
     {
         return getApiCaller().callDeviceComplete(
                 userCode, subject, result, authTime, acr, claims, properties, scopes,
-                errorDescription, errorUri);
+                errorDescription, errorUri, options);
     }
 }

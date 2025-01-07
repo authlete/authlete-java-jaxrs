@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Authlete, Inc.
+ * Copyright (C) 2021-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.GMRequest;
 import com.authlete.common.dto.GMResponse;
 import com.authlete.common.dto.GMResponse.Action;
@@ -54,7 +55,8 @@ public class GMRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a grant management request.
+     * Handle a grant management request. This method is an alias of {@link
+     * #handle(GMRequest, Options) handle}{@code (request, null)}.
      *
      * @param request
      *         A grant management request.
@@ -67,8 +69,32 @@ public class GMRequestHandler extends BaseHandler
      */
     public Response handle(GMRequest request) throws WebApplicationException
     {
+        return handle(request, null);
+    }
+
+
+    /**
+     * Handle a grant management request.
+     *
+     * @param request
+     *         A grant management request.
+     *
+     * @param options
+     *         The request options for the {@code /api/gm} API.
+     *
+     * @return
+     *         A response that should be returned from the grant management
+     *         endpoint to the client application.
+     *
+     * @throws WebApplicationException
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            GMRequest request, Options options) throws WebApplicationException
+    {
         // Call Authlete's /api/gm API.
-        GMResponse response = getApiCaller().callGm(request);
+        GMResponse response = getApiCaller().callGm(request, options);
 
         // 'action' in the response denotes the next action which
         // the implementation of grant management endpoint should take.

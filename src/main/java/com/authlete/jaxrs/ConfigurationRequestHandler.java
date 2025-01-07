@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.ServiceConfigurationRequest;
 
 
@@ -104,8 +105,29 @@ public class ConfigurationRequestHandler extends BaseHandler
 
     /**
      * Handle a request to an OpenID Provider configuration endpoint. This
-     * method internally calls Authlete's {@code /api/service/configuration}
-     * API.
+     * method is an alias of {@link #handle(boolean, Options) handle}{@code (true, options)}.
+     *
+     * @param options
+     *         The request options to the Authlete API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to
+     *         the client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(Options options) throws WebApplicationException
+    {
+        return handle(true, options);
+    }
+
+
+    /**
+     * Handle a request to an OpenID Provider configuration endpoint. This
+     * method is an alias of {@link #handle(boolean, Options) handle}{@code (pretty, null)}.
      *
      * @param pretty
      *         {@code true} to return the output JSON in pretty format.
@@ -119,12 +141,38 @@ public class ConfigurationRequestHandler extends BaseHandler
      */
     public Response handle(boolean pretty) throws WebApplicationException
     {
+        return handle(pretty, null);
+    }
+
+
+    /**
+     * Handle a request to an OpenID Provider configuration endpoint. This
+     * method internally calls Authlete's {@code /api/service/configuration}
+     * API.
+     *
+     * @param pretty
+     *         {@code true} to return the output JSON in pretty format.
+     *
+     * @param options
+     *         The request options to the Authlete API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to
+     *         the client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(boolean pretty, Options options) throws WebApplicationException
+    {
         try
         {
             // Call Authlete's /api/service/configuration API.
             // The API returns a JSON that complies with
             // OpenID Connect Discovery 1.0.
-            String json = getApiCaller().callServiceConfiguration(pretty);
+            String json = getApiCaller().callServiceConfiguration(pretty, options);
 
             // Response as "application/json;charset=UTF-8" with 200 OK.
             return ResponseUtil.ok(json);
@@ -144,11 +192,11 @@ public class ConfigurationRequestHandler extends BaseHandler
 
     /**
      * Handle a request to an OpenID Provider configuration endpoint. This
-     * method internally calls Authlete's {@code /api/service/configuration}
-     * API.
+     * method is an alias of {@link
+     * #handle(ServiceConfigurationRequest, Options) handle}{@code (request, null)}.
      *
      * @param request
-     *         Request parameters to the Authlete API.
+     *         The request parameters to the Authlete API.
      *
      * @return
      *         A response that should be returned from the discovery endpoint.
@@ -160,12 +208,38 @@ public class ConfigurationRequestHandler extends BaseHandler
      */
     public Response handle(ServiceConfigurationRequest request) throws WebApplicationException
     {
+        return handle(request, null);
+    }
+
+
+    /**
+     * Handle a request to an OpenID Provider configuration endpoint. This
+     * method internally calls Authlete's {@code /api/service/configuration}
+     * API.
+     *
+     * @param request
+     *         The request parameters to the Authlete API.
+     *
+     * @param options
+     *         The request options to the Authlete API.
+     *
+     * @return
+     *         A response that should be returned from the discovery endpoint.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            ServiceConfigurationRequest request, Options options) throws WebApplicationException
+    {
         try
         {
             // Call Authlete's /api/service/configuration API.
             // The API returns a JSON that complies with
             // OpenID Connect Discovery 1.0.
-            String json = getApiCaller().callServiceConfiguration(request);
+            String json = getApiCaller().callServiceConfiguration(request, options);
 
             // Response as "application/json;charset=UTF-8" with 200 OK.
             return ResponseUtil.ok(json);

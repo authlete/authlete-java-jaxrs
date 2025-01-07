@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Authlete, Inc.
+ * Copyright (C) 2015-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.AuthorizationFailRequest;
 import com.authlete.common.dto.AuthorizationFailResponse;
 import com.authlete.common.dto.AuthorizationIssueRequest;
@@ -170,18 +171,18 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/authorization} API.
      */
-    public AuthorizationResponse callAuthorization(MultivaluedMap<String, String> parameters)
+    public AuthorizationResponse callAuthorization(MultivaluedMap<String, String> parameters, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
-        return callAuthorization(params);
+        return callAuthorization(params, options);
     }
 
 
     /**
      * Call Authlete's {@code /api/auth/authorization} API.
      */
-    private AuthorizationResponse callAuthorization(String parameters)
+    private AuthorizationResponse callAuthorization(String parameters, Options options)
     {
         if (parameters == null)
         {
@@ -198,7 +199,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/authorization API.
-            return mApi.authorization(request);
+            return mApi.authorization(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -211,7 +212,8 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/authorization/fail} API.
      */
-    private AuthorizationFailResponse callAuthorizationFail(String ticket, AuthorizationFailRequest.Reason reason)
+    private AuthorizationFailResponse callAuthorizationFail(
+            String ticket, AuthorizationFailRequest.Reason reason, Options options)
     {
         // Create a request for /api/auth/authorization/fail API.
         AuthorizationFailRequest request = new AuthorizationFailRequest()
@@ -221,7 +223,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/authorization/fail API.
-            return mApi.authorizationFail(request);
+            return mApi.authorizationFail(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -235,10 +237,11 @@ class AuthleteApiCaller
      * Create a response that describes the failure. This method
      * calls Authlete's {@code /api/auth/authorization/fail} API.
      */
-    private Response createAuthorizationFailResponse(String ticket, AuthorizationFailRequest.Reason reason)
+    private Response createAuthorizationFailResponse(
+            String ticket, AuthorizationFailRequest.Reason reason, Options options)
     {
         // Call Authlete's /api/auth/authorization/fail API.
-        AuthorizationFailResponse response = callAuthorizationFail(ticket, reason);
+        AuthorizationFailResponse response = callAuthorizationFail(ticket, reason, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -278,11 +281,12 @@ class AuthleteApiCaller
      * Create an exception that describes the failure. This method
      * calls Authlete's {@code /api/auth/authorization/fail} API.
      */
-    public WebApplicationException authorizationFail(String ticket, AuthorizationFailRequest.Reason reason)
+    public WebApplicationException authorizationFail(
+            String ticket, AuthorizationFailRequest.Reason reason, Options options)
     {
         // Create a response to the client application with the help of
         // Authlete's /api/auth/authorization/fail API.
-        Response response = createAuthorizationFailResponse(ticket, reason);
+        Response response = createAuthorizationFailResponse(ticket, reason, options);
 
         // Create an exception containing the response.
         return new WebApplicationException(response);
@@ -296,7 +300,7 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
             String sub, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx)
+            List<Map<String, Object>> verifiedClaimsForTx, Options options)
     {
         // Create a request for /api/auth/authorization/issue API.
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
@@ -319,7 +323,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/authorization/issue API.
-            return mApi.authorizationIssue(request);
+            return mApi.authorizationIssue(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -335,9 +339,10 @@ class AuthleteApiCaller
      */
     public Response authorizationIssue(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes)
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            Options options)
     {
-        return authorizationIssue(ticket, subject, authTime, acr, claims, properties, scopes, null);
+        return authorizationIssue(ticket, subject, authTime, acr, claims, properties, scopes, null, options);
     }
 
 
@@ -347,10 +352,11 @@ class AuthleteApiCaller
      */
     public Response authorizationIssue(
             String ticket, String subject, long authTime, String acr,
-            Map<String, Object> claims, Property[] properties, String[] scopes, String sub)
+            Map<String, Object> claims, Property[] properties, String[] scopes,
+            String sub, Options options)
     {
         return authorizationIssue(
-                ticket, subject, authTime, acr, claims, properties, scopes, sub, null, null);
+                ticket, subject, authTime, acr, claims, properties, scopes, sub, null, null, options);
     }
 
 
@@ -362,12 +368,12 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
             String sub, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx)
+            List<Map<String, Object>> verifiedClaimsForTx, Options options)
     {
         // Call Authlete's /api/auth/authorization/issue API.
         AuthorizationIssueResponse response =
             callAuthorizationIssue(ticket, subject, authTime, acr, claims,
-                    properties, scopes, sub, claimsForTx, verifiedClaimsForTx);
+                    properties, scopes, sub, claimsForTx, verifiedClaimsForTx, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -410,13 +416,13 @@ class AuthleteApiCaller
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
             String dpop, String htm, String htu,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callToken(params, clientId, clientSecret,
                 properties, clientCertificate, clientCertificatePath,
-                dpop, htm, htu, clientAttestation, clientAttestationPop);
+                dpop, htm, htu, clientAttestation, clientAttestationPop, options);
     }
 
 
@@ -427,7 +433,7 @@ class AuthleteApiCaller
             String parameters, String clientId, String clientSecret,
             Property[] properties, String clientCertificate, String[] clientCertificatePath,
             String dpop, String htm, String htu,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         if (parameters == null)
         {
@@ -455,7 +461,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/token API.
-            return mApi.token(request);
+            return mApi.token(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -468,7 +474,8 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/token/fail} API.
      */
-    private TokenFailResponse callTokenFail(String ticket, TokenFailRequest.Reason reason)
+    private TokenFailResponse callTokenFail(
+            String ticket, TokenFailRequest.Reason reason, Options options)
     {
         // Create a request for /api/auth/token/fail API.
         TokenFailRequest request = new TokenFailRequest()
@@ -478,7 +485,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/token/fail API.
-            return mApi.tokenFail(request);
+            return mApi.tokenFail(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -494,10 +501,10 @@ class AuthleteApiCaller
      */
     private Response createTokenFailResponse(
             String ticket, TokenFailRequest.Reason reason,
-            Map<String, Object> headers)
+            Map<String, Object> headers, Options options)
     {
         // Call Authlete's /api/auth/token/fail API.
-        TokenFailResponse response = callTokenFail(ticket, reason);
+        TokenFailResponse response = callTokenFail(ticket, reason, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -530,11 +537,11 @@ class AuthleteApiCaller
      */
     public WebApplicationException tokenFail(
             String ticket, TokenFailRequest.Reason reason,
-            Map<String, Object> headers)
+            Map<String, Object> headers, Options options)
     {
         // Create a response to the client application with the help of
         // Authlete's /api/auth/token/fail API.
-        Response response = createTokenFailResponse(ticket, reason, headers);
+        Response response = createTokenFailResponse(ticket, reason, headers, options);
 
         // Create an exception containing the response.
         return new WebApplicationException(response);
@@ -545,7 +552,7 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/auth/token/issue} API.
      */
     private TokenIssueResponse callTokenIssue(
-            String ticket, String subject, Property[] properties)
+            String ticket, String subject, Property[] properties, Options options)
     {
         // Create a request for Authlete's /api/auth/token/issue API.
         TokenIssueRequest request = new TokenIssueRequest()
@@ -557,7 +564,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/token/issue API.
-            return mApi.tokenIssue(request);
+            return mApi.tokenIssue(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -573,10 +580,10 @@ class AuthleteApiCaller
      */
     public Response tokenIssue(
             String ticket, String subject, Property[] properties,
-            Map<String, Object> headers)
+            Map<String, Object> headers, Options options)
     {
         // Call Authlete's /api/auth/token/issue API.
-        TokenIssueResponse response = callTokenIssue(ticket, subject, properties);
+        TokenIssueResponse response = callTokenIssue(ticket, subject, properties, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -606,12 +613,12 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/service/configuration} API.
      */
-    public String callServiceConfiguration(boolean pretty)
+    public String callServiceConfiguration(boolean pretty, Options options)
     {
         try
         {
             // Call Authlete's /api/service/configuration API.
-            return mApi.getServiceConfiguration(pretty);
+            return mApi.getServiceConfiguration(pretty, options);
         }
         catch (AuthleteApiException e)
         {
@@ -624,12 +631,12 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/service/configuration} API.
      */
-    public String callServiceConfiguration(ServiceConfigurationRequest request)
+    public String callServiceConfiguration(ServiceConfigurationRequest request, Options options)
     {
         try
         {
             // Call Authlete's /api/service/configuration API.
-            return mApi.getServiceConfiguration(request);
+            return mApi.getServiceConfiguration(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -644,12 +651,12 @@ class AuthleteApiCaller
      * {@code /api/service/jwks/get} API.
      */
     public Response serviceJwksGet(
-            boolean pretty, boolean includePrivateKeys) throws AuthleteApiException
+            boolean pretty, boolean includePrivateKeys, Options options) throws AuthleteApiException
     {
         try
         {
             // Call Authlete's /api/service/jwks/get API.
-            String jwks = mApi.getServiceJwks(pretty, includePrivateKeys);
+            String jwks = mApi.getServiceJwks(pretty, includePrivateKeys, options);
 
             if (jwks == null || jwks.length() == 0)
             {
@@ -702,14 +709,14 @@ class AuthleteApiCaller
     public RevocationResponse callRevocation(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callRevocation(
                 params, clientId, clientSecret,
                 clientCertificate, clientCertificatePath,
-                clientAttestation, clientAttestationPop);
+                clientAttestation, clientAttestationPop, options);
     }
 
 
@@ -719,7 +726,7 @@ class AuthleteApiCaller
     private RevocationResponse callRevocation(
             String parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         if (parameters == null)
         {
@@ -743,7 +750,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/revocation API.
-            return mApi.revocation(request);
+            return mApi.revocation(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -756,7 +763,7 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/auth/userinfo} API.
      */
-    public UserInfoResponse callUserInfo(UserInfoRequestHandler.Params params)
+    public UserInfoResponse callUserInfo(UserInfoRequestHandler.Params params, Options options)
     {
         // Create a request for Authlete's /api/auth/userinfo API.
         UserInfoRequest request = new UserInfoRequest()
@@ -774,7 +781,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/userinfo API.
-            return mApi.userinfo(request);
+            return mApi.userinfo(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -789,7 +796,7 @@ class AuthleteApiCaller
      */
     private UserInfoIssueResponse callUserInfoIssue(String accessToken,
             Map<String, Object> claims, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx)
+            List<Map<String, Object>> verifiedClaimsForTx, Options options)
     {
         // Create a request for /api/auth/userinfo/issue API.
         UserInfoIssueRequest request = new UserInfoIssueRequest()
@@ -813,7 +820,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/userinfo/issue API.
-            return mApi.userinfoIssue(request);
+            return mApi.userinfoIssue(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -829,11 +836,11 @@ class AuthleteApiCaller
     public Response userInfoIssue(String accessToken,
             Map<String, Object> claims, Map<String, Object> claimsForTx,
             List<Map<String, Object>> verifiedClaimsForTx,
-            Map<String, Object> headers)
+            Map<String, Object> headers, Options options)
     {
         // Call Authlete's /api/auth/userinfo/issue API.
         UserInfoIssueResponse response = callUserInfoIssue(
-                accessToken, claims, claimsForTx, verifiedClaimsForTx);
+                accessToken, claims, claimsForTx, verifiedClaimsForTx, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -882,7 +889,7 @@ class AuthleteApiCaller
      */
     public IntrospectionResponse callIntrospection(
             String accessToken, String[] scopes, String subject, String clientCertificate,
-            String dpop, String htm, String htu)
+            String dpop, String htm, String htu, Options options)
     {
         // Create a request for /api/auth/introspection API.
         IntrospectionRequest request = new IntrospectionRequest()
@@ -895,16 +902,16 @@ class AuthleteApiCaller
             .setHtu(htu)
             ;
 
-        return callIntrospection(request);
+        return callIntrospection(request, options);
     }
 
 
-    public IntrospectionResponse callIntrospection(IntrospectionRequest request)
+    public IntrospectionResponse callIntrospection(IntrospectionRequest request, Options options)
     {
         try
         {
             // Call Authlete's /api/auth/introspection API.
-            return mApi.introspection(request);
+            return mApi.introspection(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -920,13 +927,13 @@ class AuthleteApiCaller
     public StandardIntrospectionResponse callStandardIntrospection(
             MultivaluedMap<String, String> parameters, boolean withHiddenProperties, String httpAcceptHeader,
             URI rsUri, JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
-            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption)
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callStandardIntrospection(
                 params, withHiddenProperties, httpAcceptHeader, rsUri, introspectionSignAlg, introspectionEncAlg,
-                introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption, publicKeyForEncryption);
+                introspectionEncEnc, sharedKeyForSign, sharedKeyForEncryption, publicKeyForEncryption, options);
     }
 
 
@@ -936,7 +943,8 @@ class AuthleteApiCaller
     private StandardIntrospectionResponse callStandardIntrospection(
             String parameters, boolean withHiddenProperties, String httpAcceptHeader, URI rsUri,
             JWSAlg introspectionSignAlg, JWEAlg introspectionEncAlg, JWEEnc introspectionEncEnc,
-            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption)
+            String sharedKeyForSign, String sharedKeyForEncryption, String publicKeyForEncryption,
+            Options options)
     {
         if (parameters == null)
         {
@@ -962,7 +970,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/auth/introspection/standard API.
-            return mApi.standardIntrospection(request);
+            return mApi.standardIntrospection(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -978,13 +986,13 @@ class AuthleteApiCaller
     public BackchannelAuthenticationResponse callBackchannelAuthentication(
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callBackchannelAuthentication(
                 params, clientId, clientSecret, clientCertificate, clientCertificatePath,
-                clientAttestation, clientAttestationPop);
+                clientAttestation, clientAttestationPop, options);
     }
 
 
@@ -994,7 +1002,7 @@ class AuthleteApiCaller
     private BackchannelAuthenticationResponse callBackchannelAuthentication(
             String parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         if (parameters == null)
         {
@@ -1018,7 +1026,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/backchannel/authentication API.
-            return mApi.backchannelAuthentication(request);
+            return mApi.backchannelAuthentication(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1031,7 +1039,8 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/backchannel/authentication/fail} API.
      */
-    private BackchannelAuthenticationFailResponse callBackchannelAuthenticationFail(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    private BackchannelAuthenticationFailResponse callBackchannelAuthenticationFail(
+            String ticket, BackchannelAuthenticationFailRequest.Reason reason, Options options)
     {
         // Create a request for /api/backchannel/authentication/fail API.
         BackchannelAuthenticationFailRequest request = new BackchannelAuthenticationFailRequest()
@@ -1042,7 +1051,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/backchannel/authentication/fail API.
-            return mApi.backchannelAuthenticationFail(request);
+            return mApi.backchannelAuthenticationFail(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1056,10 +1065,11 @@ class AuthleteApiCaller
      * Create a response that describes the failure. This method
      * calls Authlete's {@code /api/backchannel/authentication/fail} API.
      */
-    private Response createBackchannelAuthenticationFailResponse(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    private Response createBackchannelAuthenticationFailResponse(
+            String ticket, BackchannelAuthenticationFailRequest.Reason reason, Options options)
     {
         // Call Authlete's /api/backchannel/authentication/fail API.
-        BackchannelAuthenticationFailResponse response = callBackchannelAuthenticationFail(ticket, reason);
+        BackchannelAuthenticationFailResponse response = callBackchannelAuthenticationFail(ticket, reason, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -1095,11 +1105,12 @@ class AuthleteApiCaller
      * Create an exception that describes the failure. This method
      * calls Authlete's {@code /api/backchannel/authentication/fail} API.
      */
-    public WebApplicationException backchannelAuthenticationFail(String ticket, BackchannelAuthenticationFailRequest.Reason reason)
+    public WebApplicationException backchannelAuthenticationFail(
+            String ticket, BackchannelAuthenticationFailRequest.Reason reason, Options options)
     {
         // Create a response to the client application with the help of
         // Authlete's /api/backchannel/authentication/fail API.
-        Response response = createBackchannelAuthenticationFailResponse(ticket, reason);
+        Response response = createBackchannelAuthenticationFailResponse(ticket, reason, options);
 
         // Create an exception containing the response.
         return new WebApplicationException(response);
@@ -1109,7 +1120,7 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/backchannel/authentication/issue} API.
      */
-    public BackchannelAuthenticationIssueResponse callBackchannelAuthenticationIssue(String ticket)
+    public BackchannelAuthenticationIssueResponse callBackchannelAuthenticationIssue(String ticket, Options options)
     {
         // Create a request for /api/backchannel/authentication/issue API.
         BackchannelAuthenticationIssueRequest request = new BackchannelAuthenticationIssueRequest()
@@ -1119,7 +1130,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/backchannel/authentication/issue API.
-            return mApi.backchannelAuthenticationIssue(request);
+            return mApi.backchannelAuthenticationIssue(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1135,7 +1146,7 @@ class AuthleteApiCaller
     public BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(
             String ticket, String subject, Result result, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
-            String errorDescription, URI errorUri)
+            String errorDescription, URI errorUri, Options options)
     {
         // Create a request for /api/backchannel/authentication/complete API.
         BackchannelAuthenticationCompleteRequest request = new BackchannelAuthenticationCompleteRequest()
@@ -1158,7 +1169,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/backchannel/authentication/complete API.
-            return mApi.backchannelAuthenticationComplete(request);
+            return mApi.backchannelAuthenticationComplete(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1172,9 +1183,9 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/client/registration} API.
      */
     public ClientRegistrationResponse callClientRegistration(
-            String json)
+            String json, Options options)
     {
-        return callClientRegistration(json, null);
+        return callClientRegistration(json, null, options);
     }
 
 
@@ -1183,7 +1194,7 @@ class AuthleteApiCaller
      * with an initial access token.
      */
     public ClientRegistrationResponse callClientRegistration(
-            String json, String initialAccessToken)
+            String json, String initialAccessToken, Options options)
     {
         ClientRegistrationRequest request = new ClientRegistrationRequest()
                 .setJson(json)
@@ -1192,7 +1203,7 @@ class AuthleteApiCaller
 
         try
         {
-            return mApi.dynamicClientRegister(request);
+            return mApi.dynamicClientRegister(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1205,7 +1216,7 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/client/registration/get} API.
      */
     public ClientRegistrationResponse callClientRegistrationGet(
-            String clientId, String registrationAccessToken)
+            String clientId, String registrationAccessToken, Options options)
     {
         ClientRegistrationRequest request = new ClientRegistrationRequest()
                 .setClientId(clientId)
@@ -1213,7 +1224,7 @@ class AuthleteApiCaller
 
         try
         {
-            return mApi.dynamicClientGet(request);
+            return mApi.dynamicClientGet(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1226,7 +1237,7 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/client/registration/update} API.
      */
     public ClientRegistrationResponse callClientRegistrationUpdate(
-            String clientId, String json, String registrationAccessToken)
+            String clientId, String json, String registrationAccessToken, Options options)
     {
         ClientRegistrationRequest request = new ClientRegistrationRequest()
                 .setClientId(clientId)
@@ -1235,7 +1246,7 @@ class AuthleteApiCaller
 
         try
         {
-            return mApi.dynamicClientUpdate(request);
+            return mApi.dynamicClientUpdate(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1248,7 +1259,7 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/client/registration/delete} API.
      */
     public ClientRegistrationResponse callClientRegistrationDelete(
-            String clientId, String registrationAccessToken)
+            String clientId, String registrationAccessToken, Options options)
     {
         ClientRegistrationRequest request = new ClientRegistrationRequest()
                 .setClientId(clientId)
@@ -1256,7 +1267,7 @@ class AuthleteApiCaller
 
         try
         {
-            return mApi.dynamicClientDelete(request);
+            return mApi.dynamicClientDelete(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1272,14 +1283,14 @@ class AuthleteApiCaller
             MultivaluedMap<String, String> parameters,
             String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callDeviceAuthorization(
                 params, clientId, clientSecret,
                 clientCertificate, clientCertificatePath,
-                clientAttestation, clientAttestationPop);
+                clientAttestation, clientAttestationPop, options);
     }
 
 
@@ -1289,7 +1300,7 @@ class AuthleteApiCaller
     private DeviceAuthorizationResponse callDeviceAuthorization(
             String parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         if (parameters == null)
         {
@@ -1313,7 +1324,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/device/authorization API.
-            return mApi.deviceAuthorization(request);
+            return mApi.deviceAuthorization(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1329,7 +1340,7 @@ class AuthleteApiCaller
     public DeviceCompleteResponse callDeviceComplete(
             String userCode, String subject, DeviceCompleteRequest.Result result,
             long authTime, String acr, Map<String, Object> claims, Property[] properties,
-            String[] scopes, String errorDescription, URI errorUri)
+            String[] scopes, String errorDescription, URI errorUri, Options options)
     {
         // Create a request for /api/device/complete API.
         DeviceCompleteRequest request = new DeviceCompleteRequest()
@@ -1352,7 +1363,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/device/complete API.
-            return mApi.deviceComplete(request);
+            return mApi.deviceComplete(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1365,7 +1376,7 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/device/verification} API.
      */
-    public DeviceVerificationResponse callDeviceVerification(String userCode)
+    public DeviceVerificationResponse callDeviceVerification(String userCode, Options options)
     {
         // Create a request for /api/device/verification API.
         DeviceVerificationRequest request = new DeviceVerificationRequest()
@@ -1375,7 +1386,7 @@ class AuthleteApiCaller
         try
         {
             // Call Authlete's /api/device/verification API.
-            return mApi.deviceVerification(request);
+            return mApi.deviceVerification(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1392,13 +1403,13 @@ class AuthleteApiCaller
             MultivaluedMap<String, String> parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
             String dpop, String htm, String htu,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop, Options options)
     {
         String params = URLCoder.formUrlEncode(parameters);
 
         return callPushedAuthReq(
                 params, clientId, clientSecret, clientCertificate, clientCertificatePath,
-                dpop, htm, htu, clientAttestation, clientAttestationPop);
+                dpop, htm, htu, clientAttestation, clientAttestationPop, options);
     }
 
 
@@ -1409,7 +1420,8 @@ class AuthleteApiCaller
             String parameters, String clientId, String clientSecret,
             String clientCertificate, String[] clientCertificatePath,
             String dpop, String htm, String htu,
-            String clientAttestation, String clientAttestationPop)
+            String clientAttestation, String clientAttestationPop,
+            Options options)
     {
         PushedAuthReqRequest request = new PushedAuthReqRequest()
                 .setParameters(parameters)
@@ -1426,7 +1438,7 @@ class AuthleteApiCaller
 
         try
         {
-            return mApi.pushAuthorizationRequest(request);
+            return mApi.pushAuthorizationRequest(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1439,11 +1451,11 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /api/gm} API.
      */
-    public GMResponse callGm(GMRequest request)
+    public GMResponse callGm(GMRequest request, Options options)
     {
         try
         {
-            return mApi.gm(request);
+            return mApi.gm(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1457,11 +1469,11 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/federation/configuration} API.
      */
     public FederationConfigurationResponse
-    callFederationConfiguration(FederationConfigurationRequest request)
+    callFederationConfiguration(FederationConfigurationRequest request, Options options)
     {
         try
         {
-            return mApi.federationConfiguration(request);
+            return mApi.federationConfiguration(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1475,11 +1487,11 @@ class AuthleteApiCaller
      * Call Authlete's {@code /api/federation/registration} API.
      */
     public FederationRegistrationResponse
-    callFederationRegistration(FederationRegistrationRequest request)
+    callFederationRegistration(FederationRegistrationRequest request, Options options)
     {
         try
         {
-            return mApi.federationRegistration(request);
+            return mApi.federationRegistration(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1493,11 +1505,11 @@ class AuthleteApiCaller
      * Call Authlete's {@code /vci/metadata} API.
      */
     public CredentialIssuerMetadataResponse
-    callCredentialIssuerMetadata(CredentialIssuerMetadataRequest request)
+    callCredentialIssuerMetadata(CredentialIssuerMetadataRequest request, Options options)
     {
         try
         {
-            return mApi.credentialIssuerMetadata(request);
+            return mApi.credentialIssuerMetadata(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1511,11 +1523,12 @@ class AuthleteApiCaller
      * Call Authlete's {@code /vci/jwtissuer} API.
      */
     public CredentialJwtIssuerMetadataResponse
-    callCredentialJwtIssuerMetadata(CredentialJwtIssuerMetadataRequest request)
+    callCredentialJwtIssuerMetadata(
+            CredentialJwtIssuerMetadataRequest request, Options options)
     {
         try
         {
-            return mApi.credentialJwtIssuerMetadata(request);
+            return mApi.credentialJwtIssuerMetadata(request, options);
         }
         catch (AuthleteApiException e)
         {
@@ -1528,11 +1541,12 @@ class AuthleteApiCaller
     /**
      * Call Authlete's {@code /vci/offer/info} API.
      */
-    public CredentialOfferInfoResponse callCredentialOfferInfo(CredentialOfferInfoRequest request)
+    public CredentialOfferInfoResponse callCredentialOfferInfo(
+            CredentialOfferInfoRequest request, Options options)
     {
         try
         {
-            return mApi.credentialOfferInfo(request);
+            return mApi.credentialOfferInfo(request, options);
         }
         catch (AuthleteApiException e)
         {

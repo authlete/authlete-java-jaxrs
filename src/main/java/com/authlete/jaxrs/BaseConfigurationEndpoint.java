@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.ServiceConfigurationRequest;
 
 
@@ -72,24 +73,8 @@ import com.authlete.common.dto.ServiceConfigurationRequest;
 public class BaseConfigurationEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a request for OpenID Provider configuration.
-     *
-     * <p>
-     * This method internally creates a {@link ConfigurationRequestHandler}
-     * instance and calls its {@link ConfigurationRequestHandler#handle()} method.
-     * Then, this method uses the value returned from the {@code handle()} method
-     * as a response from this method.
-     * </p>
-     *
-     * <p>
-     * When {@code ConfigurationRequestHandler.handle()} method raises a {@link
-     * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
-     * onError()} method with the exception. The default implementation of {@code onError()}
-     * does nothing. You
-     * can override the method as necessary. After calling {@code onError()} method,
-     * this method calls {@code getResponse()} method of the exception and uses the
-     * returned value as a response from this method.
-     * </p>
+     * Handle a request for OpenID Provider configuration. This method is an alias
+     * of {@link #handle(AuthleteApi, Options) handle}{@code (api, (Options)null)}.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -99,13 +84,49 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
      */
     public Response handle(AuthleteApi api)
     {
+        return handle(api, (Options)null);
+    }
+
+
+    /**
+     * Handle a request for OpenID Provider configuration.
+     *
+     * <p>
+     * This method internally creates a {@link ConfigurationRequestHandler}
+     * instance and calls its {@link ConfigurationRequestHandler#handle(Options)}
+     * method. Then, this method uses the value returned from the {@code handle()}
+     * method as a response from this method.
+     * </p>
+     *
+     * <p>
+     * When {@code ConfigurationRequestHandler.handle()} method raises a {@link
+     * WebApplicationException}, this method calls {@link #onError(WebApplicationException) onError()}
+     * method with the exception. The default implementation of {@code onError()}
+     * does nothing. You can override the method as necessary. After calling {@code
+     * onError()} method, this method calls {@code getResponse()} method of the
+     * exception and uses the returned value as a response from this method.
+     * </p>
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param options
+     *         The request options for the {@code /api/service/configuration} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.82
+     */
+    public Response handle(AuthleteApi api, Options options)
+    {
         try
         {
             // Create a handler.
             ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle();
+            return handler.handle(options);
         }
         catch (WebApplicationException e)
         {
@@ -119,14 +140,36 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
 
 
     /**
+     * Handle a request for OpenID Provider configuration. This method is an alias
+     * of {@link #handle(AuthleteApi, ServiceConfigurationRequest, Options) handle}{@code
+     * (api, request, null)}.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param request
+     *         The request parameters for Authlete's {@code /service/configuration}
+     *         API.
+     *
+     * @return
+     *         A response that should be returned from the discovery endpoint.
+     *
+     * @since 2.50
+     */
+    public Response handle(AuthleteApi api, ServiceConfigurationRequest request)
+    {
+        return handle(api, request, null);
+    }
+
+
+    /**
      * Handle a request for OpenID Provider configuration.
      *
      * <p>
      * This method internally creates a {@link ConfigurationRequestHandler}
      * instance and calls its
-     * {@link ConfigurationRequestHandler#handle(ServiceConfigurationRequest)
-     * handle}{@code (}{@link ServiceConfigurationRequest}{@code )} method.
-     * Then, this method uses the value returned from the method as a response
+     * {@link ConfigurationRequestHandler#handle(ServiceConfigurationRequest, Options) handle()}
+     * method. Then, this method uses the value returned from the method as a response
      * from this method.
      * </p>
      *
@@ -143,14 +186,19 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
      *         An implementation of {@link AuthleteApi}.
      *
      * @param request
-     *         Request parameters for Authlete's {@code /service/configuration} API.
+     *         The request parameters for Authlete's {@code /api/service/configuration}
+     *         API.
+     *
+     * @param options
+     *         The request options for the {@code /api/service/configuration} API.
      *
      * @return
      *         A response that should be returned from the discovery endpoint.
      *
-     * @since 2.50
+     * @since 2.82
      */
-    public Response handle(AuthleteApi api, ServiceConfigurationRequest request)
+    public Response handle(
+            AuthleteApi api, ServiceConfigurationRequest request, Options options)
     {
         try
         {
@@ -158,7 +206,7 @@ public class BaseConfigurationEndpoint extends BaseEndpoint
             ConfigurationRequestHandler handler = new ConfigurationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(request);
+            return handler.handle(request, options);
         }
         catch (WebApplicationException e)
         {

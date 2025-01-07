@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.jaxrs.UserInfoRequestHandler.Params;
 import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 
@@ -37,10 +38,9 @@ import com.authlete.jaxrs.spi.UserInfoRequestHandlerSpi;
 public class BaseUserInfoEndpoint extends BaseResourceEndpoint
 {
     /**
-     * Handle a userinfo request.
-     *
-     * This method is an alias of the {@link #handle(AuthleteApi,
-     * UserInfoRequestHandlerSpi, UserInfoRequestHandler.Params)} method.
+     * Handle a userinfo request. This method is an alias of {@link
+     * #handle(AuthleteApi, UserInfoRequestHandlerSpi, UserInfoRequestHandler.Params, Options, Options)
+     * handle}{@code (api, spi, accessToken, null, null)}.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -57,11 +57,68 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
     public Response handle(
             AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken)
     {
-        Params params = new Params()
-                .setAccessToken(accessToken)
-                ;
+        return handle(api, spi, accessToken, null, null);
+    }
 
-        return handle(api, spi, params);
+
+    /**
+     * Handle a userinfo request. This method is an alias of the {@link
+     * #handle(AuthleteApi, UserInfoRequestHandlerSpi, UserInfoRequestHandler.Params, Options, Options)}
+     * method.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link UserInfoRequestHandlerSpi}.
+     *
+     * @param accessToken
+     *         An access token.
+     *
+     * @param userInfoOptions
+     *         The request options for the {@code /api/auth/userinfo} API.
+     *
+     * @param userInfoIssueOptions
+     *         The request options for the {@code /api/auth/userinfo/issue} API.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, String accessToken,
+            Options userInfoOptions, Options userInfoIssueOptions)
+    {
+        Params params = new Params().setAccessToken(accessToken);
+
+        return handle(api, spi, params, userInfoOptions, userInfoIssueOptions);
+    }
+
+
+    /**
+     * Handle a userinfo request. This method is an alias of {@link
+     * #handle(AuthleteApi, UserInfoRequestHandlerSpi, UserInfoRequestHandler.Params, Options, Options)
+     * handle}{@code (api, spi, params, null, null)}.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link UserInfoRequestHandlerSpi}.
+     *
+     * @param params
+     *         Parameters needed to handle the userinfo request.
+     *
+     * @return
+     *         A response that should be returned to the client application.
+     *
+     * @since 2.27
+     */
+    public Response handle(
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, Params params)
+    {
+        return handle(api, spi, params, null, null);
     }
 
 
@@ -71,8 +128,8 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      * <p>
      * This method internally creates a {@link UserInfoRequestHandler} instance
      * and calls its
-     * {@link UserInfoRequestHandler#handle(UserInfoRequestHandler.Params)
-     * handle(Params)} method. Then, this method uses the value returned from
+     * {@link UserInfoRequestHandler#handle(UserInfoRequestHandler.Params, Options, Options)
+     * handle()} method. Then, this method uses the value returned from
      * the {@code handle()} method as a response from this method.
      * </p>
      *
@@ -95,13 +152,20 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
      * @param params
      *         Parameters needed to handle the userinfo request.
      *
+     * @param userInfoOptions
+     *         The request options for the {@code /api/auth/userinfo} API.
+     *
+     * @param userInfoIssueOptions
+     *         The request options for the {@code /api/auth/userinfo/issue} API.
+     *
      * @return
      *         A response that should be returned to the client application.
      *
-     * @since 2.27
+     * @since 2.82
      */
     public Response handle(
-            AuthleteApi api, UserInfoRequestHandlerSpi spi, Params params)
+            AuthleteApi api, UserInfoRequestHandlerSpi spi, Params params,
+            Options userInfoOptions, Options userInfoIssueOptions)
     {
         try
         {
@@ -109,7 +173,7 @@ public class BaseUserInfoEndpoint extends BaseResourceEndpoint
             UserInfoRequestHandler handler = new UserInfoRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(params);
+            return handler.handle(params, userInfoOptions, userInfoIssueOptions);
         }
         catch (WebApplicationException e)
         {

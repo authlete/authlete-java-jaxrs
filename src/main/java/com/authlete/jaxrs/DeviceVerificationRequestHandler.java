@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.DeviceVerificationResponse;
 import com.authlete.common.dto.DeviceVerificationResponse.Action;
 import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
@@ -71,7 +72,8 @@ public class DeviceVerificationRequestHandler extends BaseHandler
     /**
      * Handle information associated with a user code that the end-user
      * input at the verification endpoint in OAuth 2.0 Device Authorization Grant
-     * (Device Flow).
+     * (Device Flow). This method is an alias of {@link #handle(Options) handle}{@code
+     * (null)}.
      *
      * @return
      *         A response that should be returned to the end-user.
@@ -81,10 +83,32 @@ public class DeviceVerificationRequestHandler extends BaseHandler
      */
     public Response handle() throws WebApplicationException
     {
+        return handle(null);
+    }
+
+
+    /**
+     * Handle information associated with a user code that the end-user
+     * input at the verification endpoint in OAuth 2.0 Device Authorization Grant
+     * (Device Flow).
+     *
+     * @param options
+     *         The request options for the {@code /api/device/verification} API.
+     *
+     * @return
+     *         A response that should be returned to the end-user.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(Options options) throws WebApplicationException
+    {
         try
         {
             // Process the given parameters.
-            return process();
+            return process(options);
         }
         catch (WebApplicationException e)
         {
@@ -98,10 +122,11 @@ public class DeviceVerificationRequestHandler extends BaseHandler
     }
 
 
-    private Response process()
+    private Response process(Options options)
     {
         // Call Authlete's /api/device/verification API.
-        DeviceVerificationResponse response = getApiCaller().callDeviceVerification(mSpi.getUserCode());
+        DeviceVerificationResponse response =
+                getApiCaller().callDeviceVerification(mSpi.getUserCode(), options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

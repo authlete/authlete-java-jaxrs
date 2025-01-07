@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Authlete, Inc.
+ * Copyright (C) 2022-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.FederationRegistrationRequest;
 import com.authlete.common.dto.FederationRegistrationResponse;
 import com.authlete.common.dto.FederationRegistrationResponse.Action;
@@ -54,7 +55,9 @@ public class FederationRegistrationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a request to the federation registration endpoint.
+     * Handle a request to the federation registration endpoint. This method is
+     * an alias of {@link #handle(FederationRegistrationRequest, Options) handle}{@code
+     * (request, null)}.
      *
      * @param request
      *         An "explicit" client registration request.
@@ -67,9 +70,33 @@ public class FederationRegistrationRequestHandler extends BaseHandler
      */
     public Response handle(FederationRegistrationRequest request) throws WebApplicationException
     {
+        return handle(request, null);
+    }
+
+
+    /**
+     * Handle a request to the federation registration endpoint.
+     *
+     * @param request
+     *         An "explicit" client registration request.
+     *
+     * @param options
+     *         The request options for the {@code /api/federation/registration} API.
+     *
+     * @return
+     *         A response that should be returned from the federation
+     *         registration endpoint.
+     *
+     * @throws WebApplicationException
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            FederationRegistrationRequest request, Options options) throws WebApplicationException
+    {
         // Call Authlete's /api/federation/registration API.
         FederationRegistrationResponse response =
-                getApiCaller().callFederationRegistration(request);
+                getApiCaller().callFederationRegistration(request, options);
 
         // 'action' in the response denotes the next action which
         // the implementation of the endpoint should take.

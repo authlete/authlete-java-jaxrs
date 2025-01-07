@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.CredentialOfferInfoRequest;
 
 
@@ -27,13 +28,20 @@ public class BaseCredentialOfferUriEndpoint extends BaseEndpoint
 {
     public Response handle(final AuthleteApi api, final CredentialOfferInfoRequest request)
     {
+        return handle(api, request, null);
+    }
+
+
+    public Response handle(
+            final AuthleteApi api, final CredentialOfferInfoRequest request, Options options)
+    {
         try
         {
             // Create a handler.
             CredentialOfferUriRequestHandler handler = new CredentialOfferUriRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(request);
+            return handler.handle(request, options);
         }
         catch (WebApplicationException e)
         {

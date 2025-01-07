@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
 
 
@@ -33,23 +34,9 @@ import com.authlete.jaxrs.spi.DeviceVerificationRequestHandlerSpi;
 public class BaseDeviceVerificationEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a device verification request.
-     *
-     * <p>
-     * This method internally creates a {@link DeviceVerificationRequestHandler}
-     * instance and calls its {@link DeviceVerificationRequestHandler#handle()}
-     * method. Then, this method uses the value returned from the {@code handle()}
-     * method as a response from this method.
-     * </p>
-     *
-     * <p>
-     * When {@code DeviceVerificationRequestHandler.handle()} method raises a {@link
-     * WebApplicationException}, this method calls {@link #onError(WebApplicationException)
-     * onError()} method with the exception. The default implementation of {@code onError()}
-     * does nothing. You can override the method as necessary. After calling
-     * {@code onError()} method, this method calls {@code getResponse()} method of
-     * the exception and uses the returned value as a response from this method.
-     * </p>
+     * Handle a device verification request. This method is an alias of {@link
+     * #handle(AuthleteApi, DeviceVerificationRequestHandlerSpi, Options) handle}{@code
+     * (api, spi, null)}.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
@@ -62,13 +49,53 @@ public class BaseDeviceVerificationEndpoint extends BaseEndpoint
      */
     public Response handle(AuthleteApi api, DeviceVerificationRequestHandlerSpi spi)
     {
+        return handle(api, spi, null);
+    }
+
+
+    /**
+     * Handle a device verification request.
+     *
+     * <p>
+     * This method internally creates a {@link DeviceVerificationRequestHandler}
+     * instance and calls its {@link DeviceVerificationRequestHandler#handle(Options) handle()}
+     * method. Then, this method uses the value returned from the {@code handle()}
+     * method as a response from this method.
+     * </p>
+     *
+     * <p>
+     * When {@code DeviceVerificationRequestHandler.handle()} method raises a {@link
+     * WebApplicationException}, this method calls {@link #onError(WebApplicationException) onError()}
+     * method with the exception. The default implementation of {@code onError()}
+     * does nothing. You can override the method as necessary. After calling
+     * {@code onError()} method, this method calls {@code getResponse()} method of
+     * the exception and uses the returned value as a response from this method.
+     * </p>
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link DeviceVerificationRequestHandlerSpi}.
+     *
+     * @param options
+     *         The request options for the {@code /api/device/authorization/verification} API.
+     *
+     * @return
+     *         A response that should be returned to the end-user.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            AuthleteApi api, DeviceVerificationRequestHandlerSpi spi, Options options)
+    {
         try
         {
             // Create a handler.
             DeviceVerificationRequestHandler handler = new DeviceVerificationRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle();
+            return handler.handle(options);
         }
         catch (WebApplicationException e)
         {

@@ -22,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.DeviceAuthorizationResponse;
 import com.authlete.common.dto.DeviceAuthorizationResponse.Action;
 
@@ -287,6 +288,9 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      *         item in the array is the client's certificate itself. May be {@code null}
      *         if the client did not send a certificate or path.
      *
+     * @param options
+     *         The request options for the device authorization request.
+     *
      * @return
      *         A response that should be returned from the endpoint to the
      *         client application.
@@ -296,7 +300,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      */
     public Response handle(
             MultivaluedMap<String, String> parameters, String authorization,
-            String[] clientCertificatePath) throws WebApplicationException
+            String[] clientCertificatePath, Options options) throws WebApplicationException
     {
         Params params = new Params()
                 .setParameters(parameters)
@@ -304,7 +308,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
                 .setClientCertificatePath(clientCertificatePath)
                 ;
 
-        return handle(params);
+        return handle(params, options);
     }
 
 
@@ -322,6 +326,27 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
      */
     public Response handle(Params params)
     {
+        return handle(params, null);
+    }
+
+
+    /**
+     * Handle a device authorization request.
+     *
+     * @param params
+     *         The request parameters for Authlete's {@code /device/authorization} API.
+     *
+     * @param options
+     *         The request options for Authlete's {@code /device/authorization} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @since 2.79
+     */
+    public Response handle(Params params, Options options)
+    {
         // The credential of the client application extracted from the
         // Authorization header. If available, the first element is the
         // client ID and the second element is the client secret.
@@ -331,7 +356,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(params, credential[0], credential[1]);
+            return process(params, credential[0], credential[1], options);
         }
         catch (WebApplicationException e)
         {
@@ -348,7 +373,8 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
     /**
      * Process the parameters of the token request.
      */
-    private Response process(Params params, String clientId, String clientSecret)
+    private Response process(
+            Params params, String clientId, String clientSecret, Options options)
     {
         // The client certificate.
         String clientCertificate = HandlerUtility
@@ -362,7 +388,8 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
         DeviceAuthorizationResponse response = getApiCaller().callDeviceAuthorization(
                 params.getParameters(), clientId, clientSecret,
                 clientCertificate, clientCertificatePath,
-                params.getClientAttestation(), params.getClientAttestationPop());
+                params.getClientAttestation(), params.getClientAttestationPop(),
+                options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

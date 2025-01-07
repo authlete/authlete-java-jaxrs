@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Authlete, Inc.
+ * Copyright (C) 2022-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.FederationConfigurationRequest;
 import com.authlete.common.dto.FederationConfigurationResponse;
 import com.authlete.common.dto.FederationConfigurationResponse.Action;
@@ -54,7 +55,9 @@ public class FederationConfigurationRequestHandler extends BaseHandler
 
 
     /**
-     * Handle a request to the entity configuration endpoint.
+     * Handle a request to the entity configuration endpoint. This method is an
+     * alias of {@link #handle(FederationConfigurationRequest, Options) handle}{@code
+     * (request, null)}.
      *
      * @param request
      *         An entity configuration request.
@@ -67,9 +70,33 @@ public class FederationConfigurationRequestHandler extends BaseHandler
      */
     public Response handle(FederationConfigurationRequest request) throws WebApplicationException
     {
+        return handle(request, null);
+    }
+
+
+    /**
+     * Handle a request to the entity configuration endpoint.
+     *
+     * @param request
+     *         An entity configuration request.
+     *
+     * @param options
+     *         The request options for the {@code /api/federation/configuration} API.
+     *
+     * @return
+     *         A response that should be returned from the entity configuration
+     *         endpoint.
+     *
+     * @throws WebApplicationException
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            FederationConfigurationRequest request, Options options) throws WebApplicationException
+    {
         // Call Authlete's /api/federation/configuration API.
         FederationConfigurationResponse response =
-                getApiCaller().callFederationConfiguration(request);
+                getApiCaller().callFederationConfiguration(request, options);
 
         // 'action' in the response denotes the next action which
         // the implementation of the endpoint should take.
