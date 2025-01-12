@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Authlete, Inc.
+ * Copyright (C) 2022-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.FederationRegistrationRequest;
 
 
@@ -81,35 +82,63 @@ import com.authlete.common.dto.FederationRegistrationRequest;
 public class BaseFederationRegistrationEndpoint extends BaseEndpoint
 {
     /**
-     * Handle a request to the federation registration endpoint.
-     *
-     * <p>
-     * This method internally creates a {@link FederationRegistrationRequestHandler}
-     * instance and calls its {@link
-     * FederationRegistrationRequestHandler#handle(FederationRegistrationRequest)
-     * handle}<code>({@link FederationRegistrationRequest})</code> method.
-     * Then, this method uses the value returned from the handler's method as a
-     * response from this method.
-     * </p>
-     *
-     * <p>
-     * When the handler's method raises a {@link WebApplicationException}, this
-     * method calls {@link #onError(WebApplicationException)
-     * onError(WebApplicationException)} method with the exception. The default
-     * implementation of {@code onError()} does nothing. You can override the
-     * method as necessary. After calling {@code onError()} method, this method
-     * calls {@code getResponse()} method of the exception and uses the returned
-     * value as a response from this method.
-     * </p>
+     * Handle a request to the federation registration endpoint. This method is an alias
+     * of {@link #handle(AuthleteApi, FederationRegistrationRequest, Options) handle}{@code
+     * (api, request, null)}.
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
+     *
+     * @param request
+     *         The request parameters for Authlete's {@code /api/federation/registration} API.
      *
      * @return
      *         A response that should be returned from the federation
      *         registration endpoint.
      */
     public Response handle(AuthleteApi api, FederationRegistrationRequest request)
+    {
+        return handle(api, request, null);
+    }
+
+
+    /**
+     * Handle a request to the federation registration endpoint.
+     *
+     * <p>
+     * This method internally creates a {@link FederationRegistrationRequestHandler}
+     * instance and calls its {@link
+     * FederationRegistrationRequestHandler#handle(FederationRegistrationRequest, Options) handle()}
+     * method. Then, this method uses the value returned from the handler's method
+     * as a response from this method.
+     * </p>
+     *
+     * <p>
+     * When the handler's method raises a {@link WebApplicationException}, this
+     * method calls {@link #onError(WebApplicationException) onError()} method with
+     * the exception. The default implementation of {@code onError()} does nothing.
+     * You can override the method as necessary. After calling {@code onError()}
+     * method, this method calls {@code getResponse()} method of the exception and
+     * uses the returned value as a response from this method.
+     * </p>
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param request
+     *         The request parameters for Authlete's {@code /api/federation/registration} API.
+     *
+     * @param options
+     *         The request options for the {@code /api/federation/registration} API.
+     *
+     * @return
+     *         A response that should be returned from the federation
+     *         registration endpoint.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            AuthleteApi api, FederationRegistrationRequest request, Options options)
     {
         try
         {
@@ -118,7 +147,7 @@ public class BaseFederationRegistrationEndpoint extends BaseEndpoint
                     new FederationRegistrationRequestHandler(api);
 
             // Delegate the task to the handler.
-            return handler.handle(request);
+            return handler.handle(request, options);
         }
         catch (WebApplicationException e)
         {

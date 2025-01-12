@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Authlete, Inc.
+ * Copyright (C) 2015-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.AuthorizationFailRequest.Reason;
 import com.authlete.common.dto.AuthorizationResponse;
 import com.authlete.common.dto.Property;
@@ -74,9 +75,11 @@ public class AuthorizationRequestHandler extends BaseHandler
      * Handle an authorization request to a <a href=
      * "https://tools.ietf.org/html/rfc6749#section-3.1">authorization endpoint</a>
      * of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
+     * This method is an alias of {@link #handle(MultivaluedMap, Options, Options, Options)
+     * handle}{@code (parameters, null, null, null)}.
      *
      * @param parameters
-     *         Request parameters of an authorization request.
+     *         The request parameters of an authorization request.
      *
      * @return
      *         A response that should be returned from the endpoint to the
@@ -87,10 +90,44 @@ public class AuthorizationRequestHandler extends BaseHandler
      */
     public Response handle(MultivaluedMap<String, String> parameters) throws WebApplicationException
     {
+        return handle(parameters, null, null, null);
+    }
+
+
+    /**
+     * Handle an authorization request to a <a href=
+     * "https://tools.ietf.org/html/rfc6749#section-3.1">authorization endpoint</a>
+     * of OAuth 2.0 (<a href="https://tools.ietf.org/html/rfc6749">RFC 6749</a>).
+     *
+     * @param parameters
+     *         The request parameters of an authorization request.
+     *
+     * @param authzOptions
+     *         The request options for the {@code /api/auth/authorization} API.
+     *
+     * @param authzIssueOptions
+     *         The request options for the {@code /api/auth/authorization/issue} API.
+     *
+     * @param authzFailOptions
+     *         The request options for the {@code /api/auth/authorization/fail} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, Options authzOptions,
+            Options authzIssueOptions, Options authzFailOptions) throws WebApplicationException
+    {
         try
         {
             // Process the given parameters.
-            return process(parameters);
+            return process(parameters, authzOptions, authzIssueOptions, authzFailOptions);
         }
         catch (WebApplicationException e)
         {
@@ -107,10 +144,12 @@ public class AuthorizationRequestHandler extends BaseHandler
     /**
      * Process the authorization request.
      */
-    private Response process(MultivaluedMap<String, String> parameters)
+    private Response process(
+            MultivaluedMap<String, String> parameters, Options authzOptions,
+            Options authzIssueOptions, Options authzFailOptions)
     {
         // Call Authlete's /api/auth/authorization API.
-        AuthorizationResponse response = getApiCaller().callAuthorization(parameters);
+        AuthorizationResponse response = getApiCaller().callAuthorization(parameters, authzOptions);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -147,7 +186,7 @@ public class AuthorizationRequestHandler extends BaseHandler
                 // Process the authorization request without user interaction.
                 // The flow reaches here only when the authorization request
                 // contained prompt=none.
-                return handleNoInteraction(response);
+                return handleNoInteraction(response, authzIssueOptions, authzFailOptions);
 
             default:
                 // This never happens.
@@ -170,16 +209,17 @@ public class AuthorizationRequestHandler extends BaseHandler
      * Handle the case where {@code action} parameter in a response from
      * Authlete's {@code /api/auth/authorization} API is {@code NO_INTERACTION}.
      */
-    private Response handleNoInteraction(AuthorizationResponse response)
+    private Response handleNoInteraction(
+            AuthorizationResponse response, Options authzIssueOptions, Options authzFailOptions)
     {
         // Check 1. End-User Authentication
-        noInteractionCheckAuthentication(response);
+        noInteractionCheckAuthentication(response, authzFailOptions);
 
         // Get the time when the user was authenticated.
         long authTime = mSpi.getUserAuthenticatedAt();
 
         // Check 2. Max Age
-        noInteractionCheckMaxAge(response, authTime);
+        noInteractionCheckMaxAge(response, authTime, authzFailOptions);
 
         // The current subject, i.e. the unique ID assigned by
         // the service to the current user.
@@ -189,14 +229,14 @@ public class AuthorizationRequestHandler extends BaseHandler
         String sub = mSpi.getSub();
 
         // Check 3. Subject
-        noInteractionCheckSubject(response, subject);
+        noInteractionCheckSubject(response, subject, authzFailOptions);
 
         // Get the ACR that was satisfied when the current user
         // was authenticated.
         String acr = mSpi.getAcr();
 
         // Check 4. ACR
-        noInteractionCheckAcr(response, acr);
+        noInteractionCheckAcr(response, acr, authzFailOptions);
 
         // Extra properties to associate with an access token and/or
         // an authorization code.
@@ -209,14 +249,14 @@ public class AuthorizationRequestHandler extends BaseHandler
         String[] scopes = mSpi.getScopes();
 
         // Issue
-        return noInteractionIssue(response, authTime, subject, acr, properties, scopes, sub);
+        return noInteractionIssue(response, authTime, subject, acr, properties, scopes, sub, authzIssueOptions);
     }
 
 
     /**
      * Check whether an end-user has already logged in or not.
      */
-    private void noInteractionCheckAuthentication(AuthorizationResponse response)
+    private void noInteractionCheckAuthentication(AuthorizationResponse response, Options authzFailOptions)
     {
         // If the current user has already been authenticated.
         if (mSpi.isUserAuthenticated())
@@ -226,11 +266,11 @@ public class AuthorizationRequestHandler extends BaseHandler
         }
 
         // A user must have logged in.
-        throw getApiCaller().authorizationFail(response.getTicket(), Reason.NOT_LOGGED_IN);
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.NOT_LOGGED_IN, authzFailOptions);
     }
 
 
-    private void noInteractionCheckMaxAge(AuthorizationResponse response, long authTime)
+    private void noInteractionCheckMaxAge(AuthorizationResponse response, long authTime, Options authzFailOptions)
     {
         // Get the requested maximum authentication age.
         int maxAge = response.getMaxAge();
@@ -253,11 +293,11 @@ public class AuthorizationRequestHandler extends BaseHandler
         }
 
         // The maximum authentication age has elapsed.
-        throw getApiCaller().authorizationFail(response.getTicket(), Reason.EXCEEDS_MAX_AGE);
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.EXCEEDS_MAX_AGE, authzFailOptions);
     }
 
 
-    private void noInteractionCheckSubject(AuthorizationResponse response, String subject)
+    private void noInteractionCheckSubject(AuthorizationResponse response, String subject, Options authzFailOptions)
     {
         // Get the requested subject.
         String requestedSubject = response.getSubject();
@@ -277,11 +317,11 @@ public class AuthorizationRequestHandler extends BaseHandler
         }
 
         // The current user is different from the requested subject.
-        throw getApiCaller().authorizationFail(response.getTicket(), Reason.DIFFERENT_SUBJECT);
+        throw getApiCaller().authorizationFail(response.getTicket(), Reason.DIFFERENT_SUBJECT, authzFailOptions);
     }
 
 
-    private void noInteractionCheckAcr(AuthorizationResponse response, String acr)
+    private void noInteractionCheckAcr(AuthorizationResponse response, String acr, Options authzFailOptions)
     {
         // Get the list of requested ACRs.
         String[] requestedAcrs = response.getAcrs();
@@ -307,7 +347,7 @@ public class AuthorizationRequestHandler extends BaseHandler
         if (response.isAcrEssential())
         {
             // None of the requested ACRs is satisfied.
-            throw getApiCaller().authorizationFail(response.getTicket(), Reason.ACR_NOT_SATISFIED);
+            throw getApiCaller().authorizationFail(response.getTicket(), Reason.ACR_NOT_SATISFIED, authzFailOptions);
         }
 
         // The ACR satisfied when the current user was authenticated
@@ -320,7 +360,8 @@ public class AuthorizationRequestHandler extends BaseHandler
 
     private Response noInteractionIssue(
             AuthorizationResponse response, long authTime, String subject,
-            String acr, Property[] properties, String[] scopes, String sub)
+            String acr, Property[] properties, String[] scopes, String sub,
+            Options authzIssueOptions)
     {
         // When prompt=none is contained in an authorization request,
         // response.getClaims() returns null. This means that user
@@ -335,6 +376,6 @@ public class AuthorizationRequestHandler extends BaseHandler
 
         return getApiCaller().authorizationIssue(
             response.getTicket(), subject, authTime, acr,
-                (Map<String, Object>) null, properties, scopes, sub);
+                (Map<String, Object>) null, properties, scopes, sub, authzIssueOptions);
     }
 }

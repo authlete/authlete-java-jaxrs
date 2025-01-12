@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.82 (2025-01-12)
+-----------------
+
+- Added request options to some request handler classes, some base endpoint classes, and some API implementation classes. 
+
+
 2.81 (2024-10-20)
 -----------------
 

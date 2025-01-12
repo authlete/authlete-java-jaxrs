@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.jaxrs.spi.DeviceCompleteRequestHandlerSpi;
 
 
@@ -34,13 +35,42 @@ import com.authlete.jaxrs.spi.DeviceCompleteRequestHandlerSpi;
 public class BaseDeviceCompleteEndpoint extends BaseEndpoint
 {
     /**
+     * Handle a device complete request. This method is an alias of {@link
+     * #handle(AuthleteApi, DeviceCompleteRequestHandlerSpi, String, String[], Options)}{@code
+     * (api, spi, userCode, claimNames, null)}.
+     *
+     * @param api
+     *         An implementation of {@link AuthleteApi}.
+     *
+     * @param spi
+     *         An implementation of {@link DeviceCompleteRequestHandlerSpi}.
+     *
+     * @param userCode
+     *         The user code that the end-user input.
+     *
+     * @param claimNames
+     *         Names of requested claims. Use the value of the {@code claimNames}
+     *         parameter in a response from Authlete's {@code /api/device/verification} API.
+     *
+     * @return
+     *         A response that should be returned to the end-user.
+     */
+    public Response handle(
+            AuthleteApi api, DeviceCompleteRequestHandlerSpi spi, String userCode,
+            String[] claimNames)
+    {
+        return handle(api, spi, userCode, claimNames, null);
+    }
+
+
+    /**
      * Handle a device complete request.
      *
      * <p>
      * This method internally creates a {@link DeviceCompleteRequestHandler} instance and
-     * calls its {@link DeviceCompleteRequestHandler#handle(String, String[])} method.
-     * Then, this method uses the value returned from the {@code handle()} method
-     * as a response from this method.
+     * calls its {@link DeviceCompleteRequestHandler#handle(String, String[], Options) handle()}
+     * method. Then, this method uses the value returned from the {@code handle()}
+     * method as a response from this method.
      * </p>
      *
      * <p>
@@ -65,12 +95,17 @@ public class BaseDeviceCompleteEndpoint extends BaseEndpoint
      *         Names of requested claims. Use the value of the {@code claimNames}
      *         parameter in a response from Authlete's {@code /api/device/verification} API.
      *
+     * @param options
+     *         The request options for the {@code /api/device/authorization/complete} API.
+     *
      * @return
      *         A response that should be returned to the end-user.
+     *
+     * @since 2.82
      */
     public Response handle(
             AuthleteApi api, DeviceCompleteRequestHandlerSpi spi, String userCode,
-            String[] claimNames)
+            String[] claimNames, Options options)
     {
         try
         {
@@ -78,7 +113,7 @@ public class BaseDeviceCompleteEndpoint extends BaseEndpoint
             DeviceCompleteRequestHandler handler = new DeviceCompleteRequestHandler(api, spi);
 
             // Delegate the task to the handler.
-            return handler.handle(userCode, claimNames);
+            return handler.handle(userCode, claimNames, options);
         }
         catch (WebApplicationException e)
         {

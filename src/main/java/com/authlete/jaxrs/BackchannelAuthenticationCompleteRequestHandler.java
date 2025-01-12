@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
@@ -68,11 +69,35 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      * @param spi
      *         Implementation of {@link BackchannelAuthenticationCompleteRequestHandlerSpi} interface.
      */
-    public BackchannelAuthenticationCompleteRequestHandler(AuthleteApi api, BackchannelAuthenticationCompleteRequestHandlerSpi spi)
+    public BackchannelAuthenticationCompleteRequestHandler(
+            AuthleteApi api, BackchannelAuthenticationCompleteRequestHandlerSpi spi)
     {
         super(api);
 
         mSpi = spi;
+    }
+
+
+    /**
+     * Handle the result of end-user authentication and authorization in CIBA
+     * (Client Initiated Backchannel Authentication) flow. This method is an alias
+     * of {@link #handle(AuthleteApi, String[], Options) handle}{@code (ticket, claimNames, null)}.
+     *
+     * @param ticket
+     *         A ticket that was issued by Authlete's {@code /api/backchannel/authentication}
+     *         API.
+     *
+     * @param claimNames
+     *         Names of requested claims. Use the value of the {@code claimNames}
+     *         parameter in a response from Authlete's {@code /api/backchannel/authentication}
+     *         API.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     */
+    public void handle(String ticket, String[] claimNames) throws WebApplicationException
+    {
+        handle(ticket, claimNames, null);
     }
 
 
@@ -89,15 +114,20 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         parameter in a response from Authlete's {@code /api/backchannel/authentication}
      *         API.
      *
+     * @param options
+     *         The request options for the {@code /api/backchannel/authentication/complete} API.
+     *
      * @throws WebApplicationException
      *         An error occurred.
+     *
+     * @since 2.82
      */
-    public void handle(String ticket, String[] claimNames) throws WebApplicationException
+    public void handle(String ticket, String[] claimNames, Options options) throws WebApplicationException
     {
         try
         {
             // Process the given parameters.
-            process(ticket, claimNames);
+            process(ticket, claimNames, options);
         }
         catch (WebApplicationException e)
         {
@@ -112,11 +142,11 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
     }
 
 
-    private void process(String ticket, String[] claimNames)
+    private void process(String ticket, String[] claimNames, Options options)
     {
         // Complete the process with the result of end-user authentication and
         // authorization.
-        BackchannelAuthenticationCompleteResponse response = complete(ticket, claimNames);
+        BackchannelAuthenticationCompleteResponse response = complete(ticket, claimNames, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -148,7 +178,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
     }
 
 
-    private BackchannelAuthenticationCompleteResponse complete(String ticket, String[] claimNames)
+    private BackchannelAuthenticationCompleteResponse complete(String ticket, String[] claimNames, Options options)
     {
         // Get the authentication result.
         Result result = mSpi.getResult();
@@ -166,7 +196,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
 
             // The end-user authorization has not been successfully done.
             // Then, complete the process with failure.
-            return fail(ticket, subject, result, errorDescription, errorUri);
+            return fail(ticket, subject, result, errorDescription, errorUri, options);
         }
 
         // OK. The end-user has successfully authorized the client.
@@ -190,7 +220,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
         Property[] properties = mSpi.getProperties();
 
         // Complete the process with successful authorization.
-        return authorize(ticket, subject, authTime, acr, claims, properties, scopes);
+        return authorize(ticket, subject, authTime, acr, claims, properties, scopes, options);
     }
 
 
@@ -214,17 +244,20 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      * @param errorUri
      *         The URI of a document which describes the error in detail.
      *
+     * @param options
+     *         The request options for the {@code /api/backchannel/authentication/complete} API.
+     *
      * @return
      *         A response from Authlete's {@code /api/backchannel/authentication/complete}
      *         API.
      */
     private BackchannelAuthenticationCompleteResponse fail(
             String ticket, String subject, Result result, String errorDescription,
-            URI errorUri)
+            URI errorUri, Options options)
     {
         return callBackchannelAuthenticationComplete(
                 ticket, subject, result, 0, null, null, null, null, errorDescription,
-                errorUri);
+                errorUri, options);
     }
 
 
@@ -265,28 +298,31 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
      *         request are used. Otherwise, the scopes given to this method replace
      *         the scopes.
      *
+     * @param options
+     *         The request options for the {@code /api/backchannel/authentication/complete} API.
+     *
      * @return
      *         A response from Authlete's {@code /api/backchannel/authentication/complete}
      *         API.
      */
     private BackchannelAuthenticationCompleteResponse authorize(
             String ticket, String subject, long authTime, String acr, Map<String, Object> claims,
-            Property[] properties, String[] scopes)
+            Property[] properties, String[] scopes, Options options)
     {
         return callBackchannelAuthenticationComplete(
                 ticket, subject, Result.AUTHORIZED, authTime, acr, claims, properties,
-                scopes, null, null);
+                scopes, null, null, options);
     }
 
 
     private BackchannelAuthenticationCompleteResponse callBackchannelAuthenticationComplete(
             String ticket, String subject, Result result, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
-            String errorDescription, URI errorUri)
+            String errorDescription, URI errorUri, Options options)
     {
         return getApiCaller().callBackchannelAuthenticationComplete(
                 ticket, subject, result, authTime, acr, claims, properties, scopes,
-                errorDescription, errorUri);
+                errorDescription, errorUri, options);
     }
 
 

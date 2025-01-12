@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Authlete, Inc.
+ * Copyright (C) 2019-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.PushedAuthReqResponse;
 import com.authlete.common.dto.PushedAuthReqResponse.Action;
 
@@ -57,7 +58,7 @@ public class PushedAuthReqHandler extends BaseHandler
      */
     public static class Params implements Serializable
     {
-        private static final long serialVersionUID = 2L;
+        private static final long serialVersionUID = 3L;
 
 
         private MultivaluedMap<String, String> parameters;
@@ -392,10 +393,12 @@ public class PushedAuthReqHandler extends BaseHandler
 
 
     /**
-     * Handle a pushed authorization request.
+     * Handle a pushed authorization request. This method is an alias
+     * of {@link #handle(MultivaluedMap, String, String[], Options) handle}{@code
+     * (parameters, authorization, clientCertificatePath, null)}.
      *
      * @param parameters
-     *            Request parameters of a pushed authorization request.
+     *            The request parameters of a pushed authorization request.
      *
      * @param authorization
      *            The value of {@code Authorization} header in the pushed
@@ -421,13 +424,52 @@ public class PushedAuthReqHandler extends BaseHandler
             MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath) throws WebApplicationException
     {
+        return handle(parameters, authorization, clientCertificatePath, null);
+    }
+
+
+    /**
+     * Handle a pushed authorization request.
+     *
+     * @param parameters
+     *            Request parameters of a pushed authorization request.
+     *
+     * @param authorization
+     *            The value of {@code Authorization} header in the pushed
+     *            authorization request. A client application may embed its
+     *            pair of client ID and client secret in a pushed authorization
+     *            request using <a href=
+     *            "https://www.rfc-editor.org/rfc/rfc2617.html#section-2"
+     *            >Basic Authentication</a>.
+     *
+     * @param clientCertificatePath
+     *            The path of the client's certificate, each in PEM format.
+     *            The first item in the array is the client's certificate itself.
+     *            May be {@code null} if the client did not send a certificate or path.
+     *
+     * @param options
+     *         The request options for the {@code /api/pushed_auth_req} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *             An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization,
+            String[] clientCertificatePath, Options options) throws WebApplicationException
+    {
         Params params = new Params()
                 .setParameters(parameters)
                 .setAuthorization(authorization)
                 .setClientCertificatePath(clientCertificatePath)
                 ;
 
-        return handle(params);
+        return handle(params, options);
     }
 
 
@@ -449,6 +491,31 @@ public class PushedAuthReqHandler extends BaseHandler
      */
     public Response handle(Params params)
     {
+        return handle(params, null);
+    }
+
+
+    /**
+     * Handle a PAR request.
+     *
+     * @param params
+     *         Parameters needed to handle the PAR request.
+     *         Must not be {@code null}.
+     *
+     * @param options
+     *         The request options for the {@code /api/pushed_auth_req} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(Params params, Options options)
+    {
         // The credential of the client application extracted from the
         // Authorization header. If available, the first element is the
         // client ID and the second element is the client secret.
@@ -458,7 +525,7 @@ public class PushedAuthReqHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(params, credential[0], credential[1]);
+            return process(params, credential[0], credential[1], options);
         }
         catch (WebApplicationException e)
         {
@@ -475,7 +542,8 @@ public class PushedAuthReqHandler extends BaseHandler
     /**
      * Process the parameters of the pushed authorization request.
      */
-    private Response process(Params params, String clientId, String clientSecret)
+    private Response process(
+            Params params, String clientId, String clientSecret, Options options)
     {
         // The client certificate.
         String clientCertificate = HandlerUtility
@@ -489,7 +557,8 @@ public class PushedAuthReqHandler extends BaseHandler
                 params.getParameters(), clientId, clientSecret,
                 clientCertificate, clientCertificatePath,
                 params.getDpop(), params.getHtm(), params.getHtu(),
-                params.getClientAttestation(), params.getClientAttestationPop());
+                params.getClientAttestation(), params.getClientAttestationPop(),
+                options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

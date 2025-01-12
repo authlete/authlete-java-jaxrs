@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Authlete, Inc.
+ * Copyright (C) 2015-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
+import com.authlete.common.api.Options;
 import com.authlete.common.dto.Property;
 import com.authlete.common.dto.TokenFailRequest.Reason;
 import com.authlete.common.dto.TokenResponse;
@@ -431,12 +432,49 @@ public class TokenRequestHandler extends BaseHandler
     public Response handle(
             MultivaluedMap<String, String> parameters, String authorization) throws WebApplicationException
     {
-        Params params = new Params()
-                .setParameters(parameters)
-                .setAuthorization(authorization)
-                ;
+        return handle(parameters, authorization, null, null, null);
+    }
 
-        return handle(params);
+
+    /**
+     * Handle a token request. This method is an alias of {@link
+     * #handle(MultivaluedMap, String, String[], Options, Options, Options) handle}{@code
+     * (parameters, authorization, null, tokenOptions, tokenIssueOptions, tokenFailOptions)}.
+     *
+     * @param parameters
+     *         The request parameters of a token request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header in the token request.
+     *         A client application may embed its pair of client ID and client
+     *         secret in a token request using <a href=
+     *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
+     *         Authentication</a>.
+     *
+     * @param tokenOptions
+     *         The request options for the {@code /api/auth/token} API.
+     *
+     * @param tokenIssueOptions
+     *         The request options for the {@code /api/auth/token/issue} API.
+     *
+     * @param tokenFailOptions
+     *         The request options for the {@code /api/auth/token/fail} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization,
+            Options tokenOptions, Options tokenIssueOptions, Options tokenFailOptions)
+                    throws WebApplicationException
+    {
+        return handle(parameters, authorization, null, tokenOptions, tokenIssueOptions, tokenFailOptions);
     }
 
 
@@ -473,18 +511,65 @@ public class TokenRequestHandler extends BaseHandler
             MultivaluedMap<String, String> parameters, String authorization,
             String[] clientCertificatePath) throws WebApplicationException
     {
+        return handle(parameters, authorization, clientCertificatePath, null, null, null);
+    }
+
+
+    /**
+     * Handle a token request. This method is an alias of the {@link #handle(Params, Options, Options, Options)}
+     * method.
+     *
+     * @param parameters
+     *         The request parameters of a token request.
+     *
+     * @param authorization
+     *         The value of {@code Authorization} header in the token request.
+     *         A client application may embed its pair of client ID and client
+     *         secret in a token request using <a href=
+     *         "https://tools.ietf.org/html/rfc2617#section-2">Basic
+     *         Authentication</a>.
+     *
+     * @param clientCertificatePath
+     *         The path of the client's certificate, each in PEM format. The first
+     *         item in the array is the client's certificate itself. May be {@code null} if
+     *         the client did not send a certificate or path.
+     *
+     * @param tokenOptions
+     *         The request options for the {@code /api/auth/token} API.
+     *
+     * @param tokenIssueOptions
+     *         The request options for the {@code /api/auth/token/issue} API.
+     *
+     * @param tokenFailOptions
+     *         The request options for the {@code /api/auth/token/fail} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            MultivaluedMap<String, String> parameters, String authorization,
+            String[] clientCertificatePath, Options tokenOptions, Options tokenIssueOptions,
+            Options tokenFailOptions) throws WebApplicationException
+    {
         Params params = new Params()
                 .setParameters(parameters)
                 .setAuthorization(authorization)
                 .setClientCertificatePath(clientCertificatePath)
                 ;
 
-        return handle(params);
+        return handle(params, tokenOptions, tokenIssueOptions, tokenFailOptions);
     }
 
 
     /**
-     * Handle a token request.
+     * Handle a token request. This method is an alias of {@link #handle(Params, Options, Options, Options)
+     * handle}{@code (params, null, null, null)}.
      *
      * @param params
      *         Parameters needed to handle the token request.
@@ -501,6 +586,39 @@ public class TokenRequestHandler extends BaseHandler
      */
     public Response handle(Params params) throws WebApplicationException
     {
+        return handle(params, null, null, null);
+    }
+
+
+    /**
+     * Handle a token request.
+     *
+     * @param params
+     *         Parameters needed to handle the token request.
+     *         Must not be {@code null}.
+     *
+     * @param tokenOptions
+     *         The request options for the {@code /api/auth/token} API.
+     *
+     * @param tokenIssueOptions
+     *         The request options for the {@code /api/auth/token/issue} API.
+     *
+     * @param tokenFailOptions
+     *         The request options for the {@code /api/auth/token/fail} API.
+     *
+     * @return
+     *         A response that should be returned from the endpoint to the
+     *         client application.
+     *
+     * @throws WebApplicationException
+     *         An error occurred.
+     *
+     * @since 2.82
+     */
+    public Response handle(
+            Params params, Options tokenOptions, Options tokenIssueOptions,
+            Options tokenFailOptions) throws WebApplicationException
+    {
         // The credential of the client application extracted from the
         // Authorization header. If available, the first element is the
         // client ID and the second element is the client secret.
@@ -510,7 +628,8 @@ public class TokenRequestHandler extends BaseHandler
         try
         {
             // Process the given parameters.
-            return process(params, credential[0], credential[1]);
+            return process(
+                    params, credential[0], credential[1], tokenOptions, tokenIssueOptions, tokenFailOptions);
         }
         catch (WebApplicationException e)
         {
@@ -527,7 +646,8 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Process the parameters of the token request.
      */
-    private Response process(Params params, String clientId, String clientSecret)
+    private Response process(Params params, String clientId, String clientSecret,
+            Options tokenOptions, Options tokenIssueOptions, Options tokenFailOptions)
     {
         // Extra properties to associate with an access token.
         Property[] properties = mSpi.getProperties();
@@ -545,7 +665,8 @@ public class TokenRequestHandler extends BaseHandler
                 params.getParameters(), clientId, clientSecret, properties,
                 clientCertificate, clientCertificatePath,
                 params.getDpop(), params.getHtm(), params.getHtu(),
-                params.getClientAttestation(), params.getClientAttestationPop());
+                params.getClientAttestation(), params.getClientAttestationPop(),
+                tokenOptions);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.
@@ -574,7 +695,8 @@ public class TokenRequestHandler extends BaseHandler
 
             case PASSWORD:
                 // Process the token request whose flow is "Resource Owner Password Credentials".
-                return handlePassword(response, headers);
+                return handlePassword(
+                        response, headers, tokenIssueOptions, tokenFailOptions);
 
             case OK:
                 // 200 OK
@@ -619,7 +741,8 @@ public class TokenRequestHandler extends BaseHandler
     /**
      * Process the token request whose flow is "Resource Owner Password Credentials".
      */
-    private Response handlePassword(TokenResponse response, Map<String, Object> headers)
+    private Response handlePassword(TokenResponse response, Map<String, Object> headers,
+            Options tokenIssueOptions, Options tokenFailOptions)
     {
         // The credentials of the resource owner.
         String username = response.getUsername();
@@ -638,13 +761,14 @@ public class TokenRequestHandler extends BaseHandler
         {
             // Issue an access token and optionally an ID token.
             return getApiCaller().tokenIssue(
-                    ticket, subject, properties, headers);
+                    ticket, subject, properties, headers, tokenIssueOptions);
         }
         else
         {
             // The credentials are invalid. An access token is not issued.
             throw getApiCaller().tokenFail(
-                    ticket, Reason.INVALID_RESOURCE_OWNER_CREDENTIALS, headers);
+                    ticket, Reason.INVALID_RESOURCE_OWNER_CREDENTIALS, headers,
+                    tokenFailOptions);
         }
     }
 
