@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.84 (2025-01-24)
+-----------------
+
+- Remove `TestRequest` object, and replace it with mocks.
+
+
 2.82 (2025-01-12)
 -----------------
 
