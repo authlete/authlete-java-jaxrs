@@ -1,10 +1,16 @@
 CHANGES
 =======
 
+2.85 (2025-02-13)
+-----------------
+
+- Bumped `com.authlete.common` to 4.17 from 4.16.
+
+
 2.84 (2025-01-24)
 -----------------
 
-- Remove `TestRequest` object, and replace it with mocks.
+- Removed `TestRequest` object, and replaced it with mocks.
 
 
 2.82 (2025-01-12)
