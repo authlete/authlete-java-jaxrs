@@ -1,6 +1,57 @@
 CHANGES
 =======
 
+- `AuthleteApiCaller` class
+    * Added the `sessionId` parameter to methods for calling the
+      `/auth/authorization/issue` API.
+
+- `AuthleteApiImpl` class
+    * Added a false implementation of the `nativeSso(NativeSsoRequest, Options)`
+      method that was introduced to the `AuthleteApi` interface in
+      version 4.18 of authlete-java-common. The `/nativesso` API is
+      not available in Authlete 2.x.
+
+- `AuthleteApiImplV3` class
+    * Implemented the `nativeSso(NativeSsoRequest, Options)` method
+      that was introduced to the `AuthleteApi` interface in version
+      4.18 of authlete-java-common.
+
+- `AuthorizationDecisionHandler` class
+    * Added support for the `sessionId` request parameter for the
+      `/auth/authorization/issue` API.
+
+- `AuthorizationDecisionHandlerSpi` interface
+    * Added the `getSessionId()` method.
+
+- `AuthorizationDecisionHandlerSpiAdapter` class
+    * Added an empty implementation of the `getSessionId()` method.
+
+- `TokenRequestHandler` class
+    * Added support for the `TokenResponse.NATIVE_SSO` action.
+
+- `TokenRequestHandlerSpi` interface
+    * BREAKING CHANGE: Changed the method signature of the
+      `tokenExchange(TokenResponse)` method to
+      `tokenExchange(TokenResponse, Map<String, Object>)`.
+    * BREAKING CHANGE: Changed the method signature of the
+      `jwtBearer(TokenResponse)` method to
+      `jwtBearer(TokenResponse, Map<String, Object>)`.
+    * Added the `nativeSso(TokenResponse, Map<String, Object>)` method.
+
+- `TokenRequestHandlerSpiAdapter` class
+    * BREAKING CHANGE: Changed the method signature of the
+      `tokenExchange(TokenResponse)` method to
+      `tokenExchange(TokenResponse, Map<String, Object>)`.
+    * BREAKING CHANGE: Changed the method signature of the
+      `jwtBearer(TokenResponse)` method to
+      `jwtBearer(TokenResponse, Map<String, Object>)`.
+    * Added an empty implementation of the
+      `nativeSso(TokenResponse, Map<String, Object>)` method.
+
+- `pom.xml`
+    * Updated the version of authlete-java-common from 4.17 to 4.19.
+
+
 2.85 (2025-02-13)
 -----------------
 

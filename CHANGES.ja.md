@@ -1,6 +1,52 @@
 変更点
 ======
 
+- `AuthleteApiCaller` クラス
+    * `/auth/authorization/issue` API を呼ぶためのメソッド群に `sessionId`
+      パラメータを追加。
+
+- `AuthleteApiImpl` クラス
+    * authlete-java-common のバージョン 4.18 で `AuthleteApi`
+      インターフェースに追加された `nativeSso(NativeSsoRequest, Options)`
+      メソッドのダミー実装を追加。 `/nativesso` API は Authlete 2.x
+      では利用できない。
+
+- `AuthleteApiImplV3` クラス
+    * authlete-java-common のバージョン 4.18 で `AuthleteApi`
+      インターフェースに追加された `nativeSso(NativeSsoRequest, Options)`
+      メソッドを実装。
+
+- `AuthorizationDecisionHandler` クラス
+    * `/auth/authorization/issue` API の `sessionId`
+      リクエストパラメータをサポート。
+
+- `AuthorizationDecisionHandlerSpi` インターフェース
+    * `getSessionId()` メソッドを追加。
+
+- `AuthorizationDecisionHandlerSpiAdapter` クラス
+    * `getSessionId()` メソッドの空実装を追加。
+
+- `TokenRequestHandler` クラス
+    * `TokenResponse.NATIVE_SSO` アクションをサポート。
+
+- `TokenRequestHandlerSpi` インターフェース
+    * 破壊的変更: `tokenExchange(TokenResponse)` メソッドのメソッドシグネチャを
+      `tokenExchange(TokenResponse, Map<String, Object>)` へ変更。
+    * 破壊的変更: `jwtBearer(TokenResponse)` メソッドのメソッドシグネチャを
+      `jwtBearer(TokenResponse, Map<String, Object>)` へ変更。
+    * `nativeSso(TokenResponse, Map<String, Object>)` メソッドを追加。
+
+- `TokenRequestHandlerSpiAdapter` クラス
+    * 破壊的変更: `tokenExchange(TokenResponse)` メソッドのメソッドシグネチャを
+      `tokenExchange(TokenResponse, Map<String, Object>)` へ変更。
+    * 破壊的変更: `jwtBearer(TokenResponse)` メソッドのメソッドシグネチャを
+      `jwtBearer(TokenResponse, Map<String, Object>)` へ変更。
+    * `nativeSso(TokenResponse, Map<String, Object>)` メソッドの空実装を追加。
+
+- `pom.xml`
+    * authlete-java-common のバージョンを 4.17 から 4.19 へ更新。
+
+
 2.85 (2025-02-13)
 -----------------
 

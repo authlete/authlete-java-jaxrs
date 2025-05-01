@@ -660,9 +660,15 @@ public class AuthorizationDecisionHandler extends BaseHandler
         // authorization request.
         String[] scopes = mSpi.getScopes();
 
+        // The session ID of the user's authentication session. This value is
+        // needed only if the "OpenID Connect Native SSO for Mobile Apps 1.0"
+        // specification (a.k.a. "Native SSO") needs to be supported.
+        String sessionId = mSpi.getSessionId();
+
         // Authorize the authorization request.
         return authorize(params.getTicket(), subject, authTime, acr, claims,
-                properties, scopes, sub, claimsForTx, verifiedClaimsForTx, authzIssueOptions);
+                properties, scopes, sub, claimsForTx, verifiedClaimsForTx,
+                sessionId, authzIssueOptions);
     }
 
 
@@ -1053,6 +1059,9 @@ public class AuthorizationDecisionHandler extends BaseHandler
      *         Authlete computes values of transformed claims under
      *         {@code verified_claims/claims}.
      *
+     * @param sessionId
+     *         The session ID of the user's authentication session.
+     *
      * @param options
      *         The request options for the {@code /auth/authorization/issue} API.
      *
@@ -1063,7 +1072,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
             String sub, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx, Options options)
+            List<Map<String, Object>> verifiedClaimsForTx,
+            String sessionId, Options options)
     {
         try
         {
@@ -1073,7 +1083,8 @@ public class AuthorizationDecisionHandler extends BaseHandler
             // the generated response, though.
             return getApiCaller().authorizationIssue(
                     ticket, subject, authTime, acr, claims, properties,
-                    scopes, sub, claimsForTx, verifiedClaimsForTx, options);
+                    scopes, sub, claimsForTx, verifiedClaimsForTx,
+                    sessionId, options);
         }
         catch (WebApplicationException e)
         {
