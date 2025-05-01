@@ -300,7 +300,8 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
             String sub, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx, Options options)
+            List<Map<String, Object>> verifiedClaimsForTx,
+            String sessionId, Options options)
     {
         // Create a request for /api/auth/authorization/issue API.
         AuthorizationIssueRequest request = new AuthorizationIssueRequest()
@@ -313,6 +314,7 @@ class AuthleteApiCaller
             .setSub(sub)
             .setClaimsForTx(claimsForTx)
             .setVerifiedClaimsForTx(verifiedClaimsForTx)
+            .setSessionId(sessionId)
             ;
 
         if (claims != null && claims.size() != 0)
@@ -356,7 +358,8 @@ class AuthleteApiCaller
             String sub, Options options)
     {
         return authorizationIssue(
-                ticket, subject, authTime, acr, claims, properties, scopes, sub, null, null, options);
+                ticket, subject, authTime, acr, claims, properties, scopes, sub,
+                null, null, null, options);
     }
 
 
@@ -368,12 +371,14 @@ class AuthleteApiCaller
             String ticket, String subject, long authTime, String acr,
             Map<String, Object> claims, Property[] properties, String[] scopes,
             String sub, Map<String, Object> claimsForTx,
-            List<Map<String, Object>> verifiedClaimsForTx, Options options)
+            List<Map<String, Object>> verifiedClaimsForTx,
+            String sessionId, Options options)
     {
         // Call Authlete's /api/auth/authorization/issue API.
         AuthorizationIssueResponse response =
             callAuthorizationIssue(ticket, subject, authTime, acr, claims,
-                    properties, scopes, sub, claimsForTx, verifiedClaimsForTx, options);
+                    properties, scopes, sub, claimsForTx, verifiedClaimsForTx,
+                    sessionId, options);
 
         // 'action' in the response denotes the next action which
         // this service implementation should take.

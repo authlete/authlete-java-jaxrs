@@ -271,7 +271,7 @@ public class TokenRequestHandler extends BaseHandler
          *
          * <p>
          * If this parameter is omitted, the {@code tokenEndpoint} property
-         * of {@link Service} will be used as the default value.
+         * of {@code Service} will be used as the default value.
          * </p>
          *
          * <p>
@@ -716,6 +716,11 @@ public class TokenRequestHandler extends BaseHandler
                 // and an ID token can be reissued.
                 return handleIdTokenReissuable(response, headers);
 
+            case NATIVE_SSO:
+                // The token request complies with the "OpenID Connect Native
+                // SSO for Mobile Apps 1.0" specification (a.k.a. "Native SSO").
+                return handleNativeSso(response, headers);
+
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/token", action);
@@ -777,12 +782,12 @@ public class TokenRequestHandler extends BaseHandler
             TokenResponse tokenResponse, Map<String, Object> headers)
     {
         // Let the SPI implementation handle the token exchange request.
-        Response response = mSpi.tokenExchange(tokenResponse);
+        Response response = mSpi.tokenExchange(tokenResponse, headers);
 
         // If the SPI implementation has prepared a token response, it is used.
         // Otherwise, a token response with "error":"unsupported_grant_type" is
         // returned.
-        return useOrUnsupported(response);
+        return useOrUnsupportedGrantType(response);
     }
 
 
@@ -790,12 +795,12 @@ public class TokenRequestHandler extends BaseHandler
             TokenResponse tokenResponse, Map<String, Object> headers)
     {
         // Let the SPI implementation handle the token request.
-        Response response = mSpi.jwtBearer(tokenResponse);
+        Response response = mSpi.jwtBearer(tokenResponse, headers);
 
         // If the SPI implementation has prepared a token response, it is used.
         // Otherwise, a token response with "error":"unsupported_grant_type" is
         // returned.
-        return useOrUnsupported(response);
+        return useOrUnsupportedGrantType(response);
     }
 
 
@@ -811,7 +816,30 @@ public class TokenRequestHandler extends BaseHandler
     }
 
 
-    private Response useOrUnsupported(Response response)
+    private Response handleNativeSso(
+            TokenResponse tokenResponse, Map<String, Object> headers)
+    {
+        // Let the SPI implementation handle the token request.
+        Response response = mSpi.nativeSso(tokenResponse, headers);
+
+        if (response != null)
+        {
+            return response;
+        }
+
+        String error = "invalid_grant";
+        String description =
+                "The token request appears to comply with the Native SSO specification, " +
+                "but this authorization server has not implemented support for it yet.";
+
+        String body = String.format(
+                "{\"error\":\"%s\",\"error_description\":\"%s\"}", error, description);
+
+        return ResponseUtil.badRequest(body);
+    }
+
+
+    private Response useOrUnsupportedGrantType(Response response)
     {
         if (response != null)
         {

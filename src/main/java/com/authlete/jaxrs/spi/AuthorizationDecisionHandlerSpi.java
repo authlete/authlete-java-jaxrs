@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,7 +207,6 @@ public interface AuthorizationDecisionHandlerSpi
      *     Property}(<span style="color: darkred;">"example_parameter"</span>, <span style="color: darkred;">"example_value"</span>)
      *     };
      * }</pre>
-     * </blockquote>
      *
      * <p>
      * Extra properties returned from this method will appear as top-level entries
@@ -640,4 +639,38 @@ public interface AuthorizationDecisionHandlerSpi
      *      >OpenID Connect for Identity Assurance 1.0</a>
      */
     Object getVerifiedClaims(String subject, Object verifiedClaimsRequest);
+
+
+    /**
+     * Get the session ID of the user's authentication session.
+     *
+     * <p>
+     * The "<a href=
+     * "https://openid.net/specs/openid-connect-native-sso-1_0.html">OpenID
+     * Connect Native SSO for Mobile Apps 1.0</a>" specification (a.k.a.
+     * "Native SSO") requires ID tokens to include the {@code sid} claim,
+     * which represents the session ID of the user's authentication session.
+     * This {@code getSessionId()} method must provide the session ID for the
+     * claim.
+     * </p>
+     *
+     * <p>
+     * If the authorization server has no plan to support the Native SSO
+     * specification, the implementation of this method does not have to
+     * return a valid session ID.
+     * </p>
+     *
+     * <p>
+     * Support for the Native SSO specification was introduced in Authlete 3.0.
+     * </p>
+     *
+     * @return
+     *         The session ID of the user's authentication session.
+     *
+     * @since 2.86
+     *
+     * @see <a href="https://openid.net/specs/openid-connect-native-sso-1_0.html"
+     *      >OpenID Connect Native SSO for Mobile Apps 1.0</a>
+     */
+    String getSessionId();
 }
