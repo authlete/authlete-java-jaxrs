@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.86 (2025-05-02)
+-----------------
+
 - `AuthleteApiCaller` クラス
     * `/auth/authorization/issue` API を呼ぶためのメソッド群に `sessionId`
       パラメータを追加。

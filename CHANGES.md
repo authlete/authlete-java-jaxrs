@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.86 (2025-05-02)
+-----------------
+
 - `AuthleteApiCaller` class
     * Added the `sessionId` parameter to methods for calling the
       `/auth/authorization/issue` API.
