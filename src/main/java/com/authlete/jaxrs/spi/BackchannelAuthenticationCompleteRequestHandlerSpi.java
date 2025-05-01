@@ -18,9 +18,9 @@ package com.authlete.jaxrs.spi;
 
 
 import java.net.URI;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
 import com.authlete.common.dto.Property;
-import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
 
 
 /**
@@ -151,7 +151,6 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      *     Property}(<span style="color: darkred;">"example_parameter"</span>, <span style="color: darkred;">"example_value"</span>)
      *     };
      * }</pre>
-     * </blockquote>
      *
      * <p>
      * Extra properties returned from this method will appear as top-level entries
@@ -198,7 +197,7 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      * responses from the client notification endpoint. The following is an excerpt
      * from "10.2. Ping Callback" and "10.3.1. Successful Token Delivery" of the specification.
      *
-     * <blockquote>
+     * <p>
      * For valid requests, the Client Notification Endpoint SHOULD respond with
      * an HTTP 204 No Content. The OP SHOULD also accept responses with HTTP 200
      * OK and any body in the response SHOULD be ignored.<br/><br/>
@@ -207,7 +206,6 @@ public interface BackchannelAuthenticationCompleteRequestHandlerSpi
      * How the OP handles HTTP error codes in the ranges of 4xx and 5xx is out-of-scope
      *  of this specification. Administrative action is likely to be needed in
      * these cases.
-     * </blockquote>
      * </p>
      *
      * @param info

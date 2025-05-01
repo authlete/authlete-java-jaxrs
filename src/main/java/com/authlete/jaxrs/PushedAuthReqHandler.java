@@ -273,7 +273,7 @@ public class PushedAuthReqHandler extends BaseHandler
          *
          * <p>
          * If this parameter is omitted, the {@code pushedAuthReqEndpoint}
-         * property of {@link Service} will be used as the default value.
+         * property of {@code Service} will be used as the default value.
          * </p>
          *
          * <p>

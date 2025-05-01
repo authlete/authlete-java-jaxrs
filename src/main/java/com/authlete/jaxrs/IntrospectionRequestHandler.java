@@ -154,7 +154,7 @@ public class IntrospectionRequestHandler extends BaseHandler
          * Set the URI of the resource server making the introspection
          * request.
          *
-         * @param rsUri
+         * @param uri
          *         The URI of the resource server making the introspection
          *         request.
          *

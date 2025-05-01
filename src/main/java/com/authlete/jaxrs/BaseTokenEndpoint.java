@@ -70,8 +70,9 @@ public class BaseTokenEndpoint extends BaseEndpoint
 
 
     /**
-     * Handle a token request. This method is an alias of the {@link #handle(AuthleteApi,
-     * TokenRequestHandlerSpi, MultivaluedMap, String, String[], Options) handle}{@code
+     * Handle a token request. This method is an alias of the
+     * {@link #handle(AuthleteApi, TokenRequestHandlerSpi, MultivaluedMap,
+     * String, String[], Options, Options, Options)  handle}{@code
      * (api, spi, parameters, authorization, null, tokenOptions, tokenIssueOptions, tokenFailOptions)}.
      *
      * @param api

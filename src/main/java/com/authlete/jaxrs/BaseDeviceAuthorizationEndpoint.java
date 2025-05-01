@@ -42,9 +42,6 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
      * @param api
      *         An implementation of {@link AuthleteApi}.
      *
-     * @param spi
-     *         An implementation of {@link DeviceAuthorizationRequestHandlerSpi}.
-     *
      * @param parameters
      *         The request parameters of the device authorization request.
      *
@@ -74,9 +71,6 @@ public class BaseDeviceAuthorizationEndpoint extends BaseEndpoint
      *
      * @param api
      *         An implementation of {@link AuthleteApi}.
-     *
-     * @param spi
-     *         An implementation of {@link DeviceAuthorizationRequestHandlerSpi}.
      *
      * @param parameters
      *         Request parameters of the device authorization request.

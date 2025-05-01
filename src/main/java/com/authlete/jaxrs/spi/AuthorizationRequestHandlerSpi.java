@@ -271,7 +271,6 @@ public interface AuthorizationRequestHandlerSpi
      *     Property}(<span style="color: darkred;">"example_parameter"</span>, <span style="color: darkred;">"example_value"</span>)
      *     };
      * }</pre>
-     * </blockquote>
      *
      * <p>
      * Extra properties returned from this method will appear as top-level entries

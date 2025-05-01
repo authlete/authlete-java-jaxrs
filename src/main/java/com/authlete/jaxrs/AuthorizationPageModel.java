@@ -683,8 +683,8 @@ public class AuthorizationPageModel implements Serializable
      *   <thead>
      *     <tr bgcolor="orange">
      *       <th>Index</th>
-     *       <th><code>getKey()</th>
-     *       <th><code>getValue()</th>
+     *       <th><code>getKey()</code></th>
+     *       <th><code>getValue()</code></th>
      *     </tr>
      *   </thead>
      *   <tbody>
@@ -696,7 +696,7 @@ public class AuthorizationPageModel implements Serializable
      *     <tr>
      *       <td align="center">1</td>
      *       <td><code>family_name</code></td>
-     *       <td><code></code></td>
+     *       <td></td>
      *     </tr>
      *     <tr>
      *       <td align="center">2</td>
@@ -813,8 +813,8 @@ public class AuthorizationPageModel implements Serializable
      *   <thead>
      *     <tr bgcolor="orange">
      *       <th>Index</th>
-     *       <th><code>getKey()</th>
-     *       <th><code>getValue()</th>
+     *       <th><code>getKey()</code></th>
+     *       <th><code>getValue()</code></th>
      *     </tr>
      *   </thead>
      *   <tbody>
@@ -826,7 +826,7 @@ public class AuthorizationPageModel implements Serializable
      *     <tr>
      *       <td align="center">1</td>
      *       <td><code>family_name</code></td>
-     *       <td><code></code></td>
+     *       <td></td>
      *     </tr>
      *     <tr>
      *       <td align="center">2</td>

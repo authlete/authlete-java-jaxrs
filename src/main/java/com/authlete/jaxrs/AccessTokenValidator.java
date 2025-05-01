@@ -361,7 +361,7 @@ public class AccessTokenValidator extends BaseHandler
      * Validate an access token. This method is an alias of {@link
      * #validate(String, String[], Options) validate}{@code (accessToken, null, options)}.
      *
-     * </p>
+     * <p>
      * When the given access token is not valid, this method throws a
      * {@link WebApplicationException}. The response contained in the
      * exception complies with the requirements described in <a href=
@@ -507,7 +507,7 @@ public class AccessTokenValidator extends BaseHandler
      * Validate an access token. This method is an alias of the {@link #validate(Params, Options)}
      * method.
      *
-     * </p>
+     * <p>
      * When the given access token is not valid, this method throws a
      * {@link WebApplicationException}. The response contained in the
      * exception complies with the requirements described in <a href=

@@ -257,8 +257,7 @@ public class DeviceAuthorizationRequestHandler extends BaseHandler
 
 
     /**
-     * Constructor with an implementation of {@link AuthleteApi} interface
-     * and an implementation of {@link DeviceAuthorizationRequestHandlerSpi} interface.
+     * Constructor with an implementation of the {@link AuthleteApi} interface.
      *
      * @param api
      *         Implementation of {@link AuthleteApi} interface.

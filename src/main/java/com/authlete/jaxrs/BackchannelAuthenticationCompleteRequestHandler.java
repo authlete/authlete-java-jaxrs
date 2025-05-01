@@ -26,9 +26,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.Options;
+import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
 import com.authlete.common.dto.BackchannelAuthenticationCompleteResponse;
 import com.authlete.common.dto.Property;
-import com.authlete.common.dto.BackchannelAuthenticationCompleteRequest.Result;
 import com.authlete.jaxrs.spi.BackchannelAuthenticationCompleteRequestHandlerSpi;
 
 
@@ -81,7 +81,7 @@ public class BackchannelAuthenticationCompleteRequestHandler extends BaseHandler
     /**
      * Handle the result of end-user authentication and authorization in CIBA
      * (Client Initiated Backchannel Authentication) flow. This method is an alias
-     * of {@link #handle(AuthleteApi, String[], Options) handle}{@code (ticket, claimNames, null)}.
+     * of {@link #handle(String, String[], Options) handle}{@code (ticket, claimNames, null)}.
      *
      * @param ticket
      *         A ticket that was issued by Authlete's {@code /api/backchannel/authentication}
