@@ -1,6 +1,22 @@
 変更点
 ======
 
+- `AuthleteApiImpl` クラス
+    * authlete-java-common のバージョン 4.20 で `AuthleteApi`
+      インターフェースに追加された
+      `nativeSsoLogout(NativeSsoLogoutRequest, Options)`
+      メソッドのダミー実装を追加。 `/nativesso/logout` API は Authlete 2.x
+      では利用できない。
+
+- `AuthleteApiImplV3` クラス
+    * authlete-java-common のバージョン 4.20 で `AuthleteApi`
+      インターフェースに追加された
+      `nativeSsoLogout(NativeSsoLogoutRequest, Options)` メソッドを実装。
+
+- `pom.xml`
+    * authlete-java-common のバージョンを 4.19 から 4.20 へ更新。
+
+
 2.86 (2025-05-02)
 -----------------
 

@@ -1,6 +1,22 @@
 CHANGES
 =======
 
+- `pom.xml`
+    * Updated the version of authlete-java-common from 4.19 to 4.20.
+
+- `AuthleteApiImpl` class
+    * Added a false implementation of the
+     `nativeSsoLogout(NativeSsoLogoutRequest, Options)` method that
+      was introduced to the `AuthleteApi` interface in version 4.20
+      of authlete-java-common. The `/nativesso/logout` API is not
+      available in Authlete 2.x.
+
+- `AuthleteApiImplV3` class
+    * Implemented the `nativeSsoLogout(NativeSsoLogoutRequest, Options)`
+      method that was introduced to the `AuthleteApi` interface in
+      version 4.20 of authlete-java-common.
+
+
 2.86 (2025-05-02)
 -----------------
 

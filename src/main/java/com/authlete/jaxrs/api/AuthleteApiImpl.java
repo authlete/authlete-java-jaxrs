@@ -118,6 +118,7 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
     private static final String VCI_DEFERRED_ISSUE_API_PATH                   = "/api/vci/deferred/issue";
     private static final String ID_TOKEN_REISSUE_API_PATH                     = "/api/idtoken/reissue";
     private static final String NATIVE_SSO_API_PATH                           = "/api/nativesso";
+    private static final String NATIVE_SSO_LOGOUT_API_PATH                    = "/api/nativesso/logout";
 
 
     private final String mServiceOwnerAuth;
@@ -1756,7 +1757,8 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
 
 
     @Override
-    public NativeSsoResponse nativeSso(NativeSsoRequest request, Options options) throws AuthleteApiException
+    public NativeSsoResponse nativeSso(
+            NativeSsoRequest request, Options options) throws AuthleteApiException
     {
         // Note that the /nativesso API is not available in Authlete 2.x,
         // so the executeApiCall below will throw an exception.
@@ -1765,6 +1767,21 @@ public class AuthleteApiImpl extends AuthleteApiJaxrsImpl
                 new ServicePostApiCaller<NativeSsoResponse>(
                         NativeSsoResponse.class, request,
                         NATIVE_SSO_API_PATH)
+                .setOptions(options));
+    }
+
+
+    @Override
+    public NativeSsoLogoutResponse nativeSsoLogout(
+            NativeSsoLogoutRequest request, Options options) throws AuthleteApiException
+    {
+        // Note that the /nativesso/logout API is not available in Authlete 2.x,
+        // so the executeApiCall below will throw an exception.
+
+        return executeApiCall(
+                new ServicePostApiCaller<NativeSsoLogoutResponse>(
+                        NativeSsoLogoutResponse.class, request,
+                        NATIVE_SSO_LOGOUT_API_PATH)
                 .setOptions(options));
     }
 }
