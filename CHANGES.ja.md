@@ -1,6 +1,9 @@
 変更点
 ======
 
+2.87 (2025-05-03)
+-----------------
+
 - `AuthleteApiImpl` クラス
     * authlete-java-common のバージョン 4.20 で `AuthleteApi`
       インターフェースに追加された
