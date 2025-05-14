@@ -42,6 +42,7 @@ import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.api.Options;
 import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
+import com.authlete.common.dto.ApiResponse;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -413,6 +414,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
     protected <TResponse> TResponse callGetApi(
             String auth, String path, Class<TResponse> responseClass, Map<String, Object[]> params, Options options)
     {
+        System.out.println("*** authlete-java-jaxrs - callGetAPI ***");
         WebTarget webTarget = getTarget().path(path);
 
         if (params != null)
@@ -428,7 +430,15 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         setCustomRequestHeaders(builder, options);
 
-        return builder.get(responseClass);
+        Response response = builder.get();
+        TResponse result = response.readEntity(responseClass);
+
+        if (result instanceof ApiResponse) {
+            System.out.println("Get response headers:" + response.getHeaders());
+            ((ApiResponse) result).setResponseHeaders(response.getStringHeaders());
+        }
+
+        return result;
     }
 
 
@@ -450,6 +460,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
     protected <TResponse> TResponse callPostApi(
             String auth, String path, Object request, Class<TResponse> responseClass, Options options)
     {
+        System.out.println("*** authlete-java-jaxrs - callPostAPI ***");
         Builder builder = wrapWithDpop(getTarget()
                 .path(path)
                 .request(APPLICATION_JSON_TYPE), path, "POST")
@@ -457,7 +468,15 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         setCustomRequestHeaders(builder, options);
 
-        return builder.post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
+        Response response = builder.post(Entity.entity(request, JSON_UTF8_TYPE));
+
+        TResponse result = response.readEntity(responseClass);
+
+        if (result instanceof ApiResponse) {
+            System.out.println("Post response headers:" + response.getHeaders());
+            ((ApiResponse) result).setResponseHeaders(response.getStringHeaders());
+        }
+        return result;
     }
 
 
