@@ -17,8 +17,6 @@
 package com.authlete.jaxrs;
 
 
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -153,9 +151,6 @@ public class AuthorizationRequestHandler extends BaseHandler
         // Call Authlete's /api/auth/authorization API.
         AuthorizationResponse response = getApiCaller().callAuthorization(parameters, authzOptions);
 
-        System.out.println("jaxrs - authorization request - process" + response.getResponseHeaders());
-        System.out.println(157);
-
         // 'action' in the response denotes the next action which
         // this service implementation should take.
         AuthorizationResponse.Action action = response.getAction();
@@ -168,39 +163,32 @@ public class AuthorizationRequestHandler extends BaseHandler
         switch (action)
         {
             case INTERNAL_SERVER_ERROR:
-                System.out.println(171);
                 // 500 Internal Server Error
                 return ResponseUtil.internalServerError(content);
 
             case BAD_REQUEST:
-                System.out.println(176);
                 // 400 Bad Request
                 return ResponseUtil.badRequest(content);
 
             case LOCATION:
-                System.out.println(181);
                 // 302 Found
                 return ResponseUtil.location(content);
 
             case FORM:
                 // 200 OK
-                System.out.println(187);
                 return ResponseUtil.form(content);
 
             case INTERACTION:
-                System.out.println(191);
                 // Process the authorization request with user interaction.
                 return handleInteraction(response);
 
             case NO_INTERACTION:
-                System.out.println(196);
                 // Process the authorization request without user interaction.
                 // The flow reaches here only when the authorization request
                 // contained prompt=none.
                 return handleNoInteraction(response, authzIssueOptions, authzFailOptions);
 
             default:
-                System.out.println(202);
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/authorization", action);
         }
