@@ -146,15 +146,16 @@ public class AuthleteApiHolder
         {
             primaryResponse = function.apply(primaryAuthleteApi);
         }
-        catch (WebApplicationException t)
-        {
-            primaryResponse = t.getResponse();
-            throwable = t;
-        }
         catch (Throwable t)
         {
+            if (t instanceof WebApplicationException)
+            {
+                primaryResponse = ((WebApplicationException) t).getResponse();
+            }
+
             throwable = t;
         }
+
         boolean primaryIsError = primaryResponse == null
                 || isErrorFunction.apply(primaryResponse, getResponseAsMap(primaryResponse), throwable);
         if (secondaryAuthleteApi == null
@@ -170,13 +171,13 @@ public class AuthleteApiHolder
         {
             secondaryResponse = function.apply(secondaryAuthleteApi);
         }
-        catch (WebApplicationException t)
-        {
-            secondaryResponse = t.getResponse();
-            throwable = t;
-        }
         catch (Throwable t)
         {
+            if (t instanceof WebApplicationException)
+            {
+                secondaryResponse = ((WebApplicationException) t).getResponse();
+            }
+
             throwable = t;
         }
         boolean secondaryIsError = secondaryResponse == null
