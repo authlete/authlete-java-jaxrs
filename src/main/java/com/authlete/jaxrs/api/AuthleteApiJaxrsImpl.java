@@ -42,6 +42,7 @@ import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.api.Options;
 import com.authlete.common.api.Settings;
 import com.authlete.common.conf.AuthleteConfiguration;
+import com.authlete.common.dto.ApiResponse;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -428,7 +429,14 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         setCustomRequestHeaders(builder, options);
 
-        return builder.get(responseClass);
+        Response httpResponse = builder.get();
+        TResponse apiResponseObject = httpResponse.readEntity(responseClass);
+
+        if (apiResponseObject instanceof ApiResponse) {
+            ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
+        }
+
+        return apiResponseObject;
     }
 
 
@@ -457,7 +465,14 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         setCustomRequestHeaders(builder, options);
 
-        return builder.post(Entity.entity(request, JSON_UTF8_TYPE), responseClass);
+        Response httpResponse = builder.post(Entity.entity(request, JSON_UTF8_TYPE));
+
+        TResponse apiResponseObject = httpResponse.readEntity(responseClass);
+
+        if (apiResponseObject instanceof ApiResponse) {
+            ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
+        }
+        return apiResponseObject;
     }
 
 
