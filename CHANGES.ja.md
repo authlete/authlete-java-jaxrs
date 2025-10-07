@@ -1,6 +1,19 @@
 変更点
 ======
 
+2.88 (2025-10-07)
+-----------------
+
+- `pom.xml`
+    * authlete-java-common のバージョンを 4.20 から 4.23 へ更新。
+    * nimbus-jose-jwt のバージョンを 9.37.2 から 10.0.2 へ更新。
+
+- `AuthleteApiJaxrsImpl` クラス
+    * Authlete API 呼び出しから HTTP レスポンスヘッダーを抽出する機能を追加。
+    * `callGetApi()` と `callPostApi()` メソッドがレスポンスヘッダーをキャプチャし、
+      `setResponseHeaders()` メソッドを使用して `ApiResponse` オブジェクトに設定するように変更。
+    * これにより、API レスポンスから `Request-Id` などのヘッダーへのアクセスが可能に。
+
 2.87 (2025-05-03)
 -----------------
 

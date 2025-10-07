@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+2.88 (2025-10-07)
+-----------------
+
+- `pom.xml`
+    * Updated the version of authlete-java-common from 4.20 to 4.23.
+    * Updated the version of nimbus-jose-jwt from 9.37.2 to 10.0.2.
+
+- `AuthleteApiJaxrsImpl` class
+    * Added support for extracting HTTP response headers from Authlete API calls.
+    * The `callGetApi()` and `callPostApi()` methods now capture response headers
+      and set them on `ApiResponse` objects using the `setResponseHeaders()` method.
+    * This enables access to headers like `Request-Id` from API responses.
+
 2.87 (2025-05-03)
 -----------------
 
