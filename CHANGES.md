@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+- `pom.xml`
+    * Updated the version of authlete-java-common from 4.23 to 4.27.
+    * Updated the version of nimbus-jose-jwt from 10.0.2 to 10.5.
+
+- `AuthleteApiImpl` class
+    * Implemented the `credentialNonce(CredentialNonceRequest, Options)` method.
+
+- `AuthleteApiImplV3` class
+    * Implemented the `credentialNonce(CredentialNonceRequest, Options)` method.
+
+
 2.88 (2025-10-07)
 -----------------
 
@@ -13,6 +24,7 @@ CHANGES
     * The `callGetApi()` and `callPostApi()` methods now capture response headers
       and set them on `ApiResponse` objects using the `setResponseHeaders()` method.
     * This enables access to headers like `Request-Id` from API responses.
+
 
 2.87 (2025-05-03)
 -----------------
