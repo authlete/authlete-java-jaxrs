@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.89 (2025-11-04)
+-----------------
+
 - `pom.xml`
     * Updated the version of authlete-java-common from 4.23 to 4.27.
     * Updated the version of nimbus-jose-jwt from 10.0.2 to 10.5.
