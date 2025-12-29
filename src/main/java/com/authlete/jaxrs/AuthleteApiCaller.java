@@ -50,6 +50,8 @@ import com.authlete.common.dto.CredentialIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialIssuerMetadataResponse;
 import com.authlete.common.dto.CredentialJwtIssuerMetadataRequest;
 import com.authlete.common.dto.CredentialJwtIssuerMetadataResponse;
+import com.authlete.common.dto.CredentialNonceRequest;
+import com.authlete.common.dto.CredentialNonceResponse;
 import com.authlete.common.dto.CredentialOfferInfoRequest;
 import com.authlete.common.dto.CredentialOfferInfoResponse;
 import com.authlete.common.dto.DeviceAuthorizationRequest;
@@ -1520,6 +1522,24 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/vci/metadata", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /vci/nonce} API.
+     */
+    public CredentialNonceResponse
+    callCredentialNonce(CredentialNonceRequest request, Options options)
+    {
+        try
+        {
+            return mApi.credentialNonce(request, options);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/vci/nonce", e);
         }
     }
 

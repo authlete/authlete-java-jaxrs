@@ -1,6 +1,17 @@
 変更点
 ======
 
+- `pom.xml`
+    * authlete-java-common のバージョンを 4.27 から 4.33 へ更新。
+
+- `AuthleteApiCaller` クラス
+    * `callCredentialNonce(CredentialNonceRequest, Options)` メソッドを追加。
+
+- 新しい型
+    * `BaseCredentialNonceEndpoint` クラス
+    * `CredentialNonceRequestHandler` クラス
+
+
 2.89 (2025-11-04)
 -----------------
 

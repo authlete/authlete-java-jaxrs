@@ -29,7 +29,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
-        <authlete-java-common.version>4.27</authlete-java-common.version>
+        <authlete-java-common.version>4.33</authlete-java-common.version>
         <gson.version>2.10.1</gson.version>
         <nimbus.version>10.5</nimbus.version>
         <javax.api.version>2.1</javax.api.version>
