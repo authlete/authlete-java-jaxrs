@@ -430,9 +430,16 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
         setCustomRequestHeaders(builder, options);
 
         Response httpResponse = builder.get();
+
+        if (httpResponse.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL)
+        {
+            throw new WebApplicationException(httpResponse);
+        }
+
         TResponse apiResponseObject = httpResponse.readEntity(responseClass);
 
-        if (apiResponseObject instanceof ApiResponse) {
+        if (apiResponseObject instanceof ApiResponse)
+        {
             ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
         }
 
@@ -467,11 +474,18 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         Response httpResponse = builder.post(Entity.entity(request, JSON_UTF8_TYPE));
 
+        if (httpResponse.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL)
+        {
+            throw new WebApplicationException(httpResponse);
+        }
+
         TResponse apiResponseObject = httpResponse.readEntity(responseClass);
 
-        if (apiResponseObject instanceof ApiResponse) {
+        if (apiResponseObject instanceof ApiResponse)
+        {
             ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
         }
+
         return apiResponseObject;
     }
 
