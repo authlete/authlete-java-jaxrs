@@ -1,6 +1,20 @@
 CHANGES
 =======
 
+2.91 (2026-03-05)
+-----------------
+
+- `AuthleteApiJaxrsImpl` class
+    * Fixed non-2xx HTTP responses not throwing `AuthleteApiException` in
+      `callGetApi()` and `callPostApi()`. Added explicit status check to
+      restore the error-handling contract after the switch from typed to
+      untyped JAX-RS overloads in v2.88.
+
+- New test
+    * `AuthleteApiJaxrsImplTest` class
+        - Added regression tests for GET, POST, and DELETE error handling.
+
+
 2.90 (2025-12-29)
 -----------------
 
