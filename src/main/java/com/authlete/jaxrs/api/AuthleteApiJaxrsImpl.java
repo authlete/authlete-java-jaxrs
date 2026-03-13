@@ -23,6 +23,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -440,7 +441,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         if (apiResponseObject instanceof ApiResponse)
         {
-            ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
+            ((ApiResponse) apiResponseObject).setResponseHeaders(new HashMap<>(httpResponse.getStringHeaders()));
         }
 
         return apiResponseObject;
@@ -483,7 +484,7 @@ public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 
         if (apiResponseObject instanceof ApiResponse)
         {
-            ((ApiResponse) apiResponseObject).setResponseHeaders(httpResponse.getStringHeaders());
+            ((ApiResponse) apiResponseObject).setResponseHeaders(new HashMap<>(httpResponse.getStringHeaders()));
         }
 
         return apiResponseObject;

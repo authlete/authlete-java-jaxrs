@@ -7,6 +7,9 @@ import com.authlete.common.api.Options;
 import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -16,6 +19,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -254,5 +258,33 @@ public class AuthleteApiJaxrsImplTest
         doReturn(response).when(h.builder).delete();
 
         h.api.deleteClient("123", new Options());
+    }
+
+    // ---------------------------------------------------------------
+    // Serialization
+    // ---------------------------------------------------------------
+    @Test
+    public void testApiResponseNotSerializableWhenHeadersAreCxfMetadataMap()
+    {
+        TestHarness h = new TestHarness();
+
+        // Mock post response
+        Response cxfResponse = Response.ok(new AuthorizationResponse())
+                .header("Content-Type", "application/json")
+                .build();
+        doReturn(cxfResponse).when(h.builder).post(any());
+
+        // CXF's getStringHeaders() returns MetadataMap; headers must be wrapped in a HashMap to be Serializable.
+        AuthorizationResponse result = ((AuthleteApiJaxrsImpl) h.api).callPostApi(
+                "Bearer test",
+                "/api/auth/authorization",
+                new AuthorizationRequest(),
+                AuthorizationResponse.class,
+                new Options());
+
+        assertDoesNotThrow(() -> {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            new ObjectOutputStream(baos).writeObject(result);
+        });
     }
 }
