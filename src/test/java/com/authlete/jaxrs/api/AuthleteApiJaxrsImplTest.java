@@ -19,6 +19,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -263,7 +264,6 @@ public class AuthleteApiJaxrsImplTest
     // Serialization
     // ---------------------------------------------------------------
     @Test
-    // FIXME: Update this test to check serialization works once it is fixed
     public void testApiResponseNotSerializableWhenHeadersAreCxfMetadataMap()
     {
         TestHarness h = new TestHarness();
@@ -274,7 +274,7 @@ public class AuthleteApiJaxrsImplTest
                 .build();
         doReturn(cxfResponse).when(h.builder).post(any());
 
-        // CXF's getStringHeaders() returns MetadataMap, which is not Serializable.
+        // CXF's getStringHeaders() returns MetadataMap; headers must be wrapped in a HashMap to be Serializable.
         AuthorizationResponse result = ((AuthleteApiJaxrsImpl) h.api).callPostApi(
                 "Bearer test",
                 "/api/auth/authorization",
@@ -282,7 +282,7 @@ public class AuthleteApiJaxrsImplTest
                 AuthorizationResponse.class,
                 new Options());
 
-        assertThrows(NotSerializableException.class, () -> {
+        assertDoesNotThrow(() -> {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             new ObjectOutputStream(baos).writeObject(result);
         });
