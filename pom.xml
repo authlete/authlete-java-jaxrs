@@ -107,12 +107,6 @@
             <version>5.11.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-client</artifactId>
-            <version>3.6.10</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <profiles>
