@@ -8,7 +8,6 @@ import com.authlete.common.conf.AuthleteConfiguration;
 import com.authlete.common.dto.AuthorizationRequest;
 import com.authlete.common.dto.AuthorizationResponse;
 import java.io.ByteArrayOutputStream;
-import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -16,6 +15,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
@@ -264,17 +264,20 @@ public class AuthleteApiJaxrsImplTest
     // Serialization
     // ---------------------------------------------------------------
     @Test
-    public void testApiResponseNotSerializableWhenHeadersAreCxfMetadataMap()
+    @SuppressWarnings("unchecked")
+    public void testResponseHeadersAreSerializableAfterWrappingInHashMap()
     {
         TestHarness h = new TestHarness();
 
-        // Mock post response
-        Response cxfResponse = Response.ok(new AuthorizationResponse())
-                .header("Content-Type", "application/json")
-                .build();
-        doReturn(cxfResponse).when(h.builder).post(any());
+        // Mockito mocks do not implement Serializable, mirroring the behaviour of
+        // CXF's MetadataMap. Without the HashMap-wrapping fix, serialization would fail.
+        MultivaluedMap<String, String> nonSerializableHeaders = mock(MultivaluedMap.class);
 
-        // CXF's getStringHeaders() returns MetadataMap; headers must be wrapped in a HashMap to be Serializable.
+        Response mockResponse = createSuccessResponse();
+        doReturn(nonSerializableHeaders).when(mockResponse).getStringHeaders();
+        doReturn(new AuthorizationResponse()).when(mockResponse).readEntity(AuthorizationResponse.class);
+        doReturn(mockResponse).when(h.builder).post(any());
+
         AuthorizationResponse result = ((AuthleteApiJaxrsImpl) h.api).callPostApi(
                 "Bearer test",
                 "/api/auth/authorization",
