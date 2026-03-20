@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Authlete, Inc.
+ * Copyright (C) 2019-2026 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -468,20 +470,23 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
         // The format of the content varies depending on the action.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case UNAUTHORIZED:
                 // 401 Unauthorized
-                return ResponseUtil.unauthorized(content, CHALLENGE);
+                return ResponseUtil.unauthorized(content, CHALLENGE, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.badRequest(content);
+                return ResponseUtil.badRequest(content, headers);
 
             case USER_IDENTIFICATION:
                 // Process user identification.
@@ -491,6 +496,21 @@ public class BackchannelAuthenticationRequestHandler extends BaseHandler
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/backchannel/authentication", action);
         }
+    }
+
+
+    private static Map<String, Object> prepareHeaders(BackchannelAuthenticationResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // OAuth-Client-Attestation-Challenge
+        String challenge = response.getAttestationChallenge();
+        if (challenge != null)
+        {
+            headers.put("OAuth-Client-Attestation-Challenge", challenge);
+        }
+
+        return headers;
     }
 
 

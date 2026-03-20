@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Authlete, Inc.
+ * Copyright (C) 2015-2026 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -737,6 +737,13 @@ public class TokenRequestHandler extends BaseHandler
         if (dpopNonce != null)
         {
             headers.put("DPoP-Nonce", dpopNonce);
+        }
+
+        // OAuth-Client-Attestation-Challenge
+        String challenge = response.getAttestationChallenge();
+        if (challenge != null)
+        {
+            headers.put("OAuth-Client-Attestation-Challenge", challenge);
         }
 
         return headers;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Authlete, Inc.
+ * Copyright (C) 2015-2026 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,19 @@ class ResponseUtil
      */
     public static Response javaScript(String entity)
     {
-        return builder(Status.OK, entity, MEDIA_TYPE_JAVASCRIPT).build();
+        return javaScript(entity, /* headers */ null);
+    }
+
+
+    /**
+     * Create a response of {@code "200 OK"}
+     * with the given entity formatted in
+     * {@code "application/javascript;charset=UTF-8"}.
+     */
+    public static Response javaScript(
+            String entity, Map<String, Object> headers)
+    {
+        return builder(Status.OK, entity, MEDIA_TYPE_JAVASCRIPT, headers).build();
     }
 
 

@@ -1,6 +1,41 @@
 変更点
 ======
 
+- `pom.xml`
+    * authlete-java-common のバージョンを 4.33 から 4.39 へ更新。
+
+- `AuthleteApiCaller` クラス
+    * `callAttestationChallenge(AttestationChallengeRequest, Options)` メソッドを追加。
+
+- `AuthleteApiImpl` クラス
+    * `attestationChallenge(AttestationChallengeRequest, Options)` メソッドを実装。
+
+- `AuthleteApiImplV3` クラス
+    * `attestationChallenge(AttestationChallengeRequest, Options)` メソッドを実装。
+
+- `BackchannelAuthenticationRequestHandler` クラス
+    * `OAuth-Client-Attestation-Challenge` HTTP レスポンスヘッダーをサポート。
+
+- `DeviceAuthorizationRequestHandler` クラス
+    * `OAuth-Client-Attestation-Challenge` HTTP レスポンスヘッダーをサポート。
+
+- `PushedAuthReqHandler` クラス
+    * `OAuth-Client-Attestation-Challenge` HTTP レスポンスヘッダーをサポート。
+
+- `ResponseUtil` クラス
+    * `javaScript(String, Map<String, Object>)` メソッドを追加。
+
+- `RevocationRequestHandler` クラス
+    * `OAuth-Client-Attestation-Challenge` HTTP レスポンスヘッダーをサポート。
+
+- `TokenRequestHandler` クラス
+    * `OAuth-Client-Attestation-Challenge` HTTP レスポンスヘッダーをサポート。
+
+- 新しい型
+    * `AttestationChallengeRequestHandler` クラス
+    * `BaseAttestationChallengeEndpoint` クラス
+
+
 2.91 (2026-03-05)
 -----------------
 
