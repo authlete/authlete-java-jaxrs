@@ -1,6 +1,41 @@
 CHANGES
 =======
 
+- `pom.xml`
+    * Updated the version of authlete-java-common from 4.33 to 4.39.
+
+- `AuthleteApiCaller` class
+    * Added the `callAttestationChallenge(AttestationChallengeRequest, Options)` method.
+
+- `AuthleteApiImpl` class
+    * Implemented the `attestationChallenge(AttestationChallengeRequest, Options)` method.
+
+- `AuthleteApiImplV3` class
+    * Implemented the `attestationChallenge(AttestationChallengeRequest, Options)` method.
+
+- `BackchannelAuthenticationRequestHandler` class
+    * Supported the `OAuth-Client-Attestation-Challenge` HTTP response header.
+
+- `DeviceAuthorizationRequestHandler` class
+    * Supported the `OAuth-Client-Attestation-Challenge` HTTP response header.
+
+- `PushedAuthReqHandler` class
+    * Supported the `OAuth-Client-Attestation-Challenge` HTTP response header.
+
+- `ResponseUtil` class
+    * Added the `javaScript(String, Map<String, Object>)` method.
+
+- `RevocationRequestHandler` class
+    * Supported the `OAuth-Client-Attestation-Challenge` HTTP response header.
+
+- `TokenRequestHandler` class
+    * Supported the `OAuth-Client-Attestation-Challenge` HTTP response header.
+
+- New types
+    * `AttestationChallengeRequestHandler` class
+    * `BaseAttestationChallengeEndpoint` class
+
+
 2.91 (2026-03-05)
 -----------------
 

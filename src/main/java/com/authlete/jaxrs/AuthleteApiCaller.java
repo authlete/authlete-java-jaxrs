@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Authlete, Inc.
+ * Copyright (C) 2015-2026 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import javax.ws.rs.core.Response.Status;
 import com.authlete.common.api.AuthleteApi;
 import com.authlete.common.api.AuthleteApiException;
 import com.authlete.common.api.Options;
+import com.authlete.common.dto.AttestationChallengeRequest;
+import com.authlete.common.dto.AttestationChallengeResponse;
 import com.authlete.common.dto.AuthorizationFailRequest;
 import com.authlete.common.dto.AuthorizationFailResponse;
 import com.authlete.common.dto.AuthorizationIssueRequest;
@@ -1577,6 +1579,24 @@ class AuthleteApiCaller
         {
             // The API call failed.
             throw apiFailure("/vci/offer/info", e);
+        }
+    }
+
+
+    /**
+     * Call Authlete's {@code /attestation/challenge} API.
+     */
+    public AttestationChallengeResponse
+    callAttestationChallenge(AttestationChallengeRequest request, Options options)
+    {
+        try
+        {
+            return mApi.attestationChallenge(request, options);
+        }
+        catch (AuthleteApiException e)
+        {
+            // The API call failed.
+            throw apiFailure("/attestation/challenge", e);
         }
     }
 }

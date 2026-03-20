@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Authlete, Inc.
+ * Copyright (C) 2015-2026 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.authlete.jaxrs;
 
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -428,28 +430,46 @@ public class RevocationRequestHandler extends BaseHandler
         // The content of the response to the client application.
         String content = response.getResponseContent();
 
+        // Additional HTTP headers.
+        Map<String, Object> headers = prepareHeaders(response);
+
         // Dispatch according to the action.
         switch (action)
         {
             case INVALID_CLIENT:
                 // 401 Unauthorized
-                return ResponseUtil.unauthorized(content, CHALLENGE);
+                return ResponseUtil.unauthorized(content, CHALLENGE, headers);
 
             case INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error
-                return ResponseUtil.internalServerError(content);
+                return ResponseUtil.internalServerError(content, headers);
 
             case BAD_REQUEST:
                 // 400 Bad Request
-                return ResponseUtil.badRequest(content);
+                return ResponseUtil.badRequest(content, headers);
 
             case OK:
                 // 200 OK
-                return ResponseUtil.javaScript(content);
+                return ResponseUtil.javaScript(content, headers);
 
             default:
                 // This never happens.
                 throw getApiCaller().unknownAction("/api/auth/revocation", action);
         }
+    }
+
+
+    private static Map<String, Object> prepareHeaders(RevocationResponse response)
+    {
+        Map<String, Object> headers = new LinkedHashMap<>();
+
+        // OAuth-Client-Attestation-Challenge
+        String challenge = response.getAttestationChallenge();
+        if (challenge != null)
+        {
+            headers.put("OAuth-Client-Attestation-Challenge", challenge);
+        }
+
+        return headers;
     }
 }
