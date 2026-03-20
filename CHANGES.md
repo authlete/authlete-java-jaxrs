@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+2.93 (2026-03-20)
+-----------------
+
 - `pom.xml`
     * Updated the version of authlete-java-common from 4.33 to 4.39.
 
