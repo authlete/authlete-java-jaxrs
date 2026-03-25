@@ -58,8 +58,8 @@ import com.nimbusds.jwt.SignedJWT;
 
 public abstract class AuthleteApiJaxrsImpl implements AuthleteApi
 {
-    // "application/json;charset=UTF-8"
-    private static final MediaType JSON_UTF8_TYPE = APPLICATION_JSON_TYPE.withCharset("UTF-8");
+    // "application/json"
+    private static final MediaType JSON_UTF8_TYPE = APPLICATION_JSON_TYPE;
 
 
     protected interface AuthleteApiCall<TResponse>
