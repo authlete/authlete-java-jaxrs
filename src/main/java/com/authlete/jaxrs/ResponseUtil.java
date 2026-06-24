@@ -32,10 +32,10 @@ import javax.ws.rs.core.Response.Status;
 class ResponseUtil
 {
     /**
-     * {@code "application/json;charset=UTF-8"}
+     * {@code "application/json"}
      */
     private static final MediaType MEDIA_TYPE_JSON =
-            MediaType.APPLICATION_JSON_TYPE.withCharset("UTF-8");
+            MediaType.APPLICATION_JSON_TYPE;
 
 
     /**
